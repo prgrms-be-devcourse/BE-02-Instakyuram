@@ -38,6 +38,10 @@ dependencies {
 
     //JWT
     implementation 'com.auth0:java-jwt:3.18.1'
+
+    //THYMELEAF
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 }
 
 tasks.named('test') {

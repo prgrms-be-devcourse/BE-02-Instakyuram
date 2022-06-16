@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.configuration.jwt;
+package com.kdt.instakyuram.security.jwt;
 
 import java.io.IOException;
 

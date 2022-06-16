@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.configuration.jwt;
+package com.kdt.instakyuram.security.jwt;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.logging.log4j.util.Strings.isNotEmpty;

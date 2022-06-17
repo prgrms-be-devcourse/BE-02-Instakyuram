@@ -7,16 +7,18 @@ import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
+import lombok.Builder;
+
 @Entity
 public class Member {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Size(min= 6, max = 24)
+	@Size(min = 6, max = 24)
 	private String username;
 
-	@Size(min= 6, max = 16)
+	@Size(min = 6, max = 16)
 	private String name;
 
 	private String password;
@@ -28,6 +30,16 @@ public class Member {
 	private String email;
 
 	protected Member() {
+	}
+
+	@Builder
+	public Member(Long id, String username, String name, String password, String phoneNumber, String email) {
+		this.id = id;
+		this.username = username;
+		this.name = name;
+		this.password = password;
+		this.phoneNumber = phoneNumber;
+		this.email = email;
 	}
 
 	public Member(String username, String password, String name, String phoneNumber, String email) {

@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.tag.service;
+package com.kdt.instakyuram.post.service;
 
 import org.springframework.stereotype.Service;
 

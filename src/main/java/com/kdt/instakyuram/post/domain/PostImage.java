@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.posttag.domain;
+package com.kdt.instakyuram.post.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -6,18 +6,22 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.kdt.instakyuram.post.domain.Post;
-import com.kdt.instakyuram.tag.domain.Tag;
 
 @Entity
-public class PostTag {
+public class PostImage {
+
 	@Id
 	private Long id;
 
-	@JoinColumn(name = "tag_id", referencedColumnName = "id")
 	@ManyToOne
-	private Tag tag;
-
 	@JoinColumn(name = "post_id", referencedColumnName = "id")
-	@ManyToOne
 	private Post post;
+
+	private String originalFileName;
+
+	private String serverFileName;
+
+	private Long size;
+
+	private String path;
 }

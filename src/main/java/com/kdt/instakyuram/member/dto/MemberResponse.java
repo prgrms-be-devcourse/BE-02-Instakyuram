@@ -5,4 +5,5 @@ public record MemberResponse(Long id, String username, String name, String email
 	public record FollowingMember(Long id, String username) {
 
 	}
+
 }

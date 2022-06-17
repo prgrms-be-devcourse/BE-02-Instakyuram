@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.commentlike.controller;
+package com.kdt.instakyuram.comment.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.commentlike.domain;
+package com.kdt.instakyuram.comment.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

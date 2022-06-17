@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.commentlike.service;
+package com.kdt.instakyuram.comment.service;
 
 import org.springframework.stereotype.Service;
 

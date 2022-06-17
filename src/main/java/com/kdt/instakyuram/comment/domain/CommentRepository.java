@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.comment.repository;
+package com.kdt.instakyuram.comment.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

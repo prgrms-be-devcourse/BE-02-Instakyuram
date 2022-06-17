@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.tag.domain;
+package com.kdt.instakyuram.post.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

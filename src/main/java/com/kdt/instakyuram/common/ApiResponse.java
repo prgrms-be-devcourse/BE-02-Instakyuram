@@ -6,4 +6,8 @@ public class ApiResponse<T> {
 	public ApiResponse(T response) {
 		this.response = response;
 	}
+
+	public T getResponse() {
+		return response;
+	}
 }

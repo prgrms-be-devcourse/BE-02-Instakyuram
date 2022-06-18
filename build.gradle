@@ -27,7 +27,9 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
-    //FAKER
+    // LOMBOK
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
     //TEST
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -25,4 +25,9 @@ public class MemberController {
 	ApiResponse<MemberResponse> getById(@PathVariable Long userId) {
 		return new ApiResponse<>(memberService.findById(userId));
 	}
+
+	@PostMapping
+	ApiResponse<MemberResponse.SignupResponse> signup(MemberRequest.SignupRequest request) {
+		return new ApiResponse<>(memberService.signup(request));
+	}
 }

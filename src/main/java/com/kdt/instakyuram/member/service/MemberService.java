@@ -1,19 +1,23 @@
 package com.kdt.instakyuram.member.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.domain.MemberRepository;
+import com.kdt.instakyuram.member.dto.MemberRequest;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 
 @Service
 public class MemberService {
 
 	private final MemberRepository memberRepository;
+	private final PasswordEncoder passwordEncoder;
 
-	public MemberService(MemberRepository memberRepository) {
+	public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
 		this.memberRepository = memberRepository;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	public MemberResponse findById(Long id) {
@@ -27,4 +31,16 @@ public class MemberService {
 			foundMember.getPhoneNumber()
 		);
 	}
+
+	public MemberResponse.SignupResponse signup(MemberRequest.SignupRequest request) {
+		Member member = memberRepository.save(new Member(request.username(),
+			passwordEncoder.encode(request.password()),
+			request.name(),
+			request.phoneNumber(),
+			request.email())
+		);
+
+		return new MemberResponse.SignupResponse(member.getId(), member.getUsername());
+	}
 }
+

@@ -9,10 +9,9 @@ import com.kdt.instakyuram.follow.service.FollowService;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.domain.MemberRepository;
 import com.kdt.instakyuram.member.dto.MemberResponse;
-import com.kdt.instakyuram.member.dto.MemberResponse.FollowingMember;
 
 @Service
-public class MemberService {
+public class MemberService implements PostGiver {
 
 	private final FollowService followService;
 	private final MemberRepository memberRepository;
@@ -35,14 +34,17 @@ public class MemberService {
 		);
 	}
 
-	public List<FollowingMember> findFollowingMembers(Long id) {
+	public List<MemberResponse> findAllFollowing(Long id) {
 		List<Long> followingIds = followService.findByFollowingIds(id);
 
 		return memberRepository.findByIdIn(followingIds).stream()
-			.map(followingMember -> new FollowingMember(
-				followingMember.getId(),
-				followingMember.getUsername(),
-				followingMember.getName())
+			.map(following -> MemberResponse.builder()
+				.id(following.getId())
+				.email(following.getEmail())
+				.username(following.getUsername())
+				.name(following.getName())
+				.phoneNumber(following.getPhoneNumber())
+				.build()
 			).toList();
 	}
 }

@@ -39,7 +39,7 @@ public class MemberService {
 		List<Long> followingIds = followService.findByFollowingIds(id);
 
 		return memberRepository.findByIdIn(followingIds).stream()
-			.map(followingMember -> new MemberResponse.FollowingMember(
+			.map(followingMember -> new FollowingMember(
 				followingMember.getId(),
 				followingMember.getUsername(),
 				followingMember.getName())

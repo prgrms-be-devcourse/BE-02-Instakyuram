@@ -25,7 +25,6 @@ public class MemberService {
 	public MemberResponse findById(Long id) {
 		Member foundMember = memberRepository.findById(id)
 			.orElseThrow(() -> new NotFoundException("유저 정보가 존재하지 않습니다."));
-
 		return new MemberResponse(
 			foundMember.getId(),
 			foundMember.getUsername(),
@@ -39,7 +38,7 @@ public class MemberService {
 		List<Long> followingIds = followService.findByFollowingIds(id);
 
 		return memberRepository.findByIdIn(followingIds).stream()
-			.map(followingMember -> new MemberResponse.FollowingMember(
+			.map(followingMember -> new FollowingMember(
 				followingMember.getId(),
 				followingMember.getUsername(),
 				followingMember.getName())

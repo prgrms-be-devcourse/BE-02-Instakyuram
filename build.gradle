@@ -44,6 +44,10 @@ dependencies {
     //THYMELEAF
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
+    //FLYWAY
+    compileOnly "org.flywaydb:flyway-mysql"
+    implementation 'org.flywaydb:flyway-core:8.5.12'
 }
 
 tasks.named('test') {

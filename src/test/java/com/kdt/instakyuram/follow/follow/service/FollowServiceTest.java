@@ -53,6 +53,7 @@ class FollowServiceTest {
 		//then
 		assertThat(followingIds.size()).isEqualTo(followingTargetIds.size());
 		assertThat(followingIds).contains(targetAId, targetBId);
+
 		verify(followRepository, times(1)).findByMemberId(memberId);
 	}
 

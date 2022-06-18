@@ -1,5 +1,7 @@
 package com.kdt.instakyuram.post.dto;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +35,7 @@ public class PostConverter {
 
 	public PostImage toPostImage(MultipartFile file, Post post) {
 		String originalFileName = file.getOriginalFilename();
-		String serverFileName = originalFileName + extractExt(originalFileName);
+		String serverFileName = UUID.randomUUID().toString() + extractExt(originalFileName);
 
 		return PostImage.builder()
 			.post(post)

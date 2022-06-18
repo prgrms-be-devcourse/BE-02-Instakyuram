@@ -55,7 +55,7 @@ class FollowRepositoryTest {
 		assertThat(followingIds).contains(targetA.getId(), targetB.getId());
 	}
 
-	public List<Member> getDemoMembers() {
+	private List<Member> getDemoMembers() {
 
 		List<Member> follwings = new ArrayList<>();
 

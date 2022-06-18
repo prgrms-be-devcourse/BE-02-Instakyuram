@@ -7,6 +7,7 @@ import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.domain.MemberRepository;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 
+// TODO : MemberGiver의 메서드가 필요합니다 !
 @Service
 public class MemberService {
 

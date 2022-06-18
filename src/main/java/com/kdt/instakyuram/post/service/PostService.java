@@ -1,6 +1,5 @@
 package com.kdt.instakyuram.post.service;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -11,7 +10,6 @@ import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
-import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
 import com.kdt.instakyuram.post.dto.PostResponse;
@@ -34,14 +32,11 @@ public class PostService {
 	}
 
 	@Transactional
-	public PostResponse.CreateResponse create(Long memberId, String content, List<MultipartFile> postImages) throws
-		IOException {
-		// 멤버 조회하기
+	public PostResponse.CreateResponse create(Long memberId, String content, List<MultipartFile> images) {
 		Member member = postConverter.toMember(
 			memberGiver.findById(memberId)
 		);
 
-		//userService.findById() 유저 정보 조회 해오기
 		Post savePost = postRepository.save(
 			Post.builder()
 				.content(content)
@@ -49,8 +44,7 @@ public class PostService {
 				.build()
 		);
 
-		// TODO 이미지 추가로직 처리해야함
-		List<PostImage> save = postImageService.save(postImages, savePost.getId());
+		postImageService.save(images, savePost);
 
 		return new PostResponse.CreateResponse(savePost.getId(), memberId, content);
 	}

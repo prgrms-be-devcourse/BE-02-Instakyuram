@@ -1,33 +1,37 @@
 package com.kdt.instakyuram.post.service;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostImageRepository;
-import com.kdt.instakyuram.post.dto.ImageUploader;
+import com.kdt.instakyuram.post.dto.PostConverter;
+import com.kdt.instakyuram.util.ImageUploader;
 
 @Service
 @Transactional(readOnly = true)
 public class PostImageService {
 
 	private final PostImageRepository postImageRepository;
-	private final ImageUploader imageUploader;
+	private final PostConverter postConverter;
 
-	public PostImageService(PostImageRepository postImageRepository,
-		ImageUploader imageUploader) {
+	public PostImageService(PostImageRepository postImageRepository, PostConverter postConverter) {
 		this.postImageRepository = postImageRepository;
-		this.imageUploader = imageUploader;
+		this.postConverter = postConverter;
 	}
 
-	public List<PostImage> save(List<MultipartFile> images, Long postId) throws IOException {
-		List<PostImage> postImages = imageUploader.getPostImages(images, postId);
+	@Transactional
+	public void save(List<MultipartFile> images, Post post) {
+		for (MultipartFile image : images) {
+			PostImage postImage = postConverter.toPostImage(image, post);
 
-		return postImageRepository.saveAll(postImages);
+			ImageUploader.writePostImages(image, postImage.getServerFileName(), postImage.getPath());
+			postImageRepository.save(postImage);
+		}
 	}
 
 }

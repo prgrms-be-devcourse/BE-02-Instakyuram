@@ -29,7 +29,7 @@ public class PostImageService {
 		for (MultipartFile image : images) {
 			PostImage postImage = postConverter.toPostImage(image, post);
 
-			ImageUploader.writePostImages(image, postImage.getServerFileName(), postImage.getPath());
+			ImageUploader.upload(image, postImage.getServerFileName(), postImage.getPath());
 			postImageRepository.save(postImage);
 		}
 	}

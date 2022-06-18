@@ -13,12 +13,13 @@ public class ImageUploader {
 
 	private static final Logger logger = LoggerFactory.getLogger(ImageUploader.class);
 
-	public static void writePostImages(MultipartFile image, String serverFileName, String path) {
+	// TODO : 추후 커스텀 예외로 처리할 것
+	public static void upload(MultipartFile image, String serverFileName, String path) {
 		try {
 			image.transferTo(new File(path + serverFileName));
 		} catch (IOException e) {
 			logger.warn("이미지 파일을 저장하면서 오류가 발생하였습니다.");
-			throw new RuntimeException(e);
+			throw new RuntimeException("이미지 파일을 저장하면서 오류가 발생하였습니다.", e);
 		}
 
 	}

@@ -12,7 +12,7 @@ import com.kdt.instakyuram.post.domain.PostImage;
 @Component
 public class PostConverter {
 
-	@Value("${file.path.post}")
+	@Value("${file.dir.post}")
 	private String path;
 
 	public Member toMember(MemberResponse memberResponse) {

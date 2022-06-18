@@ -1,6 +1,5 @@
 package com.kdt.instakyuram.post.controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +26,7 @@ public class PostController {
 	@PostMapping
 	public ApiResponse<PostResponse.CreateResponse> posting(
 		PostRequest.CreateRequest request
-	) throws IOException {
+	) {
 		return new ApiResponse(
 			postService.create(
 				request.memberId(), request.content(), request.postImages()

@@ -8,8 +8,8 @@ public class PostRequest {
 
 	public record CreateRequest(
 		Long memberId,
-		String content
-	) {
-	}
+		String content,
+		List<MultipartFile> postImages
+	) { }
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.dto.MemberResponse;
@@ -20,24 +21,30 @@ public class PostService {
 	private final PostRepository postRepository;
 	private final PostConverter postConverter;
 	private final MemberGiver memberGiver;
+	private final PostImageService postImageService;
 
-	public PostService(PostRepository postRepository, PostConverter postConverter, MemberGiver memberGiver) {
+	public PostService(PostRepository postRepository, PostConverter postConverter,
+		MemberGiver memberGiver, PostImageService postImageService) {
 		this.postRepository = postRepository;
 		this.postConverter = postConverter;
 		this.memberGiver = memberGiver;
+		this.postImageService = postImageService;
 	}
 
 	@Transactional
-	public PostResponse.CreateResponse create(Long memberId, String content) {
-		// 멤버 조회하기
+	public PostResponse.CreateResponse create(Long memberId, String content, List<MultipartFile> images) {
 		Member member = postConverter.toMember(
 			memberGiver.findById(memberId)
 		);
 
-		//userService.findById() 유저 정보 조회 해오기
 		Post savePost = postRepository.save(
-			new Post(content, member)
+			Post.builder()
+				.content(content)
+				.member(member)
+				.build()
 		);
+
+		postImageService.save(images, savePost);
 
 		return new PostResponse.CreateResponse(savePost.getId(), memberId, content);
 	}
@@ -45,7 +52,7 @@ public class PostService {
 	public List<PostResponse.FindAllResponse> findAll(Long memberId) {
 		List<MemberResponse> follows = memberGiver.findAllFollowing(memberId);
 		List<Member> members = follows.stream()
-			.map(follow -> postConverter.toMember(follow))
+			.map(postConverter::toMember)
 			.toList();
 
 		return postRepository.findByMemberIn(members).stream()

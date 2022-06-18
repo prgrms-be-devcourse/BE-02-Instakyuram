@@ -13,7 +13,6 @@ import com.kdt.instakyuram.post.domain.PostRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
 import com.kdt.instakyuram.post.dto.PostResponse;
 
-// TODO : MemberGiver의 메서드가 필요합니다 !
 @Transactional(readOnly = true)
 @Service
 public class PostService {

@@ -1,11 +1,11 @@
 package com.kdt.instakyuram.post.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,11 +26,11 @@ public class PostController {
 
 	@PostMapping
 	public ApiResponse<PostResponse.CreateResponse> posting(
-		@RequestBody PostRequest.CreateRequest request
-	) {
+		PostRequest.CreateRequest request
+	) throws IOException {
 		return new ApiResponse(
 			postService.create(
-				request.memberId(), request.content()
+				request.memberId(), request.content(), request.postImages()
 			)
 		);
 	}

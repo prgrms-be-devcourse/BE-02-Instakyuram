@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.kdt.instakyuram.member.dto.MemberResponse;
 
-public interface PostGiver {
+public interface MemberGiver {
 
 	MemberResponse findById(Long id);
 

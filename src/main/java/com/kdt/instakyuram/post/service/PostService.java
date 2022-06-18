@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.dto.MemberResponse;
-import com.kdt.instakyuram.member.service.PostGiver;
+import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
@@ -19,19 +19,19 @@ public class PostService {
 
 	private final PostRepository postRepository;
 	private final PostConverter postConverter;
-	private final PostGiver postGiver;
+	private final MemberGiver memberGiver;
 
-	public PostService(PostRepository postRepository, PostConverter postConverter, PostGiver postGiver) {
+	public PostService(PostRepository postRepository, PostConverter postConverter, MemberGiver memberGiver) {
 		this.postRepository = postRepository;
 		this.postConverter = postConverter;
-		this.postGiver = postGiver;
+		this.memberGiver = memberGiver;
 	}
 
 	@Transactional
 	public PostResponse.CreateResponse create(Long memberId, String content) {
 		// 멤버 조회하기
 		Member member = postConverter.toMember(
-			postGiver.findById(memberId)
+			memberGiver.findById(memberId)
 		);
 
 		//userService.findById() 유저 정보 조회 해오기
@@ -43,7 +43,7 @@ public class PostService {
 	}
 
 	public List<PostResponse.FindAllResponse> findAll(Long memberId) {
-		List<MemberResponse> follows = postGiver.findAllFollowing(memberId);
+		List<MemberResponse> follows = memberGiver.findAllFollowing(memberId);
 		List<Member> members = follows.stream()
 			.map(follow -> postConverter.toMember(follow))
 			.toList();

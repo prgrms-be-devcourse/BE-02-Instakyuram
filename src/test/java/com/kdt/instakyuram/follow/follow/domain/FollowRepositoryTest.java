@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,41 +26,33 @@ class FollowRepositoryTest {
 	private FollowRepository followRepository;
 
 	@Test
-	@DisplayName("의존성 주입 테스트")
-	void testDependencyInjection() {
-		//given
-		//when
-		//then
-		Assertions.assertNotNull(entityManager);
-	}
-
-	@Test
 	@DisplayName("팔로잉 목록 조회 테스트")
 	void testLookUpFollowings() {
 		//given
 		List<Member> members = getDemoMembers();
 
-		Member followingFromMember = members.get(0);
-		Member followingToTargetFirst = members.get(1);
-		Member followingToTargetSecond = members.get(2);
+		Member member = members.get(0);
+		Member targetA = members.get(1);
+		Member targetB = members.get(2);
 
 		followRepository.save(Follow.builder()
-			.memberId(followingFromMember.getId())
-			.targetId(followingToTargetFirst.getId())
+			.memberId(member.getId())
+			.targetId(targetA.getId())
 			.build());
 
 		followRepository.save(Follow.builder()
-			.memberId(followingFromMember.getId())
-			.targetId(followingToTargetSecond.getId())
+			.memberId(member.getId())
+			.targetId(targetB.getId())
 			.build());
+
 		//when
-		List<Long> followingIds = followRepository.findByMemberId(followingFromMember.getId()).stream()
+		List<Long> followingIds = followRepository.findByMemberId(member.getId()).stream()
 			.map(Follow::getTargetId)
 			.toList();
-		//then
 
+		//then
 		assertThat(followingIds.size()).isEqualTo(2);
-		assertThat(followingIds).contains(followingToTargetFirst.getId(), followingToTargetSecond.getId());
+		assertThat(followingIds).contains(targetA.getId(), targetB.getId());
 	}
 
 	public List<Member> getDemoMembers() {
@@ -71,16 +62,15 @@ class FollowRepositoryTest {
 		String name = "programmers";
 		String password = "password";
 		String phoneNumber = "01012345678";
+		String emailPostfix = "@programmers.co.kr";
 
 		IntStream.range(1, 5).forEach(
 			number -> {
-				String username = name + number;
-				String email = username + "@programmers.co.kr";
 				Member persistedMember = entityManager.persist(
 					Member.builder()
-						.email(email)
+						.email((name + number) + emailPostfix)
 						.password(password)
-						.username(username)
+						.username(name + number)
 						.phoneNumber(phoneNumber)
 						.name(name)
 						.build()

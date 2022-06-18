@@ -41,7 +41,8 @@ public class MemberService {
 		return memberRepository.findByIdIn(followingIds).stream()
 			.map(followingMember -> new MemberResponse.FollowingMember(
 				followingMember.getId(),
-				followingMember.getUsername())
+				followingMember.getUsername(),
+				followingMember.getName())
 			).toList();
 	}
 }

@@ -8,16 +8,20 @@ import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.follow.service.FollowService;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.domain.MemberRepository;
+import com.kdt.instakyuram.member.dto.MemberConverter;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 
 @Service
 public class MemberService implements PostGiver {
 
 	private final FollowService followService;
+	private final MemberConverter memberConverter;
 	private final MemberRepository memberRepository;
 
-	public MemberService(FollowService followService, MemberRepository memberRepository) {
+	public MemberService(FollowService followService, MemberConverter memberConverter,
+		MemberRepository memberRepository) {
 		this.followService = followService;
+		this.memberConverter = memberConverter;
 		this.memberRepository = memberRepository;
 	}
 
@@ -38,13 +42,7 @@ public class MemberService implements PostGiver {
 		List<Long> followingIds = followService.findByFollowingIds(id);
 
 		return memberRepository.findByIdIn(followingIds).stream()
-			.map(following -> MemberResponse.builder()
-				.id(following.getId())
-				.email(following.getEmail())
-				.username(following.getUsername())
-				.name(following.getName())
-				.phoneNumber(following.getPhoneNumber())
-				.build()
-			).toList();
+			.map(memberConverter::toMemberResponse)
+			.toList();
 	}
 }

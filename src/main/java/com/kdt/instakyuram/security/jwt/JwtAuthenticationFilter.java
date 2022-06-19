@@ -89,7 +89,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 	}
 
 	private boolean isHaveToJwtCheck(HttpServletRequest request) {
-		return !request.getRequestURI().endsWith("/api/member/signup")
+		return !request.getRequestURI().endsWith("/api/members/signup")
 			&& SecurityContextHolder.getContext().getAuthentication() == null;
 	}
 
@@ -140,18 +140,26 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 	}
 
 	private String getToken(HttpServletRequest request) {
-		return Arrays.stream(request.getCookies())
-			.filter(cookie -> cookie.getName().equals(this.accessTokenHeader))
-			.findFirst()
-			.map(Cookie::getValue)
-			.orElseThrow(JwtAccessTokenNotFoundException::new);
+		if(request.getCookies() != null) {
+			return Arrays.stream(request.getCookies())
+				.filter(cookie -> cookie.getName().equals(this.accessTokenHeader))
+				.findFirst()
+				.map(Cookie::getValue)
+				.orElseThrow(JwtAccessTokenNotFoundException::new);
+		} else {
+			throw new JwtAccessTokenNotFoundException();
+		}
 	}
 
 	private String getRefreshToken(HttpServletRequest request) {
-		return Arrays.stream(request.getCookies())
-			.filter(cookie -> cookie.getName().equals(this.refreshTokenHeader))
-			.findFirst()
-			.map(Cookie::getValue)
-			.orElseThrow(JwtRefreshTokenNotFoundException::new);
+		if(request.getCookies() != null) {
+			return Arrays.stream(request.getCookies())
+				.filter(cookie -> cookie.getName().equals(this.refreshTokenHeader))
+				.findFirst()
+				.map(Cookie::getValue)
+				.orElseThrow(JwtRefreshTokenNotFoundException::new);
+		} else {
+			throw new JwtRefreshTokenNotFoundException();
+		}
 	}
 }

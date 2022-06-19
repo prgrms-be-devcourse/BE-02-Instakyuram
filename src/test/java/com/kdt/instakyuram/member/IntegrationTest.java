@@ -34,16 +34,6 @@ public class IntegrationTest {
 	MemberConverter memberConverter;
 
 	@Test
-	@DisplayName("의존성 테스트")
-	void testDependencyInjection() {
-		//given
-		//when
-		//then
-		Assertions.assertThat(entityManager).isNotNull();
-		Assertions.assertThat(postGiver).isNotNull();
-	}
-
-	@Test
 	@Transactional
 	@DisplayName("팔로잉 목록 멤버를 조회")
 	void testFindAllFollowing() {

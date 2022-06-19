@@ -47,6 +47,9 @@ dependencies {
     //THYMELEAF
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
+    // WEBJARS - AXIOS
+    implementation 'org.webjars.npm:axios:0.27.2'
 }
 
 tasks.named('test') {

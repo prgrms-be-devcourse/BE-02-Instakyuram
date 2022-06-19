@@ -35,8 +35,7 @@ public class PostImageService {
 	}
 
 	public List<PostImageResponse> findByPostId(Long postId) {
-		return postImageRepository.findByPostId(postId)
-			.stream()
+		return postImageRepository.findByPostId(postId).stream()
 			.map(postConverter::toPostImageResponse)
 			.toList();
 	}

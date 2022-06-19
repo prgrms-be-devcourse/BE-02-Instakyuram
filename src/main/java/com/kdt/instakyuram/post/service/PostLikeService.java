@@ -21,10 +21,13 @@ public class PostLikeService {
 	}
 
 	public List<PostLikeResponse> findByPostId(Long postId) {
-		return postLikeRepository.findByPostId(postId)
-			.stream()
+		return postLikeRepository.findByPostId(postId).stream()
 			.map(postConverter::toPostLikeResponse)
 			.toList();
+	}
+
+	public int countByPostId(Long postId) {
+		return postLikeRepository.countByPostId(postId);
 	}
 
 }

@@ -23,7 +23,8 @@ public record PostResponse(Long id, MemberResponse memberResponse, String conten
 		MemberResponse member,
 		List<PostImageResponse> postImageResponse,
 		List<CommentResponse> commentResponse,
-		List<PostLikeResponse> postLikeResponse
+		List<PostLikeResponse> postLikeResponse,
+		int totalPostLike
 	) { }
 
 }

@@ -61,15 +61,15 @@ public class PostService {
 			.map(postConverter::toMember)
 			.toList();
 
-		return postRepository.findByMemberIn(members)
-			.stream()
+		return postRepository.findByMemberIn(members).stream()
 			.map(post ->
 				postConverter.toDetailResponse(
 					memberGiver.findById(members.iterator().next().getId()),
 					post,
 					postImageService.findByPostId(post.getId()),
 					commentGiver.findByPostId(post.getId()),
-					postLikeService.findByPostId(post.getId())
+					postLikeService.findByPostId(post.getId()),
+					postLikeService.countByPostId(post.getId())
 				)
 			)
 			.toList();

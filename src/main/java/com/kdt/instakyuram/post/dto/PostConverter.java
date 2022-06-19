@@ -50,13 +50,14 @@ public class PostConverter {
 
 	public PostResponse.FindAllResponse toDetailResponse(MemberResponse memberResponse, Post post,
 		List<PostImageResponse> postImageResponse, List<CommentResponse> commentResponse,
-		List<PostLikeResponse> postLikeResponse) {
+		List<PostLikeResponse> postLikeResponse, int totalPostLike) {
 		return PostResponse.FindAllResponse.builder()
 			.content(post.getContent())
 			.member(memberResponse)
 			.postImageResponse(postImageResponse)
 			.commentResponse(commentResponse)
 			.postLikeResponse(postLikeResponse)
+			.totalPostLike(totalPostLike)
 			.build();
 
 	}
@@ -89,7 +90,6 @@ public class PostConverter {
 		return PostLikeResponse.builder()
 			.id(postLike.getId())
 			.memberResponse(toMemberResponse(postLike.getMember()))
-			.postResponse(toResponse(postLike.getPost()))
 			.build();
 	}
 }

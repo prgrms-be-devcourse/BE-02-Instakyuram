@@ -1,13 +1,15 @@
-package com.kdt.instakyuram.follow;
-
-import static org.assertj.core.api.Assertions.assertThat;
+package com.kdt.instakyuram.member;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.LongStream;
 
 import javax.persistence.EntityManager;
 
+import org.assertj.core.api.Assertions;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,21 +17,26 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kdt.instakyuram.follow.domain.Follow;
-import com.kdt.instakyuram.follow.service.FollowService;
 import com.kdt.instakyuram.member.domain.Member;
+import com.kdt.instakyuram.member.dto.MemberConverter;
+import com.kdt.instakyuram.member.dto.MemberResponse;
+import com.kdt.instakyuram.member.service.MemberGiver;
 
 @SpringBootTest
-public class IntegrationTest {
+public class MemberServiceIntegrationTest {
 
 	@Autowired
 	EntityManager entityManager;
 	@Autowired
-	private FollowService followService;
+	MemberGiver memberGiver;
+
+	@Autowired
+	MemberConverter memberConverter;
 
 	@Test
 	@Transactional
-	@DisplayName("팔로잉 목록 조회 테스트")
-	void testFollowing() {
+	@DisplayName("팔로잉 목록 멤버를 조회")
+	void testFindAllFollowing() {
 		//given
 		List<Member> members = getDemoMembers();
 
@@ -47,27 +54,37 @@ public class IntegrationTest {
 			.targetId(targetB.getId())
 			.build());
 
-		List<Long> expectedFollowingIds = List.of(targetA.getId(), targetB.getId());
+		List<MemberResponse> expectedFollowings = List.of(targetA, targetB).stream()
+			.map(memberConverter::toMemberResponse)
+			.toList();
 
 		//when
-		List<Long> followingIds = followService.findByFollowingIds(member.getId());
+		List<MemberResponse> followings = memberGiver.findAllFollowing(member.getId());
 
 		//then
-		assertThat(followingIds.size()).isEqualTo(expectedFollowingIds.size());
-		assertThat(followingIds).contains(targetA.getId(), targetB.getId());
+		Assertions.assertThat(followings.size()).isEqualTo(expectedFollowings.size());
+
+		AtomicInteger index = new AtomicInteger();
+
+		followings.forEach(following -> {
+			MatcherAssert.assertThat(
+				following,
+				Matchers.samePropertyValuesAs(expectedFollowings.get(index.getAndIncrement()))
+			);
+		});
 	}
 
 	@Transactional
 	public List<Member> getDemoMembers() {
 
-		List<Member> follwings = new ArrayList<>();
+		List<Member> members = new ArrayList<>();
 
 		String name = "programmers";
 		String password = "password";
 		String phoneNumber = "01012345678";
 		String emailPostfix = "@programmers.co.kr";
 
-		IntStream.range(1, 5).forEach(
+		LongStream.range(1, 5).forEach(
 			number -> {
 				Member member = Member.builder()
 					.email((name + number) + emailPostfix)
@@ -79,11 +96,11 @@ public class IntegrationTest {
 
 				entityManager.persist(member);
 
-				follwings.add(member);
+				members.add(member);
 			}
 		);
 
-		return follwings;
+		return members;
 	}
 
 }

@@ -18,7 +18,7 @@ public class Member {
 	@Size(min = 6, max = 24)
 	private String username;
 
-	@Size(min = 6, max = 16)
+	@Size(min = 2, max = 16)
 	private String name;
 
 	private String password;

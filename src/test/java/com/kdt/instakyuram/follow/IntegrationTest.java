@@ -31,7 +31,7 @@ public class IntegrationTest {
 	@DisplayName("팔로잉 목록 조회 테스트")
 	void testFollowing() {
 		//given
-		List<Member> members = this.getDemoMembers();
+		List<Member> members = getDemoMembers();
 
 		Member member = members.get(0);
 		Member targetA = members.get(1);

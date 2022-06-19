@@ -10,6 +10,7 @@ import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostImageRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
+import com.kdt.instakyuram.post.dto.PostImageResponse;
 import com.kdt.instakyuram.util.ImageUploader;
 
 @Service
@@ -28,10 +29,15 @@ public class PostImageService {
 	public void save(List<MultipartFile> images, Post post) {
 		for (MultipartFile image : images) {
 			PostImage postImage = postConverter.toPostImage(image, post);
-
 			ImageUploader.upload(image, postImage.getServerFileName(), postImage.getPath());
 			postImageRepository.save(postImage);
 		}
+	}
+
+	public List<PostImageResponse> findByPostId(Long postId) {
+		return postImageRepository.findByPostId(postId).stream()
+			.map(postConverter::toPostImageResponse)
+			.toList();
 	}
 
 }

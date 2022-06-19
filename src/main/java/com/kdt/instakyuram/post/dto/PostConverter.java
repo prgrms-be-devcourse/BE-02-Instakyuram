@@ -1,21 +1,23 @@
 package com.kdt.instakyuram.post.dto;
 
+import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostImage;
+import com.kdt.instakyuram.post.domain.PostLike;
 
 @Component
 public class PostConverter {
 
-	@Value("${file.dir.post}")
-	private String path;
+	// 프로젝트 최상단의 picture에 이미지가 저장됩니다.
+	private final String path = System.getProperty("user.dir") + "/picture/";
 
 	public Member toMember(MemberResponse memberResponse) {
 		return Member.builder()
@@ -46,8 +48,26 @@ public class PostConverter {
 			.build();
 	}
 
-	public PostResponse.FindAllResponse toResponse(Post post) {
-		return new PostResponse.FindAllResponse(post.getContent(), toMemberResponse(post.getMember()));
+	public PostResponse.FindAllResponse toDetailResponse(MemberResponse memberResponse, Post post,
+		List<PostImageResponse> postImageResponse, List<CommentResponse> commentResponse,
+		List<PostLikeResponse> postLikeResponse, int totalPostLike) {
+		return PostResponse.FindAllResponse.builder()
+			.content(post.getContent())
+			.member(memberResponse)
+			.postImageResponse(postImageResponse)
+			.commentResponse(commentResponse)
+			.postLikeResponse(postLikeResponse)
+			.totalPostLike(totalPostLike)
+			.build();
+
+	}
+
+	public PostResponse toResponse(Post post) {
+		return PostResponse.builder()
+			.id(post.getId())
+			.content(post.getContent())
+			.memberResponse(toMemberResponse(post.getMember()))
+			.build();
 	}
 
 	private static String extractExt(String originalFileName) {
@@ -56,4 +76,20 @@ public class PostConverter {
 		);
 	}
 
+	public PostImageResponse toPostImageResponse(PostImage postImage) {
+		return PostImageResponse.builder()
+			.id(postImage.getId())
+			.path(postImage.getPath())
+			.serverFileName(postImage.getServerFileName())
+			.originalFileName(postImage.getOriginalFileName())
+			.size(postImage.getSize())
+			.build();
+	}
+
+	public PostLikeResponse toPostLikeResponse(PostLike postLike) {
+		return PostLikeResponse.builder()
+			.id(postLike.getId())
+			.memberResponse(toMemberResponse(postLike.getMember()))
+			.build();
+	}
 }

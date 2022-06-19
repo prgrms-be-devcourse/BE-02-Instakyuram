@@ -15,11 +15,11 @@ import com.kdt.instakyuram.post.service.PostService;
 
 @RestController
 @RequestMapping("/api/posts")
-public class PostController {
+public class PostRestController {
 
 	private final PostService postService;
 
-	public PostController(PostService postService) {
+	public PostRestController(PostService postService) {
 		this.postService = postService;
 	}
 

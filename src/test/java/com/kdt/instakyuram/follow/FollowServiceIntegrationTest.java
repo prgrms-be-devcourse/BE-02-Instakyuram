@@ -22,7 +22,7 @@ import com.kdt.instakyuram.member.domain.Member;
 public class FollowServiceIntegrationTest {
 
 	@Autowired
-	EntityManager entityManager;
+	private EntityManager entityManager;
 
 	@Autowired
 	private FollowService followService;

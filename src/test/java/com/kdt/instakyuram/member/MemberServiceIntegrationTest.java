@@ -26,12 +26,12 @@ import com.kdt.instakyuram.member.service.MemberGiver;
 public class MemberServiceIntegrationTest {
 
 	@Autowired
-	EntityManager entityManager;
+	private EntityManager entityManager;
 	@Autowired
-	MemberGiver memberGiver;
+	private MemberGiver memberGiver;
 
 	@Autowired
-	MemberConverter memberConverter;
+	private MemberConverter memberConverter;
 
 	@Test
 	@Transactional

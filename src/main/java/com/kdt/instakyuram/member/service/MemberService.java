@@ -2,6 +2,7 @@ package com.kdt.instakyuram.member.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.kdt.instakyuram.exception.NotFoundException;
@@ -17,15 +18,17 @@ public class MemberService implements PostGiver {
 	private final FollowService followService;
 	private final MemberConverter memberConverter;
 	private final MemberRepository memberRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	public MemberService(FollowService followService, MemberConverter memberConverter,
 		MemberRepository memberRepository) {
 		this.followService = followService;
 		this.memberConverter = memberConverter;
 		this.memberRepository = memberRepository;
+		this.passwordEncoder = passwordEncoder;
 	}
 
-	public MemberResponse findById(Long id) {
+	public MemberResponse findById(Long id, ) {
 		Member foundMember = memberRepository.findById(id)
 			.orElseThrow(() -> new NotFoundException("유저 정보가 존재하지 않습니다."));
 

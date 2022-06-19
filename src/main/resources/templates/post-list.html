@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<th:block th:replace="fragments/head :: headFragment('')"></th:block>
+<body>
+<div th:replace="~{fragments/header :: headerFragment}"></div>
+<div class="container">
+    <section class="container__post">
+        <ul class="posts"></ul>
+    </section>
+    <div class="container__user"></div>
+</div>
+
+<script th:inline="javascript">
+    const tbody = document.querySelector('.posts');
+
+    search()
+        .then(posts => {
+            posts.map(post => addRow(post));
+        });
+
+    async function search() {
+        return await axios.get('/api/posts/1')
+            .then(response => {
+                return response.data.response;
+            });
+    }
+
+    function addRow(post) {
+        const item = `
+            <li class="post">
+                <div class="post__header">
+                    <div class="post__profile">
+                        <img
+                                class="post__profile__img"
+                                src="/images/icon/account.png"
+                                alt="account"
+                        />
+                    </div>
+
+                    <p class="post__header__name">${post.member.name}</p>
+                    <button class="post__header__button">
+                        <img
+                                class="post__header__button__img"
+                                src="/images/icon/close.png"
+                                alt="functions"
+                        />
+                    </button>
+                </div>
+                <div>
+                    <img class="post__image" src="/images/sample.png" alt="image"/>
+                </div>
+                <div class="post__buttons"></div>
+                <div class="post__comments">
+                    ${post.content}
+                </div>
+            </li>
+        `
+        tbody.innerHTML += item;
+    }
+
+</script>
+</body>
+</html>

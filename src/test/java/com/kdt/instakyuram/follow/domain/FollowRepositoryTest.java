@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import com.kdt.instakyuram.follow.domain.Follow;
-import com.kdt.instakyuram.follow.domain.FollowRepository;
 import com.kdt.instakyuram.member.domain.Member;
 
 @DataJpaTest

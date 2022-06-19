@@ -20,7 +20,7 @@ import com.kdt.instakyuram.follow.domain.Follow;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.dto.MemberConverter;
 import com.kdt.instakyuram.member.dto.MemberResponse;
-import com.kdt.instakyuram.member.service.PostGiver;
+import com.kdt.instakyuram.member.service.MemberGiver;
 
 @SpringBootTest
 public class IntegrationTest {
@@ -28,7 +28,7 @@ public class IntegrationTest {
 	@Autowired
 	EntityManager entityManager;
 	@Autowired
-	PostGiver postGiver;
+	MemberGiver memberGiver;
 
 	@Autowired
 	MemberConverter memberConverter;
@@ -59,7 +59,7 @@ public class IntegrationTest {
 			.toList();
 
 		//when
-		List<MemberResponse> followings = postGiver.findAllFollowing(member.getId());
+		List<MemberResponse> followings = memberGiver.findAllFollowing(member.getId());
 
 		//then
 		Assertions.assertThat(followings.size()).isEqualTo(expectedFollowings.size());

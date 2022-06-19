@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.follow.follow.service;
+package com.kdt.instakyuram.follow.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;

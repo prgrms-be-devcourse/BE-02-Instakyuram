@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.follow.follow;
+package com.kdt.instakyuram.follow;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -2,9 +2,12 @@ package com.kdt.instakyuram.member.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.follow.service.FollowService;
 import com.kdt.instakyuram.member.domain.Member;
@@ -22,13 +25,12 @@ public class MemberService implements MemberGiver {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public MemberService(
-		MemberConverter memberConverter, FollowService followService,
-		PasswordEncoder passwordEncoder, MemberRepository memberRepository) {
+	public MemberService(FollowService followService, MemberRepository memberRepository, PasswordEncoder passwordEncoder,
+		MemberConverter memberConverter) {
 		this.followService = followService;
-		this.memberConverter = memberConverter;
 		this.memberRepository = memberRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.memberConverter = memberConverter;
 	}
 
 	public MemberResponse findById(Long id) {
@@ -54,6 +56,13 @@ public class MemberService implements MemberGiver {
 
 		return new MemberResponse.SignupResponse(member.getId(), member.getUsername());
 	}
+
+	public PageDto.Response<MemberResponse.ViewResponse, Member> findAll(Pageable requestPage) {
+		Page<Member> pagingMembers = memberRepository.findAll(requestPage);
+
+		return memberConverter.toPageResponse(pagingMembers);
+	}
+}
 
 	public List<MemberResponse> findAllFollowing(Long id) {
 		List<Long> followingIds = followService.findByFollowingIds(id);

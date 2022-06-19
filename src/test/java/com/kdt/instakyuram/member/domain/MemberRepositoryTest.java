@@ -38,8 +38,8 @@ class MemberRepositoryTest {
 
 		//when
 		List<Member> followings = memberRepository.findByIdIn(followingIds);
-		//then
 
+		//then
 		assertThat(followings.size()).isEqualTo(2);
 
 		AtomicInteger index = new AtomicInteger();
@@ -54,7 +54,7 @@ class MemberRepositoryTest {
 
 	private List<Member> getDemoMembers() {
 
-		List<Member> follwings = new ArrayList<>();
+		List<Member> followings = new ArrayList<>();
 
 		String name = "programmers";
 		String password = "password";
@@ -62,7 +62,7 @@ class MemberRepositoryTest {
 		String emailPostfix = "@programmers.co.kr";
 
 		LongStream.range(1, 5).forEach(
-			number -> follwings.add(Member.builder()
+			number -> followings.add(Member.builder()
 				.id(number)
 				.email((name + number) + emailPostfix)
 				.password(password)
@@ -73,7 +73,7 @@ class MemberRepositoryTest {
 			)
 		);
 
-		return follwings;
+		return followings;
 	}
 
 }

@@ -42,6 +42,7 @@ class MemberServiceTest {
 	@DisplayName("팔로잉한 사용자 목록 조회")
 	void findAllFollowing() {
 		List<Member> members = getDemoMembers();
+
 		Member member = members.get(0);
 		Member targetA = members.get(1);
 		Member targetB = members.get(2);
@@ -68,7 +69,6 @@ class MemberServiceTest {
 		List<MemberResponse> followingMemberResponses = memberService.findAllFollowing(member.getId());
 
 		// then
-
 		Assertions.assertThat(followingMemberResponses.size()).isEqualTo(followings.size());
 
 		AtomicInteger index = new AtomicInteger();

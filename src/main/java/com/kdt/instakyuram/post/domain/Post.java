@@ -10,6 +10,8 @@ import javax.validation.constraints.NotNull;
 
 import com.kdt.instakyuram.member.domain.Member;
 
+import lombok.Builder;
+
 @Entity
 public class Post {
 	@Id
@@ -25,7 +27,9 @@ public class Post {
 
 	protected Post(){}
 
-	public Post(String content, Member member) {
+	@Builder
+	public Post(Long id, String content, Member member) {
+		this.id = id;
 		this.content = content;
 		this.member = member;
 	}
@@ -41,4 +45,5 @@ public class Post {
 	public Member getMember() {
 		return member;
 	}
+
 }

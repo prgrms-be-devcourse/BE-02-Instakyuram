@@ -4,10 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.kdt.instakyuram.comment.service.CommentGiver;
 import com.kdt.instakyuram.member.domain.Member;
-import com.kdt.instakyuram.member.dto.MemberResponse;
-import com.kdt.instakyuram.member.service.PostGiver;
+import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
@@ -19,37 +20,58 @@ public class PostService {
 
 	private final PostRepository postRepository;
 	private final PostConverter postConverter;
-	private final PostGiver postGiver;
+	private final MemberGiver memberGiver;
+	private final PostImageService postImageService;
 
-	public PostService(PostRepository postRepository, PostConverter postConverter, PostGiver postGiver) {
+	private final CommentGiver commentGiver;
+
+	private final PostLikeService postLikeService;
+
+	public PostService(PostRepository postRepository, PostConverter postConverter,
+		MemberGiver memberGiver, PostImageService postImageService, CommentGiver commentGiver,
+		PostLikeService postLikeService) {
 		this.postRepository = postRepository;
 		this.postConverter = postConverter;
-		this.postGiver = postGiver;
+		this.memberGiver = memberGiver;
+		this.postImageService = postImageService;
+		this.commentGiver = commentGiver;
+		this.postLikeService = postLikeService;
 	}
 
 	@Transactional
-	public PostResponse.CreateResponse create(Long memberId, String content) {
-		// 멤버 조회하기
+	public PostResponse.CreateResponse create(Long memberId, String content, List<MultipartFile> images) {
 		Member member = postConverter.toMember(
-			postGiver.findById(memberId)
+			memberGiver.findById(memberId)
 		);
 
-		//userService.findById() 유저 정보 조회 해오기
 		Post savePost = postRepository.save(
-			new Post(content, member)
+			Post.builder()
+				.content(content)
+				.member(member)
+				.build()
 		);
+
+		postImageService.save(images, savePost);
 
 		return new PostResponse.CreateResponse(savePost.getId(), memberId, content);
 	}
 
 	public List<PostResponse.FindAllResponse> findAll(Long memberId) {
-		List<MemberResponse> follows = postGiver.findAllFollowing(memberId);
-		List<Member> members = follows.stream()
-			.map(follow -> postConverter.toMember(follow))
+		List<Member> members = memberGiver.findAllFollowing(memberId).stream()
+			.map(postConverter::toMember)
 			.toList();
 
 		return postRepository.findByMemberIn(members).stream()
-			.map(postConverter::toResponse)
+			.map(post ->
+				postConverter.toDetailResponse(
+					memberGiver.findById(members.iterator().next().getId()),
+					post,
+					postImageService.findByPostId(post.getId()),
+					commentGiver.findByPostId(post.getId()),
+					postLikeService.findByPostId(post.getId()),
+					postLikeService.countByPostId(post.getId())
+				)
+			)
 			.toList();
 	}
 

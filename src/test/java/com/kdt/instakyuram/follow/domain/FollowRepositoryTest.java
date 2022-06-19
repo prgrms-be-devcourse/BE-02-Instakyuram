@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.follow.follow;
+package com.kdt.instakyuram.follow.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,53 +9,49 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import com.kdt.instakyuram.follow.domain.Follow;
 import com.kdt.instakyuram.follow.domain.FollowRepository;
-import com.kdt.instakyuram.follow.service.FollowService;
 import com.kdt.instakyuram.member.domain.Member;
-import com.kdt.instakyuram.member.domain.MemberRepository;
 
-@SpringBootTest
-public class IntegrationTest {
+@DataJpaTest
+class FollowRepositoryTest {
 
 	@Autowired
-	private FollowService followService;
+	private TestEntityManager entityManager;
 
 	@Autowired
 	private FollowRepository followRepository;
 
-	@Autowired
-	private MemberRepository memberRepository;
-
 	@Test
 	@DisplayName("팔로잉 목록 조회 테스트")
-	void testFollowing() {
+	void testLookUpFollowings() {
 		//given
-		List<Member> members = this.getDemoMembers();
+		List<Member> members = getDemoMembers();
 
 		Member member = members.get(0);
 		Member targetA = members.get(1);
 		Member targetB = members.get(2);
 
-		List<Follow> followings = followRepository.saveAll(List.of(
-			Follow.builder()
-				.memberId(member.getId())
-				.targetId(targetA.getId())
-				.build(),
+		followRepository.save(Follow.builder()
+			.memberId(member.getId())
+			.targetId(targetA.getId())
+			.build());
 
-			Follow.builder()
-				.memberId(member.getId())
-				.targetId(targetB.getId())
-				.build()
-		));
+		followRepository.save(Follow.builder()
+			.memberId(member.getId())
+			.targetId(targetB.getId())
+			.build());
 
 		//when
-		List<Long> followingIds = followService.findByFollowingIds(member.getId());
+		List<Long> followingIds = followRepository.findByMemberId(member.getId()).stream()
+			.map(Follow::getTargetId)
+			.toList();
 
 		//then
-		assertThat(followingIds.size()).isEqualTo(followings.size());
+		assertThat(followingIds.size()).isEqualTo(2);
 		assertThat(followingIds).contains(targetA.getId(), targetB.getId());
 	}
 
@@ -70,7 +66,7 @@ public class IntegrationTest {
 
 		IntStream.range(1, 5).forEach(
 			number -> {
-				Member persistedMember = memberRepository.save(
+				Member persistedMember = entityManager.persist(
 					Member.builder()
 						.email((name + number) + emailPostfix)
 						.password(password)

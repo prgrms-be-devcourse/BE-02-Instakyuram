@@ -1,5 +1,7 @@
 package com.kdt.instakyuram.member.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -21,10 +23,10 @@ public class MemberController {
 	}
 
 	@GetMapping
-	public ModelAndView getMembers(@ModelAttribute PageDto.Request pagingDto) {
+	public ModelAndView getMembers(@ModelAttribute @Valid PageDto.Request pagingDto) {
 		Pageable requestPage = pagingDto.getPageable(Sort.by("id").descending());
 
-		return new ModelAndView("member-inventories")
+		return new ModelAndView("member/member-list")
 			.addObject(memberService.findAll(requestPage));
 	}
 }

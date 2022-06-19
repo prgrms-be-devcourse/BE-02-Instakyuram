@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kdt.instakyuram.comment.service.CommentGiver;
 import com.kdt.instakyuram.member.domain.Member;
-import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostRepository;
@@ -23,12 +23,19 @@ public class PostService {
 	private final MemberGiver memberGiver;
 	private final PostImageService postImageService;
 
+	private final CommentGiver commentGiver;
+
+	private final PostLikeService postLikeService;
+
 	public PostService(PostRepository postRepository, PostConverter postConverter,
-		MemberGiver memberGiver, PostImageService postImageService) {
+		MemberGiver memberGiver, PostImageService postImageService, CommentGiver commentGiver,
+		PostLikeService postLikeService) {
 		this.postRepository = postRepository;
 		this.postConverter = postConverter;
 		this.memberGiver = memberGiver;
 		this.postImageService = postImageService;
+		this.commentGiver = commentGiver;
+		this.postLikeService = postLikeService;
 	}
 
 	@Transactional
@@ -50,13 +57,21 @@ public class PostService {
 	}
 
 	public List<PostResponse.FindAllResponse> findAll(Long memberId) {
-		List<MemberResponse> follows = memberGiver.findAllFollowing(memberId);
-		List<Member> members = follows.stream()
+		List<Member> members = memberGiver.findAllFollowing(memberId).stream()
 			.map(postConverter::toMember)
 			.toList();
 
-		return postRepository.findByMemberIn(members).stream()
-			.map(postConverter::toResponse)
+		return postRepository.findByMemberIn(members)
+			.stream()
+			.map(post ->
+				postConverter.toDetailResponse(
+					memberGiver.findById(members.iterator().next().getId()),
+					post,
+					postImageService.findByPostId(post.getId()),
+					commentGiver.findByPostId(post.getId()),
+					postLikeService.findByPostId(post.getId())
+				)
+			)
 			.toList();
 	}
 

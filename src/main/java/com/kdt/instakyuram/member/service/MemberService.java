@@ -31,7 +31,7 @@ public class MemberService implements  MemberGiver{
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	public MemberResponse findById(Long id) {
+	public MemberResponse findById(Long id, ) {
 		Member foundMember = memberRepository.findById(id)
 			.orElseThrow(() -> new NotFoundException("유저 정보가 존재하지 않습니다."));
 

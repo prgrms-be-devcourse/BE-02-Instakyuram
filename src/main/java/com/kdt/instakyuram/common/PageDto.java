@@ -19,7 +19,7 @@ public class PageDto {
 	}
 
 	public record Request(@NotNull(message = "숫자를 입력해주세요")
-						  @Positive(message = "자연수를 입력해주세요") Integer page,
+						  @Positive Integer page,
 						  @NotNull(message = "숫자를 입력해주세요")
 						  @Range(min = 5, max = 10, message = "목록 단위는 5 ~ 10까지 가능합니다.") Integer size) {
 		public Pageable getPageable(Sort sort) {

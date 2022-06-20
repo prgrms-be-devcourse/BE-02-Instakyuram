@@ -2,6 +2,8 @@ package com.kdt.instakyuram.member.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,10 +53,12 @@ class MemberControllerTest {
 		String redirectionUri = "/members?page=1&size=10";
 
 		//when
+		ResultActions perform = mockMvc.perform(
+			get("/members/all")
+		);
+
 		//then
-		mockMvc.perform(
-				get("/members/all")
-			).andExpect(redirectedUrl(redirectionUri))
+		perform.andExpect(redirectedUrl(redirectionUri))
 			.andExpect(status().is3xxRedirection());
 	}
 
@@ -69,18 +73,22 @@ class MemberControllerTest {
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
 		List<Member> members = getMembers();
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
-		PageDto.Response<MemberResponse.ViewResponse, Member> pageResponse = new PageDto.Response<>(
+		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.ViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
 		);
 
 		given(memberService.findAll(any())).willReturn(pageResponse);
 
 		//when
-		//then
-		mockMvc.perform(
+		ResultActions perform = mockMvc.perform(
 			get("/members?page=" + request.page() + "&size=" + request.size())
-		).andExpect(status().isOk());
+		);
+
+		//then
+		perform.andExpect(status().isOk());
+
+		verify(memberService, times(1)).findAll(any());
 	}
 
 	@Nested
@@ -93,41 +101,56 @@ class MemberControllerTest {
 			@Test
 			@DisplayName("음수의 page 번호 값은 400 status 를 반환한다. ")
 			void requestMinusSizeValue() throws Exception {
+				// given
 				PageDto.Request requestDto = new PageDto.Request(-1, 5);
-				sendApi(requestDto)
-					.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+
+				// when
+				// then
+				sendApi(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 			}
 
 			@Test
 			@DisplayName("범위에 벗어난 size 값은 400 status 를 반환한다. ")
 			void requestSizeLessThan5() throws Exception {
+				// given
 				PageDto.Request requestDto = new PageDto.Request(2, 4);
-				sendApi(requestDto)
-					.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+
+				// when
+				// then
+				sendApi(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 			}
 
 			@Test
 			@DisplayName("범위에 벗어난 size 값은 400 status 를 반환한다. ")
 			void requestSizeGraterThan11() throws Exception {
+				// given
 				PageDto.Request requestDto = new PageDto.Request(2, 11);
-				sendApi(requestDto)
-					.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+
+				// when
+				// then
+				sendApi(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 			}
 
 			@Test
 			@DisplayName("page 에 아무런 값이 안들어 올경우 400 status 를 반환한다.")
 			void requestPageValueNull() throws Exception {
+				// given
 				PageDto.Request requestDto = new PageDto.Request(null, 1);
-				sendApi(requestDto)
-					.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+
+				// when
+				// then
+				sendApi(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 			}
 
 			@Test
 			@DisplayName("size 에 아무런 값이 안들어 올경우 400 status 를 반환한다.")
 			void requestSizeValueNull() throws Exception {
+				// given
 				PageDto.Request requestDto = new PageDto.Request(3, null);
-				sendApi(requestDto)
-					.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+
+				// when
+				// then
+				sendApi(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 			}
 
 			private ResultActions sendApi(PageDto.Request request) throws Exception {

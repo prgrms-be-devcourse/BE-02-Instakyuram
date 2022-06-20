@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,18 @@ class MemberRepositoryTest {
 
 	@Autowired
 	private MemberRepository memberRepository;
+	private List<Member> members;
+
+	@BeforeEach
+	public void settingDate() {
+		memberRepository.deleteAll();
+	}
 
 	@Test
 	@DisplayName("팔로잉한 사용자 조회")
 	void testFindByIdIn() {
 		//given
-		List<Member> savedMembers = memberRepository.saveAll(this.getDemoMembers());
+		List<Member> savedMembers = memberRepository.saveAll(getMembers());
 		Member targetA = savedMembers.get(1);
 		Member targetB = savedMembers.get(2);
 
@@ -65,6 +72,7 @@ class MemberRepositoryTest {
 
 		int expectedTotalSize = insertedMembers.size() / requestSize + 1;
 		int expectedOffset = (requestPage - 1) * requestSize;
+		List<Member> all = memberRepository.findAll();
 
 		//when
 		Page<Member> pageMembers = memberRepository.findAll(pageRequest);
@@ -82,7 +90,7 @@ class MemberRepositoryTest {
 
 	private List<Member> getMembers() {
 
-		List<Member> members = new ArrayList<>();
+		members = new ArrayList<>();
 
 		String name = "programmers";
 		String password = "devCourse2!";
@@ -104,30 +112,6 @@ class MemberRepositoryTest {
 		);
 
 		return members;
-	}
-
-	private List<Member> getDemoMembers() {
-
-		List<Member> followings = new ArrayList<>();
-
-		String name = "programmers";
-		String password = "password";
-		String phoneNumber = "01012345678";
-		String emailPostfix = "@programmers.co.kr";
-
-		LongStream.range(1, 5).forEach(
-			number -> followings.add(Member.builder()
-				.id(number)
-				.email((name + number) + emailPostfix)
-				.password(password)
-				.username(name + number)
-				.phoneNumber(phoneNumber)
-				.name(name)
-				.build()
-			)
-		);
-
-		return followings;
 	}
 
 }

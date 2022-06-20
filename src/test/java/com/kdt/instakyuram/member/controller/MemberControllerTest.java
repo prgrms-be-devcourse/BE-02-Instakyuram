@@ -41,6 +41,9 @@ class MemberControllerTest {
 	@Autowired
 	private ObjectMapper mapper;
 
+	@MockBean
+	private MemberService memberService;
+
 	@Test
 	@DisplayName("사용자 전체 목록 조회 최초 진입 테스트")
 	void testFirstRequestMembers() throws Exception {
@@ -55,13 +58,10 @@ class MemberControllerTest {
 			.andExpect(status().is3xxRedirection());
 	}
 
-	@MockBean
-	private MemberService memberService;
-
 	@DisplayName("사용자 전체 목록 조회 테스트")
 	@Test
 	void testGetMembers() throws Exception {
-		// given
+		//given
 		int requestPage = 2;
 		int requestSize = 5;
 
@@ -76,8 +76,8 @@ class MemberControllerTest {
 
 		given(memberService.findAll(any())).willReturn(pageResponse);
 
-		// when
-		// then
+		//when
+		//then
 		mockMvc.perform(
 			get("/members?page=" + request.page() + "&size=" + request.size())
 		).andExpect(status().isOk());

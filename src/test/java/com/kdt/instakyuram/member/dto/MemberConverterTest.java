@@ -49,12 +49,13 @@ class MemberConverterTest {
 		PageDto.Response<MemberResponse.ViewResponse, Member> responses = memberConverter.toPageResponse(pagingMembers);
 		AtomicInteger index = new AtomicInteger();
 
-		//when
+		//then
 		assertThat(responses.getResponses().size()).isEqualTo(expectedContents.size());
 		responses.getResponses().forEach(response -> {
 				MatcherAssert.assertThat(
 					response,
-					Matchers.samePropertyValuesAs(expectedContents.get(index.getAndIncrement())));
+					Matchers.samePropertyValuesAs(expectedContents.get(index.getAndIncrement()))
+				);
 			}
 		);
 	}

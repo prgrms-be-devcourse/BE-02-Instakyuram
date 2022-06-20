@@ -31,7 +31,7 @@ import com.kdt.instakyuram.member.dto.MemberResponse;
 @WithMockUser("MEMBER")
 @AutoConfigureMockMvc
 @SpringBootTest
-public class MemberControllerIntegerationTest {
+public class MemberControllerIntegrationTest {
 
 	@Autowired
 	private EntityManager entityManager;
@@ -45,20 +45,22 @@ public class MemberControllerIntegerationTest {
 	@Transactional
 	@DisplayName("사용자가 목록을 조회한다.")
 	void testGetMembers() throws Exception {
-		// given
+		//given
 		int requestPage = 2;
 		int requestSize = 5;
+		String htmlTittleContent = "사용자가 팔로잉 할 대상 찾는 사용자 목록";
 
 		PageDto.Request request = new PageDto.Request(requestPage, requestSize);
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
 		List<Member> members = getMembers();
-		String htmlTittleContent = "사용자가 팔로잉 할 대상 찾는 사용자 목록";
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
 		PageDto.Response<MemberResponse.ViewResponse, Member> pageResponse = new PageDto.Response<>(
 			pagingMembers,
 			member -> new MemberResponse.ViewResponse(member.getId(), member.getUsername(), member.getName())
 		);
-		//when, then
+
+		//when
+		//then
 		MvcResult result = mockMvc.perform(
 			get("/members?page=" + request.page() + "&size=" + request.size())
 		).andExpect(status().isOk()).andReturn();
@@ -74,6 +76,7 @@ public class MemberControllerIntegerationTest {
 		// given
 		int requestPage = 100;
 		int requestSize = 5;
+		String errorPageTitle = "오류 페이지";
 
 		PageDto.Request request = new PageDto.Request(requestPage, requestSize);
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
@@ -84,8 +87,9 @@ public class MemberControllerIntegerationTest {
 			pagingMembers,
 			member -> new MemberResponse.ViewResponse(member.getId(), member.getUsername(), member.getName())
 		);
-		String errorPageTitle = "오류 페이지";
-		//when, then
+
+		//when
+		//then
 		MvcResult result = mockMvc.perform(
 			get("/members?page=" + request.page() + "&size=" + request.size())
 		).andExpect(status().isBadRequest()).andReturn();

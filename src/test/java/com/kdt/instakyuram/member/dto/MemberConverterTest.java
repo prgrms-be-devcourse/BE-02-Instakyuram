@@ -78,7 +78,8 @@ class MemberConverterTest {
 		List<MemberResponse.MemberListViewResponse> expectedContents = expectedResponses.getResponses();
 
 		//when
-		PageDto.Response<MemberResponse.MemberListViewResponse, Member> responses = converter.toPageResponse(pagingMembers);
+		PageDto.Response<MemberResponse.MemberListViewResponse, Member> responses = memberConverter.toPageResponse(
+			pagingMembers);
 		AtomicInteger index = new AtomicInteger();
 
 		//then

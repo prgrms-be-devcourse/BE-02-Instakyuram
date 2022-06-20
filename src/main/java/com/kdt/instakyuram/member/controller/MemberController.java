@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.member.service.MemberService;
@@ -22,8 +23,14 @@ public class MemberController {
 		this.memberService = memberService;
 	}
 
+	@GetMapping("/all")
+	public RedirectView firstRequestMembers() {
+		return new RedirectView("/members?page=1&size=10");
+	}
+
 	@GetMapping
-	public ModelAndView getMembers(@ModelAttribute @Valid PageDto.Request pagingDto) {
+	public ModelAndView getMembers(
+		@ModelAttribute @Valid PageDto.Request pagingDto) {
 		Pageable requestPage = pagingDto.getPageable(Sort.by("id").descending());
 
 		return new ModelAndView("member/member-list")

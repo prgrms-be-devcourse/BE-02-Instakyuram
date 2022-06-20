@@ -60,6 +60,10 @@ public class MemberService implements MemberGiver {
 	public PageDto.Response<MemberResponse.ViewResponse, Member> findAll(Pageable requestPage) {
 		Page<Member> pagingMembers = memberRepository.findAll(requestPage);
 
+		if (pagingMembers.getContent().isEmpty()) {
+			throw new NotFoundException("사용자 목록이 존재하지 않습니다.");
+		}
+
 		return memberConverter.toPageResponse(pagingMembers);
 	}
 }

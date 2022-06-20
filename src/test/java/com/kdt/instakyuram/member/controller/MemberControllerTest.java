@@ -106,7 +106,7 @@ class MemberControllerTest {
 
 				// when
 				// then
-				sendApi(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+				perform(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 			}
 
 			@Test
@@ -117,7 +117,7 @@ class MemberControllerTest {
 
 				// when
 				// then
-				sendApi(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+				perform(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 			}
 
 			@Test
@@ -128,7 +128,7 @@ class MemberControllerTest {
 
 				// when
 				// then
-				sendApi(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+				perform(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 			}
 
 			@Test
@@ -139,7 +139,7 @@ class MemberControllerTest {
 
 				// when
 				// then
-				sendApi(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+				perform(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 			}
 
 			@Test
@@ -150,10 +150,10 @@ class MemberControllerTest {
 
 				// when
 				// then
-				sendApi(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+				perform(requestDto).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 			}
 
-			private ResultActions sendApi(PageDto.Request request) throws Exception {
+			private ResultActions perform(PageDto.Request request) throws Exception {
 				return mockMvc.perform(
 					get("/members?page=" + request.page() + "&size=" + request.size())
 						.contentType(MediaType.APPLICATION_JSON)

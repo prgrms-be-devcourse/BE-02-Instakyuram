@@ -15,3 +15,13 @@ spring:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:testdb
   # sql 파일 x
+
+jwt:
+  issuer: prgrms
+  client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
+  accessToken:
+    header: atoken
+    expiry-seconds: 60
+  refreshToken:
+    header: rtoken
+    expiry-seconds: 120

@@ -1,34 +1,40 @@
 package com.kdt.instakyuram.member.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import javax.validation.Valid;
 
-import com.kdt.instakyuram.common.ApiResponse;
-import com.kdt.instakyuram.member.dto.MemberRequest;
-import com.kdt.instakyuram.member.dto.MemberResponse;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
+import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.member.service.MemberService;
 
-@RestController
-@RequestMapping("/api/members")
+@RequestMapping("/members")
+@Controller
 public class MemberController {
-
 	private final MemberService memberService;
 
 	public MemberController(MemberService memberService) {
 		this.memberService = memberService;
 	}
 
-	@GetMapping("/{userId}")
-	ApiResponse<MemberResponse> getById(@PathVariable Long userId) {
-		return new ApiResponse<>(memberService.findById(userId));
+	//todo: @AuthenticationPrincipal JwtAuthentication member로 요청 id 뽑아내기 -> 테스트 코드 변경
+	@GetMapping("/all")
+	public RedirectView firstRequestMembers() {
+		return new RedirectView("/members?page=1&size=10");
 	}
 
-	@PostMapping("/signup")
-	ApiResponse<MemberResponse.SignupResponse> signup(@RequestBody MemberRequest.SignupRequest request) {
-		return new ApiResponse<>(memberService.signup(request));
+	//todo: @AuthenticationPrincipal JwtAuthentication member로 요청 id 뽑아내기 -> 테스트 코드 변경
+	@GetMapping
+	public ModelAndView getMembers(@ModelAttribute @Valid PageDto.Request pagingDto) {
+		Pageable requestPage = pagingDto.getPageable(Sort.by("id").descending());
+
+		return new ModelAndView("member/member-list")
+			.addObject(memberService.findAll(requestPage));
 	}
 }

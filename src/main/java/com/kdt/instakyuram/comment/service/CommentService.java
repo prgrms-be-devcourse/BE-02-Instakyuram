@@ -83,5 +83,15 @@ public class CommentService implements CommentGiver {
 			.toList();
 	}
 
+	@Override
+	public void delete(Long id) {
+		commentRepository.findById(id)
+			.map(comment -> {
+				commentLikeService.delete(id);
+				commentRepository.delete(comment);
+				return true;
+			})
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
+	}
 
 }

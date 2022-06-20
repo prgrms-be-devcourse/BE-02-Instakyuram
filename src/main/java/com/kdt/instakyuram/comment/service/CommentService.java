@@ -1,7 +1,5 @@
 package com.kdt.instakyuram.comment.service;
 
-import static java.util.stream.Collectors.*;
-
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ public class CommentService implements CommentGiver {
 	}
 
 	@Transactional
-	public CommentResponse create(Long memberId, Long postId, String content) {
+	public CommentResponse create(Long postId, Long memberId, String content) {
 		MemberResponse member = memberGiver.findById(memberId);
 		Comment comment = commentConverter.toComment(member, postId, content);
 		Comment savedComment = commentRepository.save(comment);
@@ -44,6 +42,6 @@ public class CommentService implements CommentGiver {
 	public List<CommentResponse> findByPostId(Long postId) {
 		return commentRepository.findAllByPostId(postId).stream()
 			.map(commentConverter::toResponse)
-			.collect(toList());
+			.toList();
 	}
 }

@@ -35,7 +35,6 @@ class MemberRepositoryTest {
 		int expectedOffset = (requestPage - 1) * requestSize;
 
 		//when
-
 		Page<Member> pageMembers = memberRepository.findAll(pageRequest);
 
 		List<Member> members = pageMembers.getContent();

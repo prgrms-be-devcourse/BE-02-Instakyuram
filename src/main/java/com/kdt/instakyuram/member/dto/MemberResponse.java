@@ -7,6 +7,6 @@ public record MemberResponse(Long id, String username, String name, String email
 	public record SignupResponse(Long id, String username) {
 	}
 
-	public record ViewResponse(Long id, String username, String name){
+	public record MemberListViewResponse(Long id, String username, String name){
 	}
 }

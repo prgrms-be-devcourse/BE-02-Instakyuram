@@ -41,4 +41,16 @@ public class CommentRestController {
 
 		return new ApiResponse<>(commentResponse);
 	}
+
+	@PostMapping("{id}/unlike")
+	public ApiResponse<CommentResponse.LikeResponse> unlike(
+		@PathVariable Long id,
+		@RequestBody CommentRequest.LikeRequest request
+	) {
+		CommentResponse.LikeResponse commentResponse = commentService.unlike(
+			id, request.memberId()
+		);
+
+		return new ApiResponse<>(commentResponse);
+	}
 }

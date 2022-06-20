@@ -58,10 +58,19 @@ public class CommentService implements CommentGiver {
 			.orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
 	}
 
+	@Transactional
+	public CommentResponse.LikeResponse unlike(Long id, Long memberId) {
+		return commentRepository.findById(id)
+			.map(comment -> commentLikeService.unlike(id, memberId))
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
+	}
+
 	@Override
 	public List<CommentResponse> findByPostId(Long postId) {
 		return commentRepository.findAllByPostId(postId).stream()
 			.map(commentConverter::toResponse)
 			.toList();
 	}
+
+
 }

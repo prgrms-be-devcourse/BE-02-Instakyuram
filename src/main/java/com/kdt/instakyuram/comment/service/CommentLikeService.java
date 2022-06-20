@@ -32,4 +32,17 @@ public class CommentLikeService {
 
 		return new CommentResponse.LikeResponse(comment.id(), likes, true);
 	}
+
+	public CommentResponse.LikeResponse unlike(Long id, Long memberId) {
+		return commentLikeRepository.findByCommentIdAndMemberId(id, memberId)
+			.map(commentLike -> {
+				commentLikeRepository.delete(commentLike);
+
+				// 해당 댓글의 좋아요 개수까지 포함해서 리턴
+				int likes = commentLikeRepository.countByCommentId(id);
+
+				return new CommentResponse.LikeResponse(id, likes, false);
+			})
+			.orElseThrow(() -> new IllegalArgumentException("이미 좋아요 취소 상태 입니다."));
+	}
 }

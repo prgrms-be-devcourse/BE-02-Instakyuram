@@ -1,7 +1,5 @@
 package com.kdt.instakyuram.comment.service;
 
-import static java.util.stream.Collectors.*;
-
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -11,6 +9,7 @@ import com.kdt.instakyuram.comment.domain.Comment;
 import com.kdt.instakyuram.comment.domain.CommentRepository;
 import com.kdt.instakyuram.comment.dto.CommentConverter;
 import com.kdt.instakyuram.comment.dto.CommentResponse;
+import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
 
@@ -38,6 +37,17 @@ public class CommentService implements CommentGiver {
 			savedComment.getContent(),
 			member
 		);
+	}
+
+	@Transactional
+	public CommentResponse.UpdateResponse update(Long id, Long postId, Long memberId, String content) {
+		return commentRepository.findByIdAndPostIdAndMemberId(id, postId, memberId)
+			.map(comment -> {
+				comment.changeContent(content);
+
+				return new CommentResponse.UpdateResponse(id, content);
+			})
+			.orElseThrow(() -> new NotFoundException("해당 댓글은 존재하지 않습니다."));
 	}
 
 	@Override

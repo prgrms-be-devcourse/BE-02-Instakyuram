@@ -12,10 +12,12 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.DynamicUpdate;
 
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.post.domain.Post;
 
+@DynamicUpdate
 @Entity
 public class Comment {
 
@@ -45,6 +47,11 @@ public class Comment {
 		this.content = content;
 		this.post = post;
 		this.member = member;
+	}
+
+	//== 비지니스 로직 ==//
+	public void changeContent(String content) {
+		this.content = content;
 	}
 
 	public Long getId() {

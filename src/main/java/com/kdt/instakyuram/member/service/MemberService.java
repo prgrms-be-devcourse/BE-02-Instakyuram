@@ -1,7 +1,5 @@
 package com.kdt.instakyuram.member.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,7 +55,8 @@ public class MemberService implements MemberGiver {
 		return new MemberResponse.SignupResponse(member.getId(), member.getUsername());
 	}
 
-	public PageDto.Response<MemberResponse.ViewResponse, Member> findAll(Pageable requestPage) {
+	// todo : 요청한 사용자의 정보는 빼야함! -> 테스트 코드 변경
+	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> findAll(Pageable requestPage) {
 		Page<Member> pagingMembers = memberRepository.findAll(requestPage);
 
 		if (pagingMembers.getContent().isEmpty()) {

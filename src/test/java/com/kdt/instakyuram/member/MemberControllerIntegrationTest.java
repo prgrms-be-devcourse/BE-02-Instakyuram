@@ -54,9 +54,9 @@ public class MemberControllerIntegrationTest {
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
 		List<Member> members = getMembers();
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
-		PageDto.Response<MemberResponse.ViewResponse, Member> pageResponse = new PageDto.Response<>(
+		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.ViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
 		);
 
 		//when
@@ -83,9 +83,9 @@ public class MemberControllerIntegrationTest {
 		List<Member> members = List.of();
 		String htmlTittleContent = "사용자가 팔로잉 할 대상 찾는 사용자 목록";
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
-		PageDto.Response<MemberResponse.ViewResponse, Member> pageResponse = new PageDto.Response<>(
+		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.ViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
 		);
 
 		//when

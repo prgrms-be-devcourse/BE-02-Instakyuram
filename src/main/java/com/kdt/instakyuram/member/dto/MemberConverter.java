@@ -9,6 +9,7 @@ import com.kdt.instakyuram.member.domain.Member;
 @Component
 public class MemberConverter {
 
+	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> toPageResponse(Page<Member> members) {
 	public MemberResponse toMemberResponse(Member following) {
 		return MemberResponse.builder()
 			.id(following.getId())
@@ -22,6 +23,6 @@ public class MemberConverter {
 	public PageDto.Response<MemberResponse.ViewResponse, Member> toPageResponse(Page<Member> members) {
 		return new PageDto.Response<>(
 			members,
-			member -> new MemberResponse.ViewResponse(member.getId(), member.getUsername(), member.getName()));
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName()));
 	}
 }

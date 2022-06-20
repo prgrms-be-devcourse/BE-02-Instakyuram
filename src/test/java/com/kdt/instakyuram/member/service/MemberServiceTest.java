@@ -56,9 +56,9 @@ class MemberServiceTest {
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
 		List<Member> members = getMembers();
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
-		PageDto.Response<MemberResponse.ViewResponse, Member> pageResponse = new PageDto.Response<>(
+		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.ViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
 		);
 		List<Integer> expectedPageNumbers = IntStream.rangeClosed(1, pageResponse.getTotalPage())
 			.boxed()
@@ -68,7 +68,7 @@ class MemberServiceTest {
 		given(memberConverter.toPageResponse(pagingMembers)).willReturn(pageResponse);
 
 		//when
-		PageDto.Response<MemberResponse.ViewResponse, Member> pageMemberResponses = memberService.findAll(pageRequest);
+		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageMemberResponses = memberService.findAll(pageRequest);
 
 		//then
 		verify(memberRepository, times(1)).findAll(pageRequest);
@@ -89,9 +89,9 @@ class MemberServiceTest {
 
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
 		PageImpl<Member> pagingMembers = new PageImpl<>(List.of(), pageRequest, 0);
-		PageDto.Response<MemberResponse.ViewResponse, Member> pageResponse = new PageDto.Response<>(
+		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.ViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
 		);
 
 		given(memberRepository.findAll(pageRequest)).willReturn(pagingMembers);

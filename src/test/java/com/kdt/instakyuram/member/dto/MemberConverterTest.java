@@ -39,14 +39,15 @@ class MemberConverterTest {
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
 		List<Member> members = getMembers();
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
-		PageDto.Response<MemberResponse.ViewResponse, Member> expectedResponses = new PageDto.Response<>(
+		PageDto.Response<MemberResponse.MemberListViewResponse, Member> expectedResponses = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.ViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
 		);
-		List<MemberResponse.ViewResponse> expectedContents = expectedResponses.getResponses();
+		List<MemberResponse.MemberListViewResponse> expectedContents = expectedResponses.getResponses();
 
 		//when
-		PageDto.Response<MemberResponse.ViewResponse, Member> responses = memberConverter.toPageResponse(pagingMembers);
+		PageDto.Response<MemberResponse.MemberListViewResponse, Member> responses = memberConverter.toPageResponse(
+			pagingMembers);
 		AtomicInteger index = new AtomicInteger();
 
 		//then

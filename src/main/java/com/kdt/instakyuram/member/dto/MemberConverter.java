@@ -10,6 +10,12 @@ import com.kdt.instakyuram.member.domain.Member;
 public class MemberConverter {
 
 	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> toPageResponse(Page<Member> members) {
+		return new PageDto.Response<>(
+			members,
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(),
+				member.getName()));
+	}
+
 	public MemberResponse toMemberResponse(Member following) {
 		return MemberResponse.builder()
 			.id(following.getId())
@@ -18,11 +24,5 @@ public class MemberConverter {
 			.name(following.getName())
 			.phoneNumber(following.getPhoneNumber())
 			.build();
-	}
-
-	public PageDto.Response<MemberResponse.ViewResponse, Member> toPageResponse(Page<Member> members) {
-		return new PageDto.Response<>(
-			members,
-			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName()));
 	}
 }

@@ -1,5 +1,7 @@
 package com.kdt.instakyuram.member.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +25,8 @@ public class MemberService implements MemberGiver {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public MemberService(FollowService followService, MemberRepository memberRepository, PasswordEncoder passwordEncoder,
+	public MemberService(FollowService followService, MemberRepository memberRepository,
+		PasswordEncoder passwordEncoder,
 		MemberConverter memberConverter) {
 		this.followService = followService;
 		this.memberRepository = memberRepository;
@@ -65,7 +68,6 @@ public class MemberService implements MemberGiver {
 
 		return memberConverter.toPageResponse(pagingMembers);
 	}
-}
 
 	public List<MemberResponse> findAllFollowing(Long id) {
 		List<Long> followingIds = followService.findByFollowingIds(id);

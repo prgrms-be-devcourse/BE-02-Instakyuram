@@ -14,6 +14,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      data-locations: classpath:/db/seed/data.sql
+      mode: always
 logging:
   level:
     org.hibernate.type.descriptor.sql: trace

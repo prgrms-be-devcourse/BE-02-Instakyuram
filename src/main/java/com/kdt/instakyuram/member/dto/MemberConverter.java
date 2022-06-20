@@ -9,9 +9,20 @@ import com.kdt.instakyuram.member.domain.Member;
 @Component
 public class MemberConverter {
 
+	public MemberResponse toMemberResponse(Member following) {
+		return MemberResponse.builder()
+			.id(following.getId())
+			.email(following.getEmail())
+			.username(following.getUsername())
+			.name(following.getName())
+			.phoneNumber(following.getPhoneNumber())
+			.build();
+	}
+
 	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> toPageResponse(Page<Member> members) {
 		return new PageDto.Response<>(
 			members,
 			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName()));
 	}
+
 }

@@ -1,5 +1,7 @@
 package com.kdt.instakyuram.member.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,6 +56,10 @@ public class MemberService {
 
 	public PageDto.Response<MemberResponse.ViewResponse, Member> findAll(Pageable requestPage) {
 		Page<Member> pagingMembers = memberRepository.findAll(requestPage);
+
+		if (pagingMembers.getContent().isEmpty()) {
+			throw new NotFoundException("사용자 목록이 존재하지 않습니다.");
+		}
 
 		return memberConverter.toPageResponse(pagingMembers);
 	}

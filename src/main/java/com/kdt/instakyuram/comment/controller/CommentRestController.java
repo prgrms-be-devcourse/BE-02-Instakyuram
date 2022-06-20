@@ -1,5 +1,6 @@
 package com.kdt.instakyuram.comment.controller;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +22,21 @@ public class CommentRestController {
 	}
 
 	@PostMapping
-	public ApiResponse<CommentResponse> create(@RequestBody CommentRequest request) {
+	public ApiResponse<CommentResponse> create(@RequestBody CommentRequest.CreateRequest request) {
 		CommentResponse commentResponse = commentService.create(
 			request.postId(), request.memberId(), request.content()
+		);
+
+		return new ApiResponse<>(commentResponse);
+	}
+
+	@PostMapping("/{id}/like")
+	public ApiResponse<CommentResponse.LikeResponse> like(
+		@PathVariable Long id,
+		@RequestBody CommentRequest.LikeRequest request
+	) {
+		CommentResponse.LikeResponse commentResponse = commentService.like(
+			id, request.memberId()
 		);
 
 		return new ApiResponse<>(commentResponse);

@@ -1,5 +1,7 @@
 package com.kdt.instakyuram.comment.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.kdt.instakyuram.comment.domain.CommentLike;
@@ -44,5 +46,10 @@ public class CommentLikeService {
 				return new CommentResponse.LikeResponse(id, likes, false);
 			})
 			.orElseThrow(() -> new IllegalArgumentException("이미 좋아요 취소 상태 입니다."));
+	}
+
+	public void delete(Long commentId) {
+		List<CommentLike> commentLikes = commentLikeRepository.findByCommentId(commentId);
+		commentLikeRepository.deleteAll(commentLikes);
 	}
 }

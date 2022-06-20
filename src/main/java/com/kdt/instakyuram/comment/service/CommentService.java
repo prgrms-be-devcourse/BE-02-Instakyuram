@@ -47,6 +47,17 @@ public class CommentService implements CommentGiver {
 	}
 
 	@Transactional
+	public void delete(Long id, Long memberId) {
+		commentRepository.findByIdAndMemberId(id, memberId)
+			.map(comment -> {
+				commentLikeService.delete(id);
+				commentRepository.delete(comment);
+				return true;
+			})
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
+	}
+
+	@Transactional
 	public CommentResponse.LikeResponse like(Long id, Long memberId) {
 		return commentRepository.findById(id)
 			.map(comment -> {

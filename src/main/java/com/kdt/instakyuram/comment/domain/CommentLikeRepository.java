@@ -1,5 +1,6 @@
 package com.kdt.instakyuram.comment.domain;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,7 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
 
 	@Query("SELECT cl FROM CommentLike cl WHERE cl.comment.id = :commentId AND cl.member.id = :memberId")
 	Optional<CommentLike> findByCommentIdAndMemberId(Long commentId, Long memberId);
+
+	@Query("SELECT cl FROM CommentLike cl WHERE cl.comment.id = :commentId")
+	List<CommentLike> findByCommentId(Long commentId);
 }

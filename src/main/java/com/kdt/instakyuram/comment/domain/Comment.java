@@ -36,6 +36,10 @@ public class Comment {
 
 	protected Comment() {/*no-op*/}
 
+	public Comment(Long id) {
+		this(id, null, null, null);
+	}
+
 	public Comment(String content, Post post, Member member) {
 		this(null, content, post, member);
 	}

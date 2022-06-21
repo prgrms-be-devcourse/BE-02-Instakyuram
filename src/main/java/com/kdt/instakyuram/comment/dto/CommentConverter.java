@@ -3,6 +3,7 @@ package com.kdt.instakyuram.comment.dto;
 import org.springframework.stereotype.Component;
 
 import com.kdt.instakyuram.comment.domain.Comment;
+import com.kdt.instakyuram.comment.domain.CommentLike;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.post.domain.Post;
@@ -23,6 +24,15 @@ public class CommentConverter {
 			comment.getContent(),
 			memberResponse
 		);
+	}
+
+	public CommentLike toCommentLike(CommentResponse commentResponse, MemberResponse memberResponse) {
+		Comment comment = new Comment(commentResponse.id());
+		Member member = Member.builder()
+			.id(memberResponse.id())
+			.build();
+
+		return new CommentLike(comment, member);
 	}
 
 	private Member toMember(MemberResponse memberResponse) {

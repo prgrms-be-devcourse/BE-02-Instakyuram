@@ -6,4 +6,10 @@ import lombok.Builder;
 
 @Builder
 public record CommentResponse(Long id, String content, MemberResponse member) {
+
+	public record LikeResponse(
+		Long id,
+		int likes,
+		boolean isLiked
+	) {}
 }

@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +20,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -30,7 +28,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.kdt.instakyuram.token.dto.TokenResponse;
 import com.kdt.instakyuram.token.service.TokenService;
 
-public class JwtAuthenticationFilter extends GenericFilterBean {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final String accessTokenHeader;
 	private final String refreshTokenHeader;
 	private final Jwt jwt;
@@ -46,51 +44,42 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 	}
 
 	@Override
-	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws
-		IOException,
-		ServletException {
-		HttpServletRequest request = (HttpServletRequest)req;
-		HttpServletResponse response = (HttpServletResponse)res;
-		if (isHaveToJwtCheck(request)) {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+		FilterChain filterChain) throws ServletException, IOException {
+		try {
+			String accessToken = getAccessToken(request);
 			try {
-				String accessToken = getToken(request);
-				if (accessToken != null) {
-					try {
-						Jwt.Claims claims = verify(accessToken);
-						JwtAuthenticationToken authenticationToken = decodeClaims(claims, request, accessToken);
-						SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-						this.log.info("set Authentication");
-					} catch (TokenExpiredException e) {
-						this.log.warn("AccessToken is expired");
-						String refreshToken = getRefreshToken(request);
-						try {
-							if (isValidRefreshToken(refreshToken, accessToken)) {
-								String reIssuedAccessToken = accessTokenReIssue(accessToken);
-								Jwt.Claims reIssuedClaims = verify(reIssuedAccessToken);
-								SecurityContextHolder.getContext()
-									.setAuthentication(decodeClaims(reIssuedClaims, request, reIssuedAccessToken));
-								response.addCookie(new Cookie(accessTokenHeader, reIssuedAccessToken));
-							}
-						} catch (JwtRefreshTokenNotFoundException exception) {
-							this.log.warn("RefreshToken is not found");
-						}
-					} catch (JWTVerificationException e) {
-						this.log.warn("AccessToken is not valid", e);
+				Jwt.Claims claims = verify(accessToken);
+				JwtAuthenticationToken authenticationToken = decodeClaims(claims, request, accessToken);
+				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+				this.log.info("set Authentication");
+			} catch (TokenExpiredException e) {
+				this.log.warn(e.getMessage());
+				String refreshToken = getRefreshToken(request);
+				try {
+					if (isValidRefreshToken(refreshToken, accessToken)) {
+						String reIssuedAccessToken = accessTokenReIssue(accessToken);
+						Jwt.Claims reIssuedClaims = verify(reIssuedAccessToken);
+						SecurityContextHolder.getContext()
+							.setAuthentication(decodeClaims(reIssuedClaims, request, reIssuedAccessToken));
+						response.addCookie(new Cookie(accessTokenHeader, reIssuedAccessToken));
 					}
-				} else {
-					this.log.info("There is no access token");
+				} catch (JwtRefreshTokenNotFoundException notFoundException) {
+					this.log.warn(notFoundException.getMessage());
 				}
-			} catch (JwtAccessTokenNotFoundException e) {
-				this.log.warn("accessToken not found");
+			} catch (JWTVerificationException e) {
+				this.log.warn(e.getMessage());
 			}
-
+		} catch (JwtAccessTokenNotFoundException | TokenExpiredException e) {
+			this.log.warn(e.getMessage());
 		}
-		chain.doFilter(req, res);
+		filterChain.doFilter(request, response);
 	}
 
-	private boolean isHaveToJwtCheck(HttpServletRequest request) {
-		return !request.getRequestURI().endsWith("/api/members/signup")
-			&& SecurityContextHolder.getContext().getAuthentication() == null;
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		return request.getRequestURI().endsWith("/api/members/signup") || request.getRequestURI()
+			.endsWith("/api/members/signin") || SecurityContextHolder.getContext().getAuthentication() != null;
 	}
 
 	private String accessTokenReIssue(String accessToken) {
@@ -112,13 +101,13 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 	}
 
 	private boolean isValidRefreshToken(String refreshToken, String accessToken) {
-		TokenResponse foundRefreshToken = this.tokenService.findByRefreshToken(refreshToken);
+		TokenResponse foundRefreshToken = this.tokenService.findByToken(refreshToken);
 		String username = this.jwt.decode(accessToken).userId;
 		if (username.equals(foundRefreshToken.userId())) {
 			try {
 				this.jwt.verify(foundRefreshToken.refreshToken());
 			} catch (JWTVerificationException e) {
-				this.log.warn("Invalid RefreshToken");
+				this.log.warn(e.getMessage());
 				return false;
 			}
 		}
@@ -128,7 +117,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 	private List<GrantedAuthority> getAuthorities(Jwt.Claims claims) {
 		String[] roles = claims.roles;
 
-		return roles == null && roles.length == 0
+		return roles == null || roles.length == 0
 			? Collections.emptyList()
 			: Arrays.stream(roles)
 			.map(SimpleGrantedAuthority::new)
@@ -139,25 +128,31 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		return jwt.verify(token);
 	}
 
-	private String getToken(HttpServletRequest request) {
-		if(request.getCookies() != null) {
-			return Arrays.stream(request.getCookies())
+	private String getAccessToken(HttpServletRequest request) {
+		if (request.getCookies() != null) {
+			String accessToken = Arrays.stream(request.getCookies())
 				.filter(cookie -> cookie.getName().equals(this.accessTokenHeader))
 				.findFirst()
 				.map(Cookie::getValue)
 				.orElseThrow(JwtAccessTokenNotFoundException::new);
+			try {
+				tokenService.findByToken(accessToken);
+				throw new TokenExpiredException("already signed out token");
+			} catch (JwtTokenNotFoundException e) {
+				return accessToken;
+			}
 		} else {
-			throw new JwtAccessTokenNotFoundException();
+			throw new JwtAccessTokenNotFoundException("AccessToken is not found.");
 		}
 	}
 
 	private String getRefreshToken(HttpServletRequest request) {
-		if(request.getCookies() != null) {
+		if (request.getCookies() != null) {
 			return Arrays.stream(request.getCookies())
 				.filter(cookie -> cookie.getName().equals(this.refreshTokenHeader))
 				.findFirst()
 				.map(Cookie::getValue)
-				.orElseThrow(JwtRefreshTokenNotFoundException::new);
+				.orElseThrow(() -> new JwtRefreshTokenNotFoundException("RefreshToken is not found."));
 		} else {
 			throw new JwtRefreshTokenNotFoundException();
 		}

@@ -1,8 +1,8 @@
-INSERT INTO member (username, name, email, phone_number) VALUES ('test00', '00', 'test00@gmail.com', '1234');
-INSERT INTO member (username, name, email, phone_number) VALUES ('test01', '01', 'test01@gmail.com', '5678');
-INSERT INTO member (username, name, email, phone_number) VALUES ('test02', '02', 'test02@gmail.com', '9012');
-INSERT INTO member (username, name, email, phone_number) VALUES ('test03', '03', 'test03@gmail.com', '3456');
-INSERT INTO member (username, name, email, phone_number) VALUES ('test04', '04', 'test04@gmail.com', '7890');
+INSERT INTO member (username, name, email, phone_number,created_at, created_by, updated_at, updated_by) VALUES ('test00', '00', 'test00@gmail.com', '1234',now(),'test00',now(),'test00');
+INSERT INTO member (username, name, email, phone_number,created_at, created_by, updated_at, updated_by) VALUES ('test01', '00', 'test01@gmail.com', '5678',now(),'test01',now(),'test01');
+INSERT INTO member (username, name, email, phone_number,created_at, created_by, updated_at, updated_by) VALUES ('test02', '00', 'test02@gmail.com', '9012',now(),'test02',now(),'test02');
+INSERT INTO member (username, name, email, phone_number,created_at, created_by, updated_at, updated_by) VALUES ('test03', '00', 'test03@gmail.com', '3456',now(),'test03',now(),'test03');
+INSERT INTO member (username, name, email, phone_number,created_at, created_by, updated_at, updated_by) VALUES ('test04', '00', 'test04@gmail.com', '7890',now(),'test04',now(),'test04');
 
 INSERT INTO post (content, member_id) VALUES ('p-content01', 1);
 INSERT INTO post (content, member_id) VALUES ('p-content02', 1);

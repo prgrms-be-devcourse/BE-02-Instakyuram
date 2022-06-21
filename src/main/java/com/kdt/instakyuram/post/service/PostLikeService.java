@@ -20,15 +20,6 @@ public class PostLikeService {
 		this.postConverter = postConverter;
 	}
 
-	public List<PostLikeResponse> findByPostId(Long postId) {
-		return postLikeRepository.findByPostId(postId).stream()
-			.map(postLike -> PostLikeResponse.builder()
-				.postId(postId)
-				.likes(postLikeRepository.countByPostId(postId))
-				.build())
-			.toList();
-	}
-
 	public int countByPostId(Long postId) {
 		return postLikeRepository.countByPostId(postId);
 	}

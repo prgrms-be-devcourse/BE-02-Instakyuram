@@ -17,8 +17,8 @@ import com.kdt.instakyuram.post.dto.PostConverter;
 import com.kdt.instakyuram.post.dto.PostLikeResponse;
 import com.kdt.instakyuram.post.dto.PostResponse;
 
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
 public class PostService {
 
 	private final PostRepository postRepository;
@@ -69,7 +69,6 @@ public class PostService {
 					post,
 					postImageService.findByPostId(post.getId()),
 					commentGiver.findByPostId(post.getId()),
-					postLikeService.findByPostId(post.getId()),
 					postLikeService.countByPostId(post.getId())
 				)
 			)

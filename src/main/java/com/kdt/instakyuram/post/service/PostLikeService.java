@@ -1,9 +1,6 @@
 package com.kdt.instakyuram.post.service;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.post.domain.PostLikeRepository;
@@ -42,9 +39,8 @@ public class PostLikeService {
 
 		postLikeRepository.save(postConverter.toPostLike(post, member));
 		int likes = postLikeRepository.countByPostId(post.id());
-		boolean isLiked = postLikeRepository.existsPostLikeByPostIdAndMemberId(post.id(), member.id());
 
-		return new PostLikeResponse(post.id(), likes, isLiked);
+		return new PostLikeResponse(post.id(), likes, true);
 	}
 
 	public PostLikeResponse unlike(PostResponse post, MemberResponse member) {

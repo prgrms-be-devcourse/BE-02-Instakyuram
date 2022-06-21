@@ -48,6 +48,12 @@ public class PostConverter {
 			.build();
 	}
 
+	private static String extractExt(String originalFileName) {
+		return originalFileName.substring(
+			originalFileName.lastIndexOf(".")
+		);
+	}
+
 	public PostResponse.FindAllResponse toDetailResponse(MemberResponse memberResponse, Post post,
 		List<PostImageResponse> postImageResponse, List<CommentResponse> commentResponse,
 		List<PostLikeResponse> postLikeResponse, int totalPostLike) {
@@ -70,12 +76,6 @@ public class PostConverter {
 			.build();
 	}
 
-	private static String extractExt(String originalFileName) {
-		return originalFileName.substring(
-			originalFileName.lastIndexOf(".")
-		);
-	}
-
 	public PostImageResponse toPostImageResponse(PostImage postImage) {
 		return PostImageResponse.builder()
 			.id(postImage.getId())
@@ -86,10 +86,14 @@ public class PostConverter {
 			.build();
 	}
 
-	public PostLikeResponse toPostLikeResponse(PostLike postLike) {
-		return PostLikeResponse.builder()
-			.id(postLike.getId())
-			.memberResponse(toMemberResponse(postLike.getMember()))
+	public PostLike toPostLike(PostResponse postResponse, MemberResponse memberResponse) {
+		return PostLike.builder()
+			.post(Post.builder()
+				.id(postResponse.id())
+				.build())
+			.member(Member.builder()
+				.id(memberResponse.id())
+				.build())
 			.build();
 	}
 }

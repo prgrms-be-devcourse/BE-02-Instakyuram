@@ -7,11 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.comment.service.CommentGiver;
+import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.member.domain.Member;
+import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
+import com.kdt.instakyuram.post.dto.PostLikeResponse;
 import com.kdt.instakyuram.post.dto.PostResponse;
 
 @Transactional(readOnly = true)
@@ -22,9 +25,7 @@ public class PostService {
 	private final PostConverter postConverter;
 	private final MemberGiver memberGiver;
 	private final PostImageService postImageService;
-
 	private final CommentGiver commentGiver;
-
 	private final PostLikeService postLikeService;
 
 	public PostService(PostRepository postRepository, PostConverter postConverter,
@@ -75,4 +76,27 @@ public class PostService {
 			.toList();
 	}
 
+	@Transactional
+	public PostLikeResponse like(Long postId, Long memberId) {
+		return postRepository.findById(postId)
+			.map(post -> {
+				MemberResponse memberResponse = memberGiver.findById(memberId);
+				PostResponse postResponse = postConverter.toResponse(post);
+
+				return postLikeService.like(postResponse, memberResponse);
+			})
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+	}
+
+	@Transactional
+	public PostLikeResponse unlike(Long postId, Long memberId) {
+		return postRepository.findById(postId)
+			.map(post -> {
+				MemberResponse memberResponse = memberGiver.findById(memberId);
+				PostResponse postResponse = postConverter.toResponse(post);
+
+				return postLikeService.unlike(postResponse, memberResponse);
+			})
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+	}
 }

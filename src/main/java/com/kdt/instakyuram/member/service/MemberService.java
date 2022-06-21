@@ -50,7 +50,8 @@ public class MemberService implements MemberGiver {
 			foundMember.getUsername(),
 			foundMember.getName(),
 			foundMember.getEmail(),
-			foundMember.getPhoneNumber()
+			foundMember.getPhoneNumber(),
+			foundMember.getIntroduction()
 		);
 	}
 
@@ -59,7 +60,8 @@ public class MemberService implements MemberGiver {
 			passwordEncoder.encode(request.password()),
 			request.name(),
 			request.phoneNumber(),
-			request.email())
+			request.email(),
+			"")
 		);
 
 		return new MemberResponse.SignupResponse(member.getId(), member.getUsername());

@@ -41,7 +41,9 @@ class MemberRepositoryTest {
 			encodedPassword,
 			"홍길동",
 			"01012345678",
-			"user@gmail.com");
+			"user@gmail.com",
+			""
+		);
 
 		//when
 		Member savedMember = memberRepository.save(member);
@@ -66,13 +68,15 @@ class MemberRepositoryTest {
 			encodedPassword,
 			"홍길동",
 			"01012345678",
-			"userA@gmail.com");
+			"userA@gmail.com",
+			"");
 		Member memberB = new Member(
 			memberA.getUsername(),
 			encodedPassword,
 			"김길동",
 			"01012345678",
-			"userB@gmail.com");
+			"userB@gmail.com",
+			"");
 		memberRepository.save(memberA);
 
 		//when, then
@@ -89,13 +93,15 @@ class MemberRepositoryTest {
 			encodedPassword,
 			"홍길동",
 			"01012345678",
-			"user@gmail.com");
+			"user@gmail.com",
+			"");
 		Member memberB = new Member(
 			"user124",
 			encodedPassword,
 			"김길동",
 			"01012345678",
-			memberA.getEmail());
+			memberA.getEmail(),
+			"");
 		memberRepository.save(memberA);
 
 		//when, then
@@ -112,7 +118,8 @@ class MemberRepositoryTest {
 			encodedPassword,
 			"홍길동",
 			"01012345678",
-			null);
+			null,
+			"");
 
 		//when, then
 		assertThatThrownBy(() -> memberRepository.save(member)).isInstanceOf(ConstraintViolationException.class);
@@ -128,7 +135,8 @@ class MemberRepositoryTest {
 			encodedPassword,
 			"홍길동",
 			"01012345678",
-			"user123@gmail.com");
+			"user123@gmail.com",
+			"");
 
 		//when, then
 		assertThatThrownBy(() -> memberRepository.save(member)).isInstanceOf(ConstraintViolationException.class);
@@ -144,7 +152,8 @@ class MemberRepositoryTest {
 			encodedPassword,
 			"홍길동",
 			"01012345678",
-			"user123@gmail.com");
+			"user123@gmail.com",
+			"");
 
 		//when, then
 		assertThatThrownBy(() -> memberRepository.save(member)).isInstanceOf(ConstraintViolationException.class);
@@ -160,7 +169,8 @@ class MemberRepositoryTest {
 			encodedPassword,
 			"홍길동",
 			"01012345678",
-			"user123@gmail.com");
+			"user123@gmail.com",
+			"");
 
 		//when, then
 		assertThatThrownBy(() -> memberRepository.save(member)).isInstanceOf(ConstraintViolationException.class);
@@ -176,7 +186,8 @@ class MemberRepositoryTest {
 			encodedPassword,
 			null,
 			"01012345678",
-			"user123@gmail.com");
+			"user123@gmail.com",
+			"");
 
 		//when, then
 		assertThatThrownBy(() -> memberRepository.save(member)).isInstanceOf(ConstraintViolationException.class);
@@ -192,7 +203,8 @@ class MemberRepositoryTest {
 			encodedPassword,
 			"",
 			"01012345678",
-			"user123@gmail.com");
+			"user123@gmail.com",
+			"");
 
 		//when, then
 		assertThatThrownBy(() -> memberRepository.save(member)).isInstanceOf(ConstraintViolationException.class);
@@ -208,7 +220,8 @@ class MemberRepositoryTest {
 			encodedPassword,
 			"홍길동",
 			null,
-			"user123@gmail.com");
+			"user123@gmail.com",
+			"");
 
 		//when, then
 		assertThatThrownBy(() -> memberRepository.save(member)).isInstanceOf(ConstraintViolationException.class);

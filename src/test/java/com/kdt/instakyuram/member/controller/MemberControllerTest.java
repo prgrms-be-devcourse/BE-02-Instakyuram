@@ -65,7 +65,7 @@ class MemberControllerTest {
 	@MockBean
 	TokenService tokenService;
 
-	Member member = new Member(1L, "pjh123", "홍길동", "encodedPassword", "01012345678", "user@gmail.com");
+	Member member = new Member(1L, "pjh123", "홍길동", "encodedPassword", "01012345678", "user@gmail.com", "");
 
 	@Test
 	@DisplayName("사용자 전체 목록 조회 최초 진입 테스트")

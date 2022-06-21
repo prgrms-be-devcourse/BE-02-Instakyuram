@@ -47,39 +47,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		try {
-			String accessToken = getToken(request);
-			if (accessToken != null) {
+			String accessToken = getAccessToken(request);
+			try {
+				Jwt.Claims claims = verify(accessToken);
+				JwtAuthenticationToken authenticationToken = decodeClaims(claims, request, accessToken);
+				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+				this.log.info("set Authentication");
+			} catch (TokenExpiredException e) {
+				this.log.warn(e.getMessage());
+				String refreshToken = getRefreshToken(request);
 				try {
-					Jwt.Claims claims = verify(accessToken);
-					JwtAuthenticationToken authenticationToken = decodeClaims(claims, request, accessToken);
-					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-					log.error("{}", ((JwtAuthentication)authenticationToken.getPrincipal()).token());
-					log.error("{}", ((JwtAuthentication)authenticationToken.getPrincipal()).id());
-
-					this.log.info("set Authentication");
-				} catch (TokenExpiredException e) {
-					this.log.warn("AccessToken is expired");
-					String refreshToken = getRefreshToken(request);
-					try {
-						if (isValidRefreshToken(refreshToken, accessToken)) {
-							String reIssuedAccessToken = accessTokenReIssue(accessToken);
-							Jwt.Claims reIssuedClaims = verify(reIssuedAccessToken);
-							SecurityContextHolder.getContext()
-								.setAuthentication(decodeClaims(reIssuedClaims, request, reIssuedAccessToken));
-							response.addCookie(new Cookie(accessTokenHeader, reIssuedAccessToken));
-						}
-					} catch (JwtRefreshTokenNotFoundException exception) {
-						this.log.warn("RefreshToken is not found");
+					if (isValidRefreshToken(refreshToken, accessToken)) {
+						String reIssuedAccessToken = accessTokenReIssue(accessToken);
+						Jwt.Claims reIssuedClaims = verify(reIssuedAccessToken);
+						SecurityContextHolder.getContext()
+							.setAuthentication(decodeClaims(reIssuedClaims, request, reIssuedAccessToken));
+						response.addCookie(new Cookie(accessTokenHeader, reIssuedAccessToken));
 					}
-				} catch (JWTVerificationException e) {
-					this.log.warn("AccessToken is not valid", e);
+				} catch (JwtRefreshTokenNotFoundException notFoundException) {
+					this.log.warn(notFoundException.getMessage());
 				}
-			} else {
-				this.log.info("There is no access token");
+			} catch (JWTVerificationException e) {
+				this.log.warn(e.getMessage());
 			}
-		} catch (JwtAccessTokenNotFoundException e) {
-			this.log.warn("accessToken not found");
+		} catch (JwtAccessTokenNotFoundException | TokenExpiredException e) {
+			this.log.warn(e.getMessage());
 		}
 		filterChain.doFilter(request, response);
 	}
@@ -87,7 +79,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		return request.getRequestURI().endsWith("/api/members/signup") || request.getRequestURI()
-			.endsWith("/api/members/sign-in") || SecurityContextHolder.getContext().getAuthentication() != null;
+			.endsWith("/api/members/signin") || SecurityContextHolder.getContext().getAuthentication() != null;
 	}
 
 	private String accessTokenReIssue(String accessToken) {
@@ -115,7 +107,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			try {
 				this.jwt.verify(foundRefreshToken.refreshToken());
 			} catch (JWTVerificationException e) {
-				this.log.warn("Invalid RefreshToken");
+				this.log.warn(e.getMessage());
 				return false;
 			}
 		}
@@ -125,7 +117,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private List<GrantedAuthority> getAuthorities(Jwt.Claims claims) {
 		String[] roles = claims.roles;
 
-		return roles == null && roles.length == 0
+		return roles == null || roles.length == 0
 			? Collections.emptyList()
 			: Arrays.stream(roles)
 			.map(SimpleGrantedAuthority::new)
@@ -136,15 +128,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		return jwt.verify(token);
 	}
 
-	private String getToken(HttpServletRequest request) {
+	private String getAccessToken(HttpServletRequest request) {
 		if (request.getCookies() != null) {
-			return Arrays.stream(request.getCookies())
+			String accessToken = Arrays.stream(request.getCookies())
 				.filter(cookie -> cookie.getName().equals(this.accessTokenHeader))
 				.findFirst()
 				.map(Cookie::getValue)
 				.orElseThrow(JwtAccessTokenNotFoundException::new);
+			try {
+				tokenService.findByToken(accessToken);
+				throw new TokenExpiredException("already signed out token");
+			} catch (JwtTokenNotFoundException e) {
+				return accessToken;
+			}
 		} else {
-			throw new JwtAccessTokenNotFoundException();
+			throw new JwtAccessTokenNotFoundException("AccessToken is not found.");
 		}
 	}
 
@@ -154,7 +152,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				.filter(cookie -> cookie.getName().equals(this.refreshTokenHeader))
 				.findFirst()
 				.map(Cookie::getValue)
-				.orElseThrow(JwtRefreshTokenNotFoundException::new);
+				.orElseThrow(() -> new JwtRefreshTokenNotFoundException("RefreshToken is not found."));
 		} else {
 			throw new JwtRefreshTokenNotFoundException();
 		}

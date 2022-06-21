@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ImageUploader {
@@ -22,6 +23,10 @@ public class ImageUploader {
 			throw new RuntimeException("이미지 파일을 저장하면서 오류가 발생하였습니다.", e);
 		}
 
+	}
+
+	public static FileSystemResource getFileResource(String path, String fileName) {
+		return new FileSystemResource(path + fileName);
 	}
 
 }

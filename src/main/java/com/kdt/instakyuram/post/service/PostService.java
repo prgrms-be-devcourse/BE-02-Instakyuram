@@ -1,6 +1,7 @@
 package com.kdt.instakyuram.post.service;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
@@ -13,12 +14,10 @@ import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
-import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
 import com.kdt.instakyuram.post.dto.PostLikeResponse;
 import com.kdt.instakyuram.post.dto.PostResponse;
-import com.kdt.instakyuram.util.ImageUploader;
 
 @Service
 @Transactional(readOnly = true)
@@ -103,12 +102,9 @@ public class PostService {
 	}
 
 	public FileSystemResource findImage(Long postId, String serverFileName) {
-		return postRepository.findById(postId).map(post ->
-			{
-				PostImage postImage = postImageService.getImage(serverFileName);
-				return ImageUploader.getFileResource(postImage.getPath(), postImage.getServerFileName());
-			}
-		).orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+		return postRepository.findById(postId)
+			.map(post -> postImageService.findByServerFileName(serverFileName))
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
 	}
 
 }

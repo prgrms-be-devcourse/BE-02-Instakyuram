@@ -58,6 +58,7 @@ public class PostConverter {
 		List<PostImageResponse> postImageResponse, List<CommentResponse> commentResponse,
 		int totalPostLike) {
 		return PostResponse.FindAllResponse.builder()
+			.id(post.getId())
 			.content(post.getContent())
 			.member(memberResponse)
 			.postImageResponse(postImageResponse)

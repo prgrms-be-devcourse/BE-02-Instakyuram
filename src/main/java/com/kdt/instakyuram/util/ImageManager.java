@@ -8,11 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 
-public class ImageUploader {
+public class ImageManager {
 
-	private ImageUploader() {}
+	private ImageManager() {}
 
-	private static final Logger logger = LoggerFactory.getLogger(ImageUploader.class);
+	private static final Logger logger = LoggerFactory.getLogger(ImageManager.class);
 
 	// TODO : 추후 커스텀 예외로 처리할 것
 	public static void upload(MultipartFile image, String serverFileName, String path) {

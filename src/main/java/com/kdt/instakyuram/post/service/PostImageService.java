@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostImageRepository;
@@ -38,6 +39,11 @@ public class PostImageService {
 		return postImageRepository.findByPostId(postId).stream()
 			.map(postConverter::toPostImageResponse)
 			.toList();
+	}
+
+	public PostImage getImage(String serverFileName) {
+		return postImageRepository.findByServerFileName(serverFileName)
+			.orElseThrow(() -> new NotFoundException("이미지가 존재하지 않습니다."));
 	}
 
 }

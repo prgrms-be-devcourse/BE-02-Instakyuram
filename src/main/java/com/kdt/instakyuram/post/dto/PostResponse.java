@@ -19,6 +19,7 @@ public record PostResponse(Long id, MemberResponse memberResponse, String conten
 
 	@Builder
 	public record FindAllResponse(
+		Long id,
 		String content,
 		MemberResponse member,
 		List<PostImageResponse> postImageResponse,

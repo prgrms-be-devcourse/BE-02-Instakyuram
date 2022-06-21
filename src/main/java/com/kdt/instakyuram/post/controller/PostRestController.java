@@ -2,6 +2,7 @@ package com.kdt.instakyuram.post.controller;
 
 import java.util.List;
 
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +29,7 @@ public class PostRestController {
 
 	@PostMapping
 	public ApiResponse<PostResponse.CreateResponse> posting(
-		@RequestBody PostRequest.CreateRequest request
+		PostRequest.CreateRequest request
 	) {
 		return new ApiResponse<>(postService.create(
 			request.memberId(), request.content(), request.postImages()
@@ -49,6 +50,12 @@ public class PostRestController {
 	public ApiResponse<PostLikeResponse> unlike(@PathVariable Long id,
 		@RequestBody PostLikeRequest postLikeRequest) {
 		return new ApiResponse<>(postService.unlike(id, postLikeRequest.memberId()));
+	}
+
+	@GetMapping("/{id}/image/{serverFileName}")
+	public FileSystemResource getImage(@PathVariable Long id, @PathVariable String serverFileName)
+	{
+		return postService.findImage(id, serverFileName);
 	}
 
 }

@@ -1,7 +1,9 @@
 package com.kdt.instakyuram.post.service;
 
 import java.util.List;
+import java.util.stream.Stream;
 
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -98,4 +100,11 @@ public class PostService {
 			})
 			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
 	}
+
+	public FileSystemResource findImage(Long postId, String serverFileName) {
+		return postRepository.findById(postId)
+			.map(post -> postImageService.findByServerFileName(serverFileName))
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+	}
+
 }

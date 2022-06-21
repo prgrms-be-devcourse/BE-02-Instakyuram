@@ -12,4 +12,12 @@ public record PostRequest() {
 		List<MultipartFile> postImages
 	) { }
 
+	public record UpdateRequest(
+		Long memberId,
+		String content
+	) {}
+
+	public record DeleteRequest(Long memberId
+	) {
+	}
 }

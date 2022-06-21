@@ -40,12 +40,12 @@ public class PostRestController {
 		return new ApiResponse<>(postService.findAll(memberId));
 	}
 
-	@PostMapping("/likes/{id}/like")
+	@PostMapping("/{id}/like")
 	public ApiResponse<PostLikeResponse> like(@PathVariable Long id, @RequestBody PostLikeRequest postLikeRequest) {
 		return new ApiResponse<>(postService.like(id, postLikeRequest.memberId()));
 	}
 
-	@PostMapping("/likes/{id}/unlike")
+	@PostMapping("/{id}/unlike")
 	public ApiResponse<PostLikeResponse> unlike(@PathVariable Long id,
 		@RequestBody PostLikeRequest postLikeRequest) {
 		return new ApiResponse<>(postService.unlike(id, postLikeRequest.memberId()));

@@ -86,13 +86,16 @@ public class PostConverter {
 	}
 
 	public PostLike toPostLike(PostResponse postResponse, MemberResponse memberResponse) {
+		Post post = Post.builder()
+			.id(postResponse.id())
+			.build();
+		Member member = Member.builder()
+			.id(memberResponse.id())
+			.build();
+
 		return PostLike.builder()
-			.post(Post.builder()
-				.id(postResponse.id())
-				.build())
-			.member(Member.builder()
-				.id(memberResponse.id())
-				.build())
+			.post(post)
+			.member(member)
 			.build();
 	}
 }

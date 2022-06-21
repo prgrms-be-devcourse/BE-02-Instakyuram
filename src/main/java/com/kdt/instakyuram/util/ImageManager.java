@@ -22,11 +22,19 @@ public class ImageManager {
 			logger.warn("이미지 파일을 저장하면서 오류가 발생하였습니다.");
 			throw new RuntimeException("이미지 파일을 저장하면서 오류가 발생하였습니다.", e);
 		}
-
 	}
 
 	public static FileSystemResource getFileResource(String path, String fileName) {
 		return new FileSystemResource(path + fileName);
+	}
+
+	public static void delete(String path, String serverFileName) {
+		File file = new File(path + serverFileName);
+		if (!file.exists()) {
+			return;
+		}
+
+		file.delete();
 	}
 
 }

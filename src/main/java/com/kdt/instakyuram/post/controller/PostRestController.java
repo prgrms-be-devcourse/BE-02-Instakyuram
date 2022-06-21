@@ -3,7 +3,9 @@ package com.kdt.instakyuram.post.controller;
 import java.util.List;
 
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +41,16 @@ public class PostRestController {
 	@GetMapping("/{memberId}")
 	public ApiResponse<List<PostResponse.FindAllResponse>> findAll(@PathVariable Long memberId) {
 		return new ApiResponse<>(postService.findAll(memberId));
+	}
+
+	@PatchMapping("/{id}")
+	public ApiResponse<PostResponse.UpdateResponse> update(@PathVariable Long id, @RequestBody PostRequest.UpdateRequest request) {
+		return new ApiResponse<>(postService.update(id, request.memberId(), request.content()));
+	}
+
+	@DeleteMapping("/{id}")
+	public ApiResponse<Long> delete(@PathVariable Long id, @RequestBody PostRequest.DeleteRequest request) {
+		return new ApiResponse<>(postService.delete(id, request.memberId()));
 	}
 
 	@PostMapping("/{id}/like")

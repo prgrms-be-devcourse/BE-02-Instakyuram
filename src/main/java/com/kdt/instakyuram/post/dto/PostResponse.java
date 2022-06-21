@@ -28,4 +28,9 @@ public record PostResponse(Long id, MemberResponse memberResponse, String conten
 		int totalPostLike
 	) { }
 
+	public record UpdateResponse(
+		Long id,
+		String content
+	) {
+	}
 }

@@ -1,5 +1,6 @@
 package com.kdt.instakyuram.post.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,6 +49,25 @@ public class PostConverter {
 			.build();
 	}
 
+	public List<PostImage> toPostImages(List<MultipartFile> files, Post post) {
+		List<PostImage> postImages = new ArrayList<>();
+		for (MultipartFile file : files) {
+			String originalFileName = file.getOriginalFilename();
+			String serverFileName = UUID.randomUUID() + extractExt(originalFileName);
+
+			postImages.add(
+				PostImage.builder()
+					.post(post)
+					.originalFileName(originalFileName)
+					.serverFileName(serverFileName)
+					.path(path)
+					.size(file.getSize())
+					.build());
+		}
+
+		return postImages;
+	}
+
 	private static String extractExt(String originalFileName) {
 		return originalFileName.substring(
 			originalFileName.lastIndexOf(".")
@@ -86,17 +106,25 @@ public class PostConverter {
 			.build();
 	}
 
-	public PostLike toPostLike(PostResponse postResponse, MemberResponse memberResponse) {
+	public PostLike toPostLike(Long postId, Long memberId) {
 		Post post = Post.builder()
-			.id(postResponse.id())
+			.id(postId)
 			.build();
 		Member member = Member.builder()
-			.id(memberResponse.id())
+			.id(memberId)
 			.build();
 
 		return PostLike.builder()
 			.post(post)
 			.member(member)
 			.build();
+	}
+
+	public PostResponse.UpdateResponse toUpdateResponse(Post post) {
+		return new PostResponse.UpdateResponse(post.getId(), post.getContent());
+	}
+
+	public PostImageResponse.DeleteResponse toDeletePostImageResponse(PostImage postImage) {
+		return new PostImageResponse.DeleteResponse(postImage.getServerFileName(), postImage.getPath());
 	}
 }

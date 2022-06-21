@@ -27,6 +27,7 @@ public class PostImageService {
 
 	@Transactional
 	public void save(List<MultipartFile> images, Post post) {
+		// [IK-203] todo: images null 처리 해줘야 함 -> java.lang.NullPointerException: Cannot invoke "java.util.List.iterator()" because "images" is null
 		for (MultipartFile image : images) {
 			PostImage postImage = postConverter.toPostImage(image, post);
 			ImageUploader.upload(image, postImage.getServerFileName(), postImage.getPath());

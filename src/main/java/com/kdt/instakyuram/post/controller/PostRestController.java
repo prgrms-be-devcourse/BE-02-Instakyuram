@@ -27,8 +27,7 @@ public class PostRestController {
 	}
 
 	@PostMapping
-	public ApiResponse<PostResponse.CreateResponse> posting(
-		@RequestBody PostRequest.CreateRequest request
+	public ApiResponse<PostResponse.CreateResponse> posting(PostRequest.CreateRequest request
 	) {
 		return new ApiResponse<>(postService.create(
 			request.memberId(), request.content(), request.postImages()

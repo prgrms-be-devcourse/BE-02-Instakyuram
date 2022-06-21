@@ -1,6 +1,6 @@
 package com.kdt.instakyuram.security.jwt;
 
-public class JwtAccessTokenNotFoundException extends RuntimeException {
+public class JwtAccessTokenNotFoundException extends JwtTokenNotFoundException {
 	public JwtAccessTokenNotFoundException() {
 	}
 

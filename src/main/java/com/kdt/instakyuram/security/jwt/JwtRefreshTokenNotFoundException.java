@@ -1,8 +1,8 @@
 package com.kdt.instakyuram.security.jwt;
 
-public class JwtRefreshTokenNotFoundException extends RuntimeException{
-
+public class JwtRefreshTokenNotFoundException extends JwtTokenNotFoundException {
 	public JwtRefreshTokenNotFoundException() {
+		super();
 	}
 
 	public JwtRefreshTokenNotFoundException(String message) {

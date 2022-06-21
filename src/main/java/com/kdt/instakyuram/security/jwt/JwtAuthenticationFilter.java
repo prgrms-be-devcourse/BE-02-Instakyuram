@@ -109,7 +109,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	private boolean isValidRefreshToken(String refreshToken, String accessToken) {
-		TokenResponse foundRefreshToken = this.tokenService.findByRefreshToken(refreshToken);
+		TokenResponse foundRefreshToken = this.tokenService.findByToken(refreshToken);
 		String username = this.jwt.decode(accessToken).userId;
 		if (username.equals(foundRefreshToken.userId())) {
 			try {

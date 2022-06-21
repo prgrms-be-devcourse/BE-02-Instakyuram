@@ -15,9 +15,10 @@ public class TokenService {
 		this.tokenRepository = tokenRepository;
 	}
 
-	public TokenResponse findByRefreshToken(String refreshToken) {
-		Token token = tokenRepository.findById(refreshToken).orElseThrow(JwtRefreshTokenNotFoundException::new);
-		return new TokenResponse(token.getRefreshToken(), token.getUserId().toString());
+	public TokenResponse findByToken(String token) {
+		Token foundToken = tokenRepository.findById(token).orElseThrow(JwtTokenNotFoundException::new);
+
+		return new TokenResponse(foundToken.getRefreshToken(), foundToken.getUserId().toString());
 	}
 
 	public String save(String refreshToken, Long userId) {

@@ -6,4 +6,6 @@ import com.kdt.instakyuram.comment.dto.CommentResponse;
 
 public interface CommentGiver {
 	List<CommentResponse> findByPostId(Long postId);
+
+	void delete(Long id);
 }

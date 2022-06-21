@@ -1,13 +1,13 @@
 package com.kdt.instakyuram.post.service;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.post.domain.PostLikeRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
 import com.kdt.instakyuram.post.dto.PostLikeResponse;
+import com.kdt.instakyuram.post.dto.PostResponse;
 
 @Service
 @Transactional(readOnly = true)
@@ -20,14 +20,31 @@ public class PostLikeService {
 		this.postConverter = postConverter;
 	}
 
-	public List<PostLikeResponse> findByPostId(Long postId) {
-		return postLikeRepository.findByPostId(postId).stream()
-			.map(postConverter::toPostLikeResponse)
-			.toList();
-	}
-
 	public int countByPostId(Long postId) {
 		return postLikeRepository.countByPostId(postId);
 	}
 
+	@Transactional
+	public PostLikeResponse like(PostResponse post, MemberResponse member) {
+		if (postLikeRepository.existsPostLikeByPostIdAndMemberId(post.id(), member.id())) {
+			throw new IllegalArgumentException("이미 좋아요 상태입니다.");
+		}
+
+		postLikeRepository.save(postConverter.toPostLike(post, member));
+		int likes = postLikeRepository.countByPostId(post.id());
+
+		return new PostLikeResponse(post.id(), likes, true);
+	}
+
+	@Transactional
+	public PostLikeResponse unlike(PostResponse post, MemberResponse member) {
+		return postLikeRepository.findByPostIdAndMemberId(post.id(), member.id())
+			.map(postLike -> {
+				postLikeRepository.delete(postLike);
+				int likes = postLikeRepository.countByPostId(post.id());
+
+				return new PostLikeResponse(post.id(), likes, false);
+			})
+			.orElseThrow(() -> new IllegalArgumentException("이미 좋아요 취소 상태입니다. "));
+	}
 }

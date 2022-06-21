@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<th:block th:replace="fragments/head :: headFragment('')"></th:block>
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+
+<script>
+    // 회원가입 처리하기
+    function joinRequest() {
+        axios
+            .post("/api/members/signup",
+                {
+                    headers: {
+                        'Content-type': 'application/json',
+                    },
+                    username: document.getElementById("username").value,
+                    password: document.getElementById("password").value,
+                    name: document.getElementById("name").value,
+                    email: document.getElementById("email").value,
+                    phoneNumber: document.getElementById("phoneNumber").value
+                }
+            )
+            .then(response => {
+                alert("회원가입이 정상적으로 완료되었습니다.")
+                window.location.href = "http://localhost:8080/api/members/login";
+            })
+            .catch(error => {
+                alert("오류가 발생했습니다. \n" + error);
+            })
+    }
+
+    // 아이디 중복처리
+
+    // 이메일 중복처리
+</script>
+<style>
+    * {
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .text_span {
+        color : #8E8E8E
+    }
+
+    main {
+        height: 600px;
+        width: 450px;
+        padding: 50px 0;
+        border: #EFEFEF solid 2px;
+        margin: 100px auto;
+        text-align: center;
+        flex-direction: column;
+    }
+
+    .logo {
+        margin-bottom: 50px;
+        font-size: 50px;
+        font-family: 'Lobster', cursive;
+    }
+
+    .other_input {
+        height: 45px;
+        width: 300px;
+        margin-bottom: 10px;
+        background-color: #FAFAFA;
+        border: #EFEFEF 1px solid;
+        border-radius: 6px;
+        padding-left: 10px;
+        align-content: center;
+    }
+    .uk_input {
+        height: 45px;
+        width: 230px;
+        margin-bottom: 10px;
+        background-color: #FAFAFA;
+        border: #EFEFEF 1px solid;
+        border-radius: 6px;
+        padding-left: 10px;
+        align-content: center;
+    }
+    .login_btn {
+        width: 300px;
+        height: 35px;
+        border-radius: 6px;
+        border: white;
+        margin-bottom: 100px;
+        background-color: #458EFF;
+        color: #FFFFFF;
+        font-size: 17px;
+    }
+
+    .duplicate_btn {
+        width: 70px;
+        height: 25px;
+        border-radius: 6px;
+        border: white;
+        margin-bottom: 10px;
+        background-color: #8E8E8E;
+        color: #FFFFFF;
+        font-size: 13px;
+    }
+</style>
+
+<main>
+    <div class="logo">Instakuyram</div><br>
+    <span class="text_span" style="color: #8E8E8E">친구들의 사진과 동영상을 보려면 가입하세요.</span>
+     <br><br><br>
+
+    <input type="email" class="uk_input" id="email" name="email" placeholder="이메일을 입력하세요">
+    <input type="button" class="duplicate_btn" value="중복확인" onclick="joinRequest()">
+
+    <input type="text" class="uk_input" id="username" name="username" placeholder="아이디를 입력하세요">
+    <input type="button" class="duplicate_btn" value="중복확인" onclick="joinRequest()">
+
+    <input type="text"  class="other_input" id="name" name="name" placeholder="이름을 입력하세요"> <br>
+    <input type="text" class="other_input" id="phoneNumber" name="phoneNumber" placeholder="핸드폰번호를 입력하세요"> <br>
+    <input type="password" class="other_input" id="password" name="password" placeholder="패스워드를 입력하세요."> <br>
+    <span style="color : #8E8E8E; font-size: 13px; ">
+        서비스를 이용하는 사람이 회원님의 연락처 정보를 <br> Instakyuram에 업로드했을 수도 있습니다. 더 알아보기
+    </span>
+    <input type="button" class="login_btn" value="가입하기" onclick="joinRequest()">
+</main>

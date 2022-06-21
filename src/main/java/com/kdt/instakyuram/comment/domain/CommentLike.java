@@ -30,6 +30,10 @@ public class CommentLike {
 
 	protected CommentLike() {/*no-op*/}
 
+	public CommentLike(Comment comment, Member member) {
+		this(null, comment, member);
+	}
+
 	public CommentLike(Long id, Comment comment, Member member) {
 		this.id = id;
 		this.comment = comment;

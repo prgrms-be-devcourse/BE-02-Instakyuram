@@ -37,7 +37,7 @@ public class PostConverter {
 
 	public PostImage toPostImage(MultipartFile file, Post post) {
 		String originalFileName = file.getOriginalFilename();
-		String serverFileName = UUID.randomUUID().toString() + extractExt(originalFileName);
+		String serverFileName = UUID.randomUUID() + extractExt(originalFileName);
 
 		return PostImage.builder()
 			.post(post)
@@ -48,15 +48,20 @@ public class PostConverter {
 			.build();
 	}
 
+	private static String extractExt(String originalFileName) {
+		return originalFileName.substring(
+			originalFileName.lastIndexOf(".")
+		);
+	}
+
 	public PostResponse.FindAllResponse toDetailResponse(MemberResponse memberResponse, Post post,
 		List<PostImageResponse> postImageResponse, List<CommentResponse> commentResponse,
-		List<PostLikeResponse> postLikeResponse, int totalPostLike) {
+		int totalPostLike) {
 		return PostResponse.FindAllResponse.builder()
 			.content(post.getContent())
 			.member(memberResponse)
 			.postImageResponse(postImageResponse)
 			.commentResponse(commentResponse)
-			.postLikeResponse(postLikeResponse)
 			.totalPostLike(totalPostLike)
 			.build();
 
@@ -70,12 +75,6 @@ public class PostConverter {
 			.build();
 	}
 
-	private static String extractExt(String originalFileName) {
-		return originalFileName.substring(
-			originalFileName.lastIndexOf(".")
-		);
-	}
-
 	public PostImageResponse toPostImageResponse(PostImage postImage) {
 		return PostImageResponse.builder()
 			.id(postImage.getId())
@@ -86,10 +85,17 @@ public class PostConverter {
 			.build();
 	}
 
-	public PostLikeResponse toPostLikeResponse(PostLike postLike) {
-		return PostLikeResponse.builder()
-			.id(postLike.getId())
-			.memberResponse(toMemberResponse(postLike.getMember()))
+	public PostLike toPostLike(PostResponse postResponse, MemberResponse memberResponse) {
+		Post post = Post.builder()
+			.id(postResponse.id())
+			.build();
+		Member member = Member.builder()
+			.id(memberResponse.id())
+			.build();
+
+		return PostLike.builder()
+			.post(post)
+			.member(member)
 			.build();
 	}
 }

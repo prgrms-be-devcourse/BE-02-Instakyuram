@@ -1,10 +1,13 @@
 package com.kdt.instakyuram.member.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -21,17 +24,25 @@ public class Member extends BaseEntity {
 	private Long id;
 
 	@Size(min = 6, max = 24)
+	@Column(unique = true)
+	@Pattern(regexp = "^[a-z0-9]*$")
+	@NotBlank
 	private String username;
 
 	@Size(min = 2, max = 16)
+	@NotBlank
 	private String name;
 
+	@NotBlank
 	private String password;
 
-	@Size(max = 11)
+	@Size(min = 11, max = 11)
+	@NotBlank
 	private String phoneNumber;
 
 	@Email
+	@Column(unique = true)
+	@NotBlank
 	private String email;
 
 	protected Member() {

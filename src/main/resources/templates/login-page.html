@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <title>login</title>
+</head>
+<body>
+<main>
+    <div class="logo">Instakyuram</div>
+    <form th:action="@{/signin}" method="post">
+        <div class="login_id">
+            <input type="text" id="username" name="username" placeholder="사용자 이름">
+        </div>
+        <div class="login_password">
+            <input type="password" id="password" name="password" placeholder="비밀번호">
+        </div>
+        <button class="login_btn" type="submit">Sign in</button>
+    </form>
+    <a th:href="@{/signup}">
+        <button class="login_btn">Sign up</button>
+    </a>
+</main>
+</body>
+</html>

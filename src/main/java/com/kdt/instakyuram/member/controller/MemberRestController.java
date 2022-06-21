@@ -1,8 +1,13 @@
 package com.kdt.instakyuram.member.controller;
 
+import java.util.Arrays;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,17 +19,21 @@ import com.kdt.instakyuram.common.ApiResponse;
 import com.kdt.instakyuram.member.dto.MemberRequest;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberService;
+import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 import com.kdt.instakyuram.security.jwt.JwtConfigure;
+import com.kdt.instakyuram.token.service.TokenService;
 
 @RestController
 @RequestMapping("/api/members")
 public class MemberRestController {
 
 	private final MemberService memberService;
+	private final TokenService tokenService;
 	private final JwtConfigure jwtConfigure;
 
-	public MemberRestController(MemberService memberService, JwtConfigure jwtConfigure) {
+	public MemberRestController(MemberService memberService, TokenService tokenService, JwtConfigure jwtConfigure) {
 		this.memberService = memberService;
+		this.tokenService = tokenService;
 		this.jwtConfigure = jwtConfigure;
 	}
 
@@ -53,5 +62,21 @@ public class MemberRestController {
 		return new ApiResponse<>(signinResponse);
 	}
 
+	@PostMapping("/signout")
+	public ApiResponse<String> signout(@AuthenticationPrincipal JwtAuthentication principal, HttpServletRequest request,
+		HttpServletResponse response) {
+		tokenService.save(principal.token(), Long.parseLong(principal.id()));
+		Arrays.stream(request.getCookies())
+			.filter(cookie -> cookie.getName().equals(jwtConfigure.refreshToken().header()))
+			.findFirst()
+			.ifPresent(cookie -> tokenService.deleteByToken(cookie.getValue()));
+		Cookie accessTokenCookie = new Cookie(jwtConfigure.accessToken().header(), null);
+		Cookie refreshTokenCookie = new Cookie(jwtConfigure.refreshToken().header(), null);
+		accessTokenCookie.setMaxAge(0);
+		refreshTokenCookie.setMaxAge(0);
+		response.addCookie(accessTokenCookie);
+		response.addCookie(refreshTokenCookie);
 
+		return new ApiResponse<>("signed out");
+	}
 }

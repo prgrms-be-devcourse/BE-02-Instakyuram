@@ -45,25 +45,31 @@ public class Member extends BaseEntity {
 	@NotBlank
 	private String email;
 
+	private String introduction;
+
 	protected Member() {
 	}
 
 	@Builder
-	public Member(Long id, String username, String name, String password, String phoneNumber, String email) {
+	public Member(Long id, String username, String name, String password, String phoneNumber, String email,
+		String introduction) {
 		this.id = id;
 		this.username = username;
 		this.name = name;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
 		this.email = email;
+		this.introduction = introduction;
 	}
 
-	public Member(String username, String password, String name, String phoneNumber, String email) {
+	public Member(String username, String password, String name, String phoneNumber, String email,
+		String introduction) {
 		this.name = name;
 		this.username = username;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
 		this.email = email;
+		this.introduction = introduction;
 	}
 
 	public Long getId() {
@@ -88,6 +94,10 @@ public class Member extends BaseEntity {
 
 	public String getEmail() {
 		return email;
+	}
+
+	public String getIntroduction() {
+		return introduction;
 	}
 
 	@Override

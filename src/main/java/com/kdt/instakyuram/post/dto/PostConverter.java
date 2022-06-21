@@ -31,7 +31,8 @@ public class PostConverter {
 			member.getUsername(),
 			member.getName(),
 			member.getEmail(),
-			member.getPhoneNumber()
+			member.getPhoneNumber(),
+			member.getIntroduction()
 		);
 	}
 

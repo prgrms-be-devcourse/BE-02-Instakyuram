@@ -77,7 +77,6 @@
             url: '/api/friendships/follow/[[${profileInfo.id}]]'
         }).then((res) => {
             toUnFollowButton();
-            console.log([[${profileInfo.followerCount}]]);
             console.log(res);
         }).catch(error => {
             alert(error);
@@ -90,7 +89,6 @@
             url: '/api/friendships/unfollow/[[${profileInfo.id}]]'
         }).then((res) => {
             toFollowButton();
-            [${profileInfo.followerCount}] = 2;
             console.log(res);
         }).catch(error => {
             alert(error);

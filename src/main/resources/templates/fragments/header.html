@@ -4,7 +4,7 @@
     <header>
         <div class="header__logo">
             <a class="navbar-brand" th:href="@{/}">
-                <img class="header__logo__img" th:src="@{images/logo.png}" alt="logo"/>
+                <img class="header__logo__img" th:src="@{/images/logo.png}" alt="logo"/>
             </a>
         </div>
         <div class="header__search">
@@ -13,19 +13,19 @@
         <ul class="navbar">
             <li class="navbar__menu__item">
                 <a th:href="@{/}">
-                    <img class="menu__icon" th:src="@{images/icon/home.png}" alt="home"/>
+                    <img class="menu__icon" th:src="@{/images/icon/home.png}" alt="home"/>
                 </a>
             </li>
             <li class="navbar__menu__item">
-                <a href="#">
-                    <img class="menu__icon" th:src="@{images/icon/add_box.png}" alt="add"/>
+                <a th:href="@{/posts/upload}">
+                    <img class="menu__icon" th:src="@{/images/icon/add_box.png}" alt="add"/>
                 </a>
             </li>
             <li class="navbar__menu__item">
                 <a href="#">
                     <img
                             class="menu__icon"
-                            th:src="@{images/icon/explore.png}"
+                            th:src="@{/images/icon/explore.png}"
                             alt="explore"
                     />
                 </a>
@@ -34,7 +34,7 @@
                 <a href="#">
                     <img
                             class="menu__icon"
-                            th:src="@{images/icon/favorite.png}"
+                            th:src="@{/images/icon/favorite.png}"
                             alt="favorite"
                     />
                 </a>
@@ -43,7 +43,7 @@
                 <a href="#">
                     <img
                             class="menu__icon"
-                            th:src="@{images/icon/account.png}"
+                            th:src="@{/images/icon/account.png}"
                             alt="account"
                     />
                 </a>

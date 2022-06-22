@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/personal-page.css}"/>
+    <title th:text="${profileInfo.username}">username</title>
+</head>
+
+<th:block th:replace="fragments/head :: headFragment('')"></th:block>
+<body>
+<div th:replace="~{fragments/header :: headerFragment}"></div>
+<main class="personal_main">
+    <div class="main_container">
+        <div class="header_container" th:object="${profileInfo}">
+            <div class="profile_image_container">
+                <div class="profile_image_sub_container">
+                    <img th:src="@{/images/default_profile.jpeg}"
+                         alt=""
+                         srcset=""
+                         class="user_image"/>
+                </div>
+            </div>
+            <div class="profile_info_container">
+                <div class="profile_info_top">
+                    <span class="username" th:text="*{username}">pjh_jn</span>
+                    <button class="follow_button">팔로우</button>
+                </div>
+                <div class="profile_info_mid">
+                    <span class="profile_PostsC">게시물 </span><span class="post_count" th:text="*{postCount}">0</span>
+                    <span class="profile_FollowersC">팔로워 </span><span class="follower_count" th:text="*{followerCount}">0</span>
+                    <span class="profile_FollowsC">팔로우 </span><span class="follow_count"
+                                                                    th:text="*{followCount}">0</span>
+                </div>
+                <div class="profile_info_bottom">
+                    <h1 class="name" th:text="*{name}">박진형</h1>
+                    <span class="introduction" th:text="*{introduction}">자기소개</span>
+                </div>
+            </div>
+        </div>
+        <div class="tabs">
+            <div class="tab_item_container">
+                <svg aria-label="게시물" class="_8-yf5 tab_item " fill="#262626" height="12" viewBox="0 0 48 48"
+                     width="12">
+                    <path clip-rule="evenodd"
+                          d="M45 1.5H3c-.8 0-1.5.7-1.5 1.5v42c0 .8.7 1.5 1.5 1.5h42c.8 0 1.5-.7 1.5-1.5V3c0-.8-.7-1.5-1.5-1.5zm-40.5 3h11v11h-11v-11zm0 14h11v11h-11v-11zm11 25h-11v-11h11v11zm14 0h-11v-11h11v11zm0-14h-11v-11h11v11zm0-14h-11v-11h11v11zm14 28h-11v-11h11v11zm0-14h-11v-11h11v11zm0-14h-11v-11h11v11z"
+                          fill-rule="evenodd"></path>
+                </svg>
+                <span class="tab_item">게시물</span>
+            </div>
+        </div>
+        <div class="article_container">
+
+        </div>
+        <div class="Container_Profile_Posts">
+        </div>
+    </div>
+</main>
+</body>
+<script th:inline="javascript">
+    const toFollowButton = () => {
+        document.querySelector(".follow_button").innerText = "팔로우";
+        document.querySelector('.follow_button').setAttribute("onClick","followUser()");
+    }
+
+    const toUnFollowButton = () => {
+        document.querySelector(".follow_button").innerText = "언팔로우";
+        document.querySelector('.follow_button').setAttribute("onClick","unFollowUser()");
+    }
+
+    const login = () => {
+        location.href="/members/signin";
+    }
+
+    const followUser = () => {
+        axios({
+            method: "GET",
+            url: '/api/friendships/follow/[[${profileInfo.id}]]'
+        }).then((res) => {
+            toUnFollowButton();
+            console.log([[${profileInfo.followerCount}]]);
+            console.log(res);
+        }).catch(error => {
+            alert(error);
+        })
+    }
+
+    const unFollowUser = () => {
+        axios({
+            method: "GET",
+            url: '/api/friendships/unfollow/[[${profileInfo.id}]]'
+        }).then((res) => {
+            toFollowButton();
+            [${profileInfo.followerCount}] = 2;
+            console.log(res);
+        }).catch(error => {
+            alert(error);
+        })
+    }
+
+    const editProfile = () => {
+        console.log("edit")
+        location.href = "/member/profile/edit";
+    }
+
+    const checkFollowing = () => {
+        axios({
+            method: "GET",
+            url: '/api/friendships/[[${profileInfo.id}]]'
+        }).then((res) => {
+            if(res.data.response) {
+               toUnFollowButton();
+            } else {
+                toFollowButton();
+            }
+        }).catch(error => {
+            alert(error);
+        })
+    }
+
+    if ([[${auth}]] == null) {
+        document.querySelector('.follow_button').innerText = "로그인";
+        document.querySelector('.follow_button').setAttribute("onClick","login()");
+    } else if ([[${auth}]] === true) {
+        document.querySelector('.follow_button').innerText = "프로필 편집";
+        document.querySelector('.follow_button').setAttribute("onClick","editProfile()");
+    } else {
+        checkFollowing();
+    }
+</script>
+
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const username = [[${profileInfo.username}]];
+    console.log("username = " + username);
+    /*]]>*/
+    getThumbnails(username);
+
+    function getThumbnails(username) {
+        axios({
+            method: "GET",
+            url: '/api/posts/thumbnails',
+            params: {
+                "username": username
+            }
+        }).then((res) => {
+            renderThumbnail(res.data.response);
+            console.log(res);
+        }).catch(error => {
+            console.log(error);
+        })
+    }
+
+    const renderThumbnail = (thumbnails) => {
+        let thumbnailHTML = "";
+        for (let i = 0; i <= thumbnails.length / 3; i++) {
+            thumbnailHTML += "<div class=\"article_row\">"
+            for (let j = i * 3; j < i * 3 + 3; j++) {
+                if (j < thumbnails.length) {
+                    let thumbnail = thumbnails[j];
+                    thumbnailHTML += "<div class=\"article\"><img class=\"article_img\" src='http://localhost:8080/api/posts/" +
+                        thumbnail.postId +
+                        "/image/" +
+                        thumbnail.serverFileName +
+                        "' alt='articleImage'></div>";
+                } else {
+                    thumbnailHTML += "<div class='article'></div>";
+                }
+            }
+            thumbnailHTML += "</div>"
+        }
+        document.querySelector(".article_container").innerHTML = thumbnailHTML;
+        console.log(thumbnailHTML);
+    }
+</script>
+</html>

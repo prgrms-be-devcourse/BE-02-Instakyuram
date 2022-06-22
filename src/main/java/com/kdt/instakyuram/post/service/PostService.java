@@ -22,7 +22,7 @@ import com.kdt.instakyuram.util.ImageManager;
 
 @Service
 @Transactional(readOnly = true)
-public class PostService {
+public class PostService implements PostGiver {
 
 	private final PostRepository postRepository;
 	private final PostConverter postConverter;
@@ -143,4 +143,13 @@ public class PostService {
 
 		return id;
 	}
+
+	@Override
+	public List<PostImageResponse.ThumbnailResponse> findPostThumbnailsByMemberId(Long memberId) {
+		return postRepository.findAllByMemberId(memberId).stream()
+			.map(Post::getId)
+			.map(postImageService::findThumbnailByPostId)
+			.toList();
+	}
+
 }

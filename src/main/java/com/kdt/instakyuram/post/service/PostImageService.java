@@ -51,4 +51,16 @@ public class PostImageService {
 			.map(postConverter::toDeletePostImageResponse)
 			.toList();
 	}
+
+	public PostImageResponse.ThumbnailResponse findThumbnailByPostId(Long postId) {
+		PostImage postImage = postImageRepository.findByPostId(postId).get(0);
+
+		return new PostImageResponse.ThumbnailResponse(
+			postId,
+			postImage.getServerFileName(),
+			postImage.getPath(),
+			postImage.getSize()
+		);
+	}
+
 }

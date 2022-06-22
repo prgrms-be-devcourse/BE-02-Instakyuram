@@ -99,4 +99,12 @@ public class MemberService implements MemberGiver {
 
 		return new MemberResponse.SigninResponse(foundMember.getId(), username, accessToken, refreshToken);
 	}
+
+	public Long countMyFollowing(Long memberId) {
+		return followService.countMyFollowing(memberId);
+	}
+
+	public Long countMyFollower(Long memberId) {
+		return followService.countMyFollower(memberId);
+	}
 }

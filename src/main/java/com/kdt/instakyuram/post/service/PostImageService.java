@@ -51,4 +51,11 @@ public class PostImageService {
 			.map(postConverter::toDeletePostImageResponse)
 			.toList();
 	}
+
+	public PostImageResponse.ThumbnailResponse findThumbnailByPostId(Long postId) {
+		return postImageRepository.findTop1ByPostId(postId)
+			.map(postImage -> postConverter.toThumbnailResponse(postId, postImage))
+			.orElseThrow(() -> new NotFoundException("이미지가 존재하지 않습니다."));
+	}
+
 }

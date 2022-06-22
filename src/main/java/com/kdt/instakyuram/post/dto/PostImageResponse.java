@@ -7,4 +7,8 @@ public record PostImageResponse(Long id, String originalFileName, String serverF
 
 	public record DeleteResponse(String serverFileName, String path) {
 	}
+
+	public record ThumbnailResponse(Long postId, String serverFileName, String path, Long size) {
+	}
+
 }

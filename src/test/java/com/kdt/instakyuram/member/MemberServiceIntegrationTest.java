@@ -13,6 +13,8 @@ import javax.validation.ConstraintViolationException;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.follow.domain.Follow;
 import com.kdt.instakyuram.member.domain.Member;
+import com.kdt.instakyuram.member.domain.MemberRepository;
 import com.kdt.instakyuram.member.dto.MemberConverter;
 import com.kdt.instakyuram.member.dto.MemberRequest;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
+import com.kdt.instakyuram.member.service.MemberService;
 
 @SpringBootTest
 @Transactional
@@ -41,7 +45,17 @@ class MemberServiceIntegrationTest {
 	@Autowired
 	private MemberConverter memberConverter;
 
+	@Autowired
+	private MemberService memberService;
+
+	@Autowired
+	private MemberRepository memberRepository;
+
 	String password = "@Test12345678";
+
+	@BeforeEach
+	public void eachInit() {
+	}
 
 	@Test
 	@Transactional
@@ -104,7 +118,7 @@ class MemberServiceIntegrationTest {
 					.name(name)
 					.build();
 
-				entityManager.persist(member);
+				memberRepository.save(member);
 
 				members.add(member);
 			}
@@ -279,6 +293,62 @@ class MemberServiceIntegrationTest {
 
 		//when, then
 		assertThatThrownBy(() -> memberGiver.findById(notExistId)).isInstanceOf(NotFoundException.class);
+	}
+
+	@Test
+	@Transactional
+	@DisplayName("나를 따르는 사람의 수 구하기 =: follower 수")
+	void testCountMyFollower() {
+		//given
+		List<Member> members = getDemoMembers();
+		Member my = members.get(0);
+		Member fromA = members.get(1);
+		Member fromB = members.get(2);
+
+		entityManager.persist(Follow.builder()
+			.memberId(fromA.getId())
+			.targetId(my.getId())
+			.build());
+
+		entityManager.persist(Follow.builder()
+			.memberId(fromB.getId())
+			.targetId(my.getId())
+			.build());
+
+		Long expectedMyFollower = (long)(List.of(fromA, fromB).size());
+
+		//when
+		Long myFollower = memberService.countMyFollower(my.getId());
+
+		//then
+		Assertions.assertNotNull(myFollower);
+		assertThat(myFollower).isEqualTo(expectedMyFollower);
+	}
+
+	@Test
+	@Transactional
+	@DisplayName("내가 따르는 사람의 수 구하기 =: following 수")
+	void testCountMyFollowing() {
+		// given
+		List<Member> members = getDemoMembers();
+		Member my = members.get(2);
+		Member followingA = members.get(1);
+
+		entityManager.persist(
+			Follow.builder()
+				.memberId(my.getId())
+				.targetId(followingA.getId())
+				.build()
+		);
+
+		Long expectedFollowing = (long)List.of(followingA).size();
+
+		// when
+		Long following = memberService.countMyFollowing(my.getId());
+
+		// then
+		Assertions.assertNotNull(following);
+		assertThat(following).isEqualTo(expectedFollowing);
 	}
 
 }

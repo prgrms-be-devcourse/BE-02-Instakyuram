@@ -10,4 +10,9 @@ public class PostController {
 	public String postsPage() {
 		return "post-list";
 	}
+
+	@GetMapping("/posts/upload")
+	public String renderUpload() {
+		return "/modal/post-upload";
+	}
 }

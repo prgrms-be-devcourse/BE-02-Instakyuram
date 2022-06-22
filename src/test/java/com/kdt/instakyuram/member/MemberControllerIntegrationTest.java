@@ -18,6 +18,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -52,6 +58,7 @@ public class MemberControllerIntegrationTest {
 
 		PageDto.Request request = new PageDto.Request(requestPage, requestSize);
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
+		setMockAnonymousAuthenticationToken();
 		List<Member> members = getMembers();
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
@@ -68,6 +75,22 @@ public class MemberControllerIntegrationTest {
 		String htmlContents = result.getResponse().getContentAsString();
 
 		Assertions.assertThat(htmlContents).contains(htmlTittleContent);
+	}
+
+	/**
+	 * note : 필요한 데이터를 저장할 때, jpaAudit이 동작하게 된다 (통합테스트에서만)
+	 *   @WithMockUser("MEMBER") 사용시 src 내부에 jpaAudit 부분에 castException이 난다.
+	 *   만약 임시 데이터를 사용하기 위해서는 해당 메소드를 한번 호출하면 해결된다.
+	 */
+	private void setMockAnonymousAuthenticationToken() {
+		SimpleGrantedAuthority role_anonymous = new SimpleGrantedAuthority("ROLE_ANONYMOUS");
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(role_anonymous);
+		Authentication authentication = new AnonymousAuthenticationToken("anonymous", "anonymous", authorities);
+
+		SecurityContext context = SecurityContextHolder.createEmptyContext();
+		context.setAuthentication(authentication);
+		SecurityContextHolder.setContext(context);
 	}
 
 	@Test
@@ -126,3 +149,4 @@ public class MemberControllerIntegrationTest {
 		return members;
 	}
 }
+

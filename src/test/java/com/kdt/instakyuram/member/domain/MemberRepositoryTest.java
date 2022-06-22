@@ -33,11 +33,14 @@ class MemberRepositoryTest {
 	@DisplayName("Auditing 테스트 (createdBy, updatedBy 는 null 이 들어갑니다.)")
 	void testSave() {
 		//given
+		String username = "username";
 		Member member = Member.builder()
-			.username("programmer")
-			.email("programmer@programmers.com")
+			.username(username)
+			.email(username+"@programmers.com")
+			.name("program")
 			.password("rlaRla123!!")
 			.phoneNumber("01012341234")
+			.introduction("")
 			.build();
 
 		//when

@@ -1,10 +1,13 @@
 
 package com.kdt.instakyuram.security;
 
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.*;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -85,7 +88,7 @@ public class WebSecurityConfigure {
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return web -> web.ignoring().antMatchers("/static/**", "/templates/**");
+		return web -> web.ignoring().antMatchers("/css/**", "/js/**", "/webjars/**", "/images/**");
 	}
 
 	@Bean

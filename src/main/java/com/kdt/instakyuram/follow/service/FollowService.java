@@ -23,4 +23,14 @@ public class FollowService {
 			.map(Follow::getTargetId)
 			.toList();
 	}
+
+	// 내가 따르는 사람
+	public Long countMyFollowing(Long memberId) {
+		return followRepository.countByMemberId(memberId);
+	}
+
+	// 나를 따르는 사람
+	public Long countMyFollower(Long memberId) {
+		return followRepository.countByTargetId(memberId);
+	}
 }

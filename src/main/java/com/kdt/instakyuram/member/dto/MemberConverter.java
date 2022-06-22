@@ -16,13 +16,14 @@ public class MemberConverter {
 				member.getName()));
 	}
 
-	public MemberResponse toMemberResponse(Member following) {
+	public MemberResponse toMemberResponse(Member member) {
 		return MemberResponse.builder()
-			.id(following.getId())
-			.email(following.getEmail())
-			.username(following.getUsername())
-			.name(following.getName())
-			.phoneNumber(following.getPhoneNumber())
+			.id(member.getId())
+			.email(member.getEmail())
+			.username(member.getUsername())
+			.name(member.getName())
+			.phoneNumber(member.getPhoneNumber())
+			.introduction(member.getIntroduction())
 			.build();
 	}
 }

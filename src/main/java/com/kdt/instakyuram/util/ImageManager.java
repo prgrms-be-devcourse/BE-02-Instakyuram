@@ -10,7 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ImageManager {
 
-	private ImageManager() {}
+	private ImageManager() {
+	}
 
 	private static final Logger logger = LoggerFactory.getLogger(ImageManager.class);
 

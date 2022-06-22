@@ -19,6 +19,7 @@ public record PostResponse(Long id, MemberResponse memberResponse, String conten
 
 	@Builder
 	public record FindAllResponse(
+		Long id,
 		String content,
 		MemberResponse member,
 		List<PostImageResponse> postImageResponse,
@@ -27,4 +28,9 @@ public record PostResponse(Long id, MemberResponse memberResponse, String conten
 		int totalPostLike
 	) { }
 
+	public record UpdateResponse(
+		Long id,
+		String content
+	) {
+	}
 }

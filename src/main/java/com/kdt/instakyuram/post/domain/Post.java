@@ -8,21 +8,25 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.kdt.instakyuram.member.domain.Member;
 
 import lombok.Builder;
 
+@DynamicUpdate
 @Entity
 public class Post {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+
 	@NotNull
 	private String content;
 
 	@ManyToOne
-	@JoinColumn(name = "member_id", referencedColumnName = "id")
+	@JoinColumn(name = "member_id")
 	private Member member;
 
 	protected Post(){}
@@ -46,4 +50,7 @@ public class Post {
 		return member;
 	}
 
+	public void updateContent(String content) {
+		this.content = content;
+	}
 }

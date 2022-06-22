@@ -1,5 +1,3 @@
 spring:
-  application:
-    name:
   profiles:
     active: test

@@ -2,6 +2,7 @@ package com.kdt.instakyuram.post.service;
 
 import java.util.List;
 
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,13 +10,15 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kdt.instakyuram.comment.service.CommentGiver;
 import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.member.domain.Member;
-import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
+import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
+import com.kdt.instakyuram.post.dto.PostImageResponse;
 import com.kdt.instakyuram.post.dto.PostLikeResponse;
 import com.kdt.instakyuram.post.dto.PostResponse;
+import com.kdt.instakyuram.util.ImageManager;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,16 +48,22 @@ public class PostService {
 			memberGiver.findById(memberId)
 		);
 
-		Post savePost = postRepository.save(
+		Post savedPost = postRepository.save(
 			Post.builder()
 				.content(content)
 				.member(member)
 				.build()
 		);
 
-		postImageService.save(images, savePost);
+		List<PostImage> postImages = postConverter.toPostImages(images, savedPost);
+		postImageService.save(postImages);
 
-		return new PostResponse.CreateResponse(savePost.getId(), memberId, content);
+		for (int i = 0; i < postImages.size(); i++) {
+			PostImage postImage = postImages.get(i);
+			ImageManager.upload(images.get(i), postImage.getServerFileName(), postImage.getPath());
+		}
+
+		return new PostResponse.CreateResponse(savedPost.getId(), memberId, content);
 	}
 
 	public List<PostResponse.FindAllResponse> findAll(Long memberId) {
@@ -76,13 +85,24 @@ public class PostService {
 	}
 
 	@Transactional
+	public PostResponse.UpdateResponse update(Long id, Long memberId, String content) {
+		return postRepository.findByIdAndMemberId(id, memberId)
+			.map(post -> {
+				post.updateContent(content);
+
+				return postConverter.toUpdateResponse(post);
+			})
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+
+	}
+
+	@Transactional
 	public PostLikeResponse like(Long postId, Long memberId) {
 		return postRepository.findById(postId)
 			.map(post -> {
-				MemberResponse memberResponse = memberGiver.findById(memberId);
-				PostResponse postResponse = postConverter.toResponse(post);
+				memberGiver.findById(memberId);
 
-				return postLikeService.like(postResponse, memberResponse);
+				return postLikeService.like(postId, memberId);
 			})
 			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
 	}
@@ -91,11 +111,36 @@ public class PostService {
 	public PostLikeResponse unlike(Long postId, Long memberId) {
 		return postRepository.findById(postId)
 			.map(post -> {
-				MemberResponse memberResponse = memberGiver.findById(memberId);
 				PostResponse postResponse = postConverter.toResponse(post);
 
-				return postLikeService.unlike(postResponse, memberResponse);
+				return postLikeService.unlike(postResponse, memberId);
 			})
 			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+	}
+
+	public FileSystemResource findImage(Long postId, String serverFileName) {
+		return postRepository.findById(postId)
+			.map(post -> postImageService.findByServerFileName(serverFileName))
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+	}
+
+	@Transactional
+	public Long delete(Long id, Long memberId) {
+		List<PostImageResponse.DeleteResponse> deletedImages = postRepository.findByIdAndMemberId(id, memberId)
+			.map(post -> {
+				//TODO : commentGiver.delete(id);
+				postLikeService.delete(id);
+				List<PostImageResponse.DeleteResponse> images = postImageService.delete(id);
+				postRepository.delete(post);
+
+				return images;
+			})
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+
+		deletedImages.forEach(image -> {
+			ImageManager.delete(image.path(), image.serverFileName());
+		});
+
+		return id;
 	}
 }

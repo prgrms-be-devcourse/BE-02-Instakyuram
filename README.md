@@ -66,4 +66,4 @@
 
 ## ERD
 
-![image](https://user-images.githubusercontent.com/50834204/174636497-8c44ed10-6734-4eaf-90b5-2667109153e4.png)
+![image](https://user-images.githubusercontent.com/50834204/174832512-4f3741d7-8728-4135-85a0-22714ac2917a.png)

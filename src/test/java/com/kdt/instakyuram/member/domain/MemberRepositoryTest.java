@@ -15,18 +15,40 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.kdt.instakyuram.configure.TestJpaAuditConfig;
+
+@Import(TestJpaAuditConfig.class)
 @DataJpaTest
 class MemberRepositoryTest {
-	@Autowired
-	private TestEntityManager entityManager;
 
 	@Autowired
 	private MemberRepository memberRepository;
+
+	@Test
+	@DisplayName("Auditing 테스트 (createdBy, updatedBy 는 null 이 들어갑니다.)")
+	void testSave() {
+		//given
+		Member member = Member.builder()
+			.username("programmer")
+			.email("programmer@programmers.com")
+			.password("rlaRla123!!")
+			.phoneNumber("01012341234")
+			.build();
+
+		//when
+		Member savedMember = memberRepository.save(member);
+
+		//then
+		Assertions.assertThat(savedMember.getCreatedAt()).isNotNull();
+		Assertions.assertThat(savedMember.getUpdatedAt()).isNotNull();
+		Assertions.assertThat(savedMember.getCreatedBy()).isNull();
+		Assertions.assertThat(savedMember.getUpdatedBy()).isNull();
+	}
 
 	@Test
 	@DisplayName("멤버 전체 조회 (페이징)")

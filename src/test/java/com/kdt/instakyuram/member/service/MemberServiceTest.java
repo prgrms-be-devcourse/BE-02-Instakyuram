@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
-import org.assertj.core.api.Assertions;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -85,7 +84,8 @@ class MemberServiceTest {
 		given(memberConverter.toPageResponse(pagingMembers)).willReturn(pageResponse);
 
 		//when
-		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageMemberResponses = memberService.findAll(pageRequest);
+		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageMemberResponses = memberService.findAll(
+			pageRequest);
 
 		//then
 		verify(memberRepository, times(1)).findAll(pageRequest);
@@ -188,8 +188,6 @@ class MemberServiceTest {
 		});
 	}
 
-
-
 	@Test
 	@DisplayName("Sign up 테스트")
 	void testSignup() {
@@ -202,7 +200,8 @@ class MemberServiceTest {
 			request.name(),
 			request.password(),
 			request.phoneNumber(),
-			request.email()
+			request.email(),
+			""
 		);
 		MemberResponse.SignupResponse response = new MemberResponse.SignupResponse(member.getId(), request.username());
 
@@ -229,7 +228,8 @@ class MemberServiceTest {
 			request.name(),
 			request.password(),
 			request.phoneNumber(),
-			request.email()
+			request.email(),
+			""
 		);
 		String notMatchingPassword = "876543210";
 		MemberRequest.SigninRequest signinRequest = new MemberRequest.SigninRequest(member.getUsername(),
@@ -250,8 +250,14 @@ class MemberServiceTest {
 	@DisplayName("Sign in 테스트")
 	void testSignin() {
 		//given
-		Member member = new Member(1L, "pjh123", "홍길동", "encodedPassword",
-			"user123@gmail.com", "01012345678");
+		Member member = new Member(
+			1L,
+			"pjh123",
+			"홍길동",
+			"encodedPassword",
+			"user123@gmail.com",
+			"01012345678",
+			"");
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
 		MemberRequest.SigninRequest request = new MemberRequest.SigninRequest(
@@ -291,8 +297,13 @@ class MemberServiceTest {
 	@DisplayName("id로 멤버 단건 조회 성공 테스트")
 	void testFindById() {
 		//given
-		Member member = new Member(1L, "pjh123", "홍길동", "encodedPassword",
-			"user123@gmail.com", "01012345678");
+		Member member = new Member(1L,
+			"pjh123",
+			"홍길동",
+			"encodedPassword",
+			"user123@gmail.com",
+			"01012345678",
+			"");
 
 		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 

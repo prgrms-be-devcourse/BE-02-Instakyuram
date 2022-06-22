@@ -16,6 +16,7 @@ import java.util.stream.LongStream;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -331,6 +332,44 @@ class MemberServiceTest {
 		assertThatThrownBy(() -> memberService.findById(notExistId)).isInstanceOf(NotFoundException.class);
 
 		verify(memberRepository, times(1)).findById(notExistId);
+	}
+
+	@Test
+	@DisplayName("나를 따르는 사람의 수 구하기 =: follower 수")
+	void testCountMyFollower() {
+		//given
+		Long expectedMyFollower = 10L;
+		Long myId = 1L;
+
+		given(followService.countMyFollower(myId)).willReturn(expectedMyFollower);
+
+		//when
+		Long myFollower = memberService.countMyFollower(myId);
+
+		//then
+		Assertions.assertNotNull(myFollower);
+		assertThat(myFollower).isEqualTo(expectedMyFollower);
+
+		verify(followService, times(1)).countMyFollower(myId);
+	}
+
+	@Test
+	@DisplayName("내가 따르는 사람의 수 구하기 =: following 수")
+	void testCountMyFollowing() {
+		//given
+		Long expectedMyFollower = 10L;
+		Long myId = 1L;
+
+		given(followService.countMyFollowing(myId)).willReturn(expectedMyFollower);
+
+		//when
+		Long myFollowing = memberService.countMyFollowing(myId);
+
+		//then
+		Assertions.assertNotNull(myFollowing);
+		assertThat(myFollowing).isEqualTo(expectedMyFollower);
+
+		verify(followService, times(1)).countMyFollowing(myId);
 	}
 
 	private List<Member> getDemoMembers() {

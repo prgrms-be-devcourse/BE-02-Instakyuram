@@ -50,6 +50,15 @@ public class PostConverter {
 			.build();
 	}
 
+	public PostImageResponse.ThumbnailResponse toThumbnailResponse(Long postId, PostImage postImage) {
+		return new PostImageResponse.ThumbnailResponse(
+			postId,
+			postImage.getServerFileName(),
+			postImage.getPath(),
+			postImage.getSize()
+		);
+	}
+
 	public List<PostImage> toPostImages(List<MultipartFile> files, Post post) {
 		List<PostImage> postImages = new ArrayList<>();
 		for (MultipartFile file : files) {

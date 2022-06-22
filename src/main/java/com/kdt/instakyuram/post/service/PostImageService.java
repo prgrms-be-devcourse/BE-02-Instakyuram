@@ -53,14 +53,9 @@ public class PostImageService {
 	}
 
 	public PostImageResponse.ThumbnailResponse findThumbnailByPostId(Long postId) {
-		PostImage postImage = postImageRepository.findByPostId(postId).get(0);
-
-		return new PostImageResponse.ThumbnailResponse(
-			postId,
-			postImage.getServerFileName(),
-			postImage.getPath(),
-			postImage.getSize()
-		);
+		return postImageRepository.findTop1ByPostId(postId)
+			.map(postImage -> postConverter.toThumbnailResponse(postId, postImage))
+			.orElseThrow(() -> new NotFoundException("이미지가 존재하지 않습니다."));
 	}
 
 }

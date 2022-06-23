@@ -10,9 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ImageManager {
 
-	private ImageManager() {}
+	private ImageManager() {
+	}
 
 	private static final Logger logger = LoggerFactory.getLogger(ImageManager.class);
+	private static final String DEFAULT_PATH = System.getProperty("user.dir") + "/picture/";
 
 	// TODO : 추후 커스텀 예외로 처리할 것
 	public static void upload(MultipartFile image, String serverFileName, String path) {
@@ -37,4 +39,7 @@ public class ImageManager {
 		file.delete();
 	}
 
+	public static FileSystemResource getBasicImage() {
+		return new FileSystemResource(DEFAULT_PATH + "/basic.png");
+	}
 }

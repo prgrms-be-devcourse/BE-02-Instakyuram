@@ -121,4 +121,10 @@ public class MemberService implements MemberGiver {
 	public Long countMyFollower(Long memberId) {
 		return followService.countMyFollower(memberId);
 	}
+
+	//TODO : 구현부탁드립니다 !
+	@Override
+	public List<MemberResponse> findAllFollowingIncludeMe(Long id) {
+		return null;
+	}
 }

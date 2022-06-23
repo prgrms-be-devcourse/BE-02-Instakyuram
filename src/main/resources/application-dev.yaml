@@ -19,6 +19,10 @@ spring:
     init:
       data-locations: classpath:/db/seed/data.sql
       mode: always
+  servlet:
+    multipart:
+      maxFileSize: 5MB
+      maxRequestSize: 30MB
 logging:
   level:
     org.hibernate.type.descriptor.sql: trace
@@ -26,7 +30,7 @@ jwt:
   issuer: prgrms
   client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
   accessToken:
-    header : atoken
+    header: atoken
     expiry-seconds: 60
   refreshToken:
     header: rtoken

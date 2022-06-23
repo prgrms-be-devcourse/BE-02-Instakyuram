@@ -31,6 +31,3 @@ jwt:
   refreshToken:
     header: rtoken
     expiry-seconds: 120
-file:
-  dir:
-    post:

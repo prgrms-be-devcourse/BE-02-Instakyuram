@@ -76,7 +76,6 @@ public class PostService implements PostGiver {
 		List<Member> members = memberGiver.findAllFollowing(memberId).stream()
 			.map(postConverter::toMember)
 			.toList();
-
 		List<Post> posts = postRepository.findByMemberIn(members);
 
 		Map<Long, List<PostImageResponse>> postImages = postImageService.findByPostIn(posts)

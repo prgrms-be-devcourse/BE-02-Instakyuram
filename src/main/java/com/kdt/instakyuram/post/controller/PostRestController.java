@@ -40,11 +40,12 @@ public class PostRestController {
 
 	@GetMapping("/{memberId}")
 	public ApiResponse<List<PostResponse.FindAllResponse>> findAll(@PathVariable Long memberId) {
-		return new ApiResponse<>(postService.findAll(memberId));
+		return new ApiResponse<>(postService.findAllRelated(memberId));
 	}
 
 	@PatchMapping("/{id}")
-	public ApiResponse<PostResponse.UpdateResponse> update(@PathVariable Long id, @RequestBody PostRequest.UpdateRequest request) {
+	public ApiResponse<PostResponse.UpdateResponse> update(@PathVariable Long id,
+		@RequestBody PostRequest.UpdateRequest request) {
 		return new ApiResponse<>(postService.update(id, request.memberId(), request.content()));
 	}
 
@@ -65,8 +66,7 @@ public class PostRestController {
 	}
 
 	@GetMapping("/{id}/image/{serverFileName}")
-	public FileSystemResource getImage(@PathVariable Long id, @PathVariable String serverFileName)
-	{
+	public FileSystemResource getImage(@PathVariable Long id, @PathVariable String serverFileName) {
 		return postService.findImage(id, serverFileName);
 	}
 

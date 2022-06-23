@@ -277,7 +277,7 @@ class MemberServiceTest {
 
 		given(passwordEncoder.matches(request.password(), member.getPassword())).willReturn(true);
 		given(memberRepository.findByUsername(request.username())).willReturn(Optional.of(member));
-		given(jwt.generateAccessToken(any(Jwt.Claims.class))).willReturn(accessToken);
+		given(jwt.generateAccessToken(any(Long.class), any(String[].class))).willReturn(accessToken);
 		given(jwt.generateRefreshToken()).willReturn(refreshToken);
 		given(tokenService.save(refreshToken, member.getId())).willReturn(refreshToken);
 
@@ -287,7 +287,7 @@ class MemberServiceTest {
 		//then
 		verify(passwordEncoder, times(1)).matches(request.password(), member.getPassword());
 		verify(memberRepository, times(1)).findByUsername(request.username());
-		verify(jwt, times(1)).generateAccessToken(any(Jwt.Claims.class));
+		verify(jwt, times(1)).generateAccessToken(any(Long.class), any(String[].class));
 		verify(jwt, times(1)).generateRefreshToken();
 		verify(tokenService, times(1)).save(refreshToken, member.getId());
 

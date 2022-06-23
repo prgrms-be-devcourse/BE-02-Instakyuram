@@ -1,6 +1,13 @@
 package com.kdt.instakyuram.security.jwt;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
@@ -8,6 +15,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+
+import lombok.Builder;
 
 public class Jwt {
 	private final String issuer;
@@ -31,16 +40,32 @@ public class Jwt {
 		Date now = new Date();
 		JWTCreator.Builder builder = JWT.create();
 
-		builder.withSubject(claims.userId);
+		builder.withSubject(claims.memberId.toString());
 		builder.withIssuer(this.issuer);
 		builder.withIssuedAt(now);
 
 		if (accessTokenProperties.expirySeconds() > 0) {
 			builder.withExpiresAt(new Date(now.getTime() + accessTokenProperties.expirySeconds() * 1000L));
 		}
-		builder.withClaim("userId", claims.userId);
+		builder.withClaim("memberId", claims.memberId);
 		builder.withArrayClaim("roles", claims.roles);
 
+		return builder.sign(algorithm);
+	}
+
+	public String generateAccessToken(Long id, String[] roles) {
+		Date now = new Date();
+		JWTCreator.Builder builder = JWT.create();
+
+		builder.withSubject(id.toString());
+		builder.withIssuer(this.issuer);
+		builder.withIssuedAt(now);
+
+		if (accessTokenProperties.expirySeconds() > 0) {
+			builder.withExpiresAt(new Date(now.getTime() + accessTokenProperties.expirySeconds() * 1000L));
+		}
+		builder.withClaim("memberId", id);
+		builder.withArrayClaim("roles", roles);
 		return builder.sign(algorithm);
 	}
 
@@ -66,8 +91,18 @@ public class Jwt {
 
 	}
 
+	public List<GrantedAuthority> getAuthorities(Jwt.Claims claims) {
+		String[] roles = claims.roles;
+
+		return roles == null || roles.length == 0
+			? Collections.emptyList()
+			: Arrays.stream(roles)
+			.map(SimpleGrantedAuthority::new)
+			.collect(Collectors.toList());
+	}
+
 	public static class Claims {
-		String userId;
+		Long memberId;
 		String[] roles;
 		Date iat;
 		Date exp;
@@ -76,9 +111,9 @@ public class Jwt {
 		}
 
 		Claims(DecodedJWT decodedJWT) {
-			Claim userId = decodedJWT.getClaim("userId");
-			if (!userId.isNull()) {
-				this.userId = userId.asString();
+			Claim memberId = decodedJWT.getClaim("memberId");
+			if (!memberId.isNull()) {
+				this.memberId = memberId.asLong();
 			}
 			Claim roles = decodedJWT.getClaim("roles");
 			if (!roles.isNull()) {
@@ -88,12 +123,12 @@ public class Jwt {
 			this.exp = decodedJWT.getExpiresAt();
 		}
 
-		public static Claims from(String username, String[] roles) {
-			Claims claims = new Claims();
-			claims.userId = username;
-			claims.roles = roles;
-
-			return claims;
+		@Builder
+		Claims(Long memberId, String[] roles, Date iat, Date exp) {
+			this.memberId = memberId;
+			this.roles = roles;
+			this.iat = iat;
+			this.exp = exp;
 		}
 	}
 }

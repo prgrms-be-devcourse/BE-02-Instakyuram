@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -40,7 +41,9 @@ import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberService;
 import com.kdt.instakyuram.member.service.ProfileService;
 import com.kdt.instakyuram.post.service.PostGiver;
+import com.kdt.instakyuram.security.Role;
 import com.kdt.instakyuram.security.WebSecurityConfigure;
+import com.kdt.instakyuram.security.jwt.Jwt;
 import com.kdt.instakyuram.security.jwt.JwtConfigure;
 import com.kdt.instakyuram.token.service.TokenService;
 
@@ -72,6 +75,9 @@ class MemberControllerTest {
 
 	@MockBean
 	TokenService tokenService;
+
+	@MockBean
+	Jwt jwt;
 
 	Member member = new Member(1L, "pjh123", "홍길동", "encodedPassword", "01012345678", "user@gmail.com", "");
 
@@ -196,7 +202,7 @@ class MemberControllerTest {
 	@DisplayName("Sign in 성공 테스트")
 	void testSigninSuccess() throws Exception {
 		//given
-		String accessToken = "accessToken";
+		String accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiTUVNQkVSIl0sImlzcyI6InByZ3JtcyIsImV4cCI6MTY1NTk2ODQ1NCwiaWF0IjoxNjU1OTY4Mzk0LCJtZW1iZXJJZCI6IjEifQ.PBIdS5PThuUD67kCC6kA9ORWi_NB8Izw123XuC6v0pXxCBHOr-wSDcdyKSt734Jsm1Q1rvnKLGDxmTD7etosWA";
 		String refreshToken = "refreshToken";
 		MemberRequest.SigninRequest signinRequest = new MemberRequest.SigninRequest(
 			"pjh123",
@@ -209,10 +215,16 @@ class MemberControllerTest {
 			refreshToken,
 			new String[] {String.valueOf(Role.MEMBER)}
 		);
+		Jwt.Claims claim = Jwt.Claims.builder().memberId(1L)
+			.roles(signinResponse.roles())
+			.iat(new Date())
+			.exp(new Date()
+			).build();
 
 		String request = objectMapper.writeValueAsString(signinRequest);
 		String response = objectMapper.writeValueAsString(new ApiResponse<>(signinResponse));
 
+		given(jwt.verify(accessToken)).willReturn(claim);
 		given(memberService.signin(any(String.class), any(String.class))).willReturn(signinResponse);
 
 		//when
@@ -223,6 +235,7 @@ class MemberControllerTest {
 
 		//then
 		verify(memberService, times(1)).signin(any(String.class), any(String.class));
+		verify(jwt, times(1)).verify(any());
 
 		perform
 			.andExpect(status().isOk())

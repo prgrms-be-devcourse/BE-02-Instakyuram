@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import com.kdt.instakyuram.exception.InvalidFileException;
 
-public enum PermissionType {
+public enum FileType {
 	JPEG,
 	JPG,
 	GIF,
@@ -12,7 +12,7 @@ public enum PermissionType {
 	BMP;
 
 	public static void verifyType(String extension) {
-		Arrays.stream(PermissionType.values())
+		Arrays.stream(FileType.values())
 			.filter(e -> e.toString().equals(extension))
 			.findFirst()
 			.orElseThrow(() -> new InvalidFileException("지원하지 않는 파일 타입입니다."));

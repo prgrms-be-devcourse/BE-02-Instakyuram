@@ -25,7 +25,7 @@ public class ImageManager {
 		try {
 			verifyDirectory(path);
 			verifyFile(image);
-			PermissionType.verifyType(FilenameUtils.getExtension(serverFileName.toUpperCase()));
+			FileType.verifyType(FilenameUtils.getExtension(serverFileName.toUpperCase()));
 
 			image.transferTo(new File(path + serverFileName));
 		} catch (

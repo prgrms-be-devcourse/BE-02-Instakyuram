@@ -53,9 +53,9 @@ public class MemberRestController {
 		MemberResponse.SigninResponse signinResponse = this.memberService.signin(request.username(),
 			request.password());
 		ResponseCookie accessTokenCookie = ResponseCookie.from(jwtConfigure.accessToken().header(),
-			signinResponse.accessToken()).build();
+			signinResponse.accessToken()).path("/").build();
 		ResponseCookie refreshTokenCookie = ResponseCookie.from(jwtConfigure.refreshToken().header(),
-			signinResponse.refreshToken()).build();
+			signinResponse.refreshToken()).path("/").build();
 		response.setHeader("Set-Cookie", accessTokenCookie.toString());
 		response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 

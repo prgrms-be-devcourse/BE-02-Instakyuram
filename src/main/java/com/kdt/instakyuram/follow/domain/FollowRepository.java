@@ -1,6 +1,7 @@
 package com.kdt.instakyuram.follow.domain;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +13,6 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 	Long countByMemberId(Long myId);
 
 	Long countByTargetId(Long myId);
+
+	Optional<Follow> findByMemberIdAndTargetId(Long memberId, Long targetId);
 }

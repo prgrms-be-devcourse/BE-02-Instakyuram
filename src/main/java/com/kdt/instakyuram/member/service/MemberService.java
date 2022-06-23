@@ -55,6 +55,20 @@ public class MemberService implements MemberGiver {
 		);
 	}
 
+	public MemberResponse findByUsername(String username) {
+		Member foundMember = memberRepository.findByUsername(username)
+			.orElseThrow(() -> new NotFoundException("유저 정보가 존재하지 않습니다."));
+
+		return new MemberResponse(
+			foundMember.getId(),
+			foundMember.getUsername(),
+			foundMember.getName(),
+			foundMember.getEmail(),
+			foundMember.getPhoneNumber(),
+			foundMember.getIntroduction()
+		);
+	}
+
 	public MemberResponse.SignupResponse signup(MemberRequest.SignupRequest request) {
 		Member member = memberRepository.save(new Member(request.username(),
 			passwordEncoder.encode(request.password()),

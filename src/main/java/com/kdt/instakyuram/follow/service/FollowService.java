@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.follow.domain.Follow;
 import com.kdt.instakyuram.follow.domain.FollowRepository;
 
@@ -24,13 +25,33 @@ public class FollowService {
 			.toList();
 	}
 
-	// 내가 따르는 사람
 	public Long countMyFollowing(Long memberId) {
 		return followRepository.countByMemberId(memberId);
 	}
 
-	// 나를 따르는 사람
 	public Long countMyFollower(Long memberId) {
 		return followRepository.countByTargetId(memberId);
+	}
+
+	public boolean isFollowed(Long memberId, Long targetId) {
+		return followRepository.findByMemberIdAndTargetId(memberId, targetId).isPresent();
+	}
+
+	@Transactional
+	public boolean follow(Long id, Long targetId) {
+		followRepository.save(Follow.builder()
+			.memberId(id)
+			.targetId(targetId)
+			.build()
+		);
+		return true;
+	}
+
+	@Transactional
+	public void unFollow(Long id, Long targetId) {
+		followRepository.delete(
+			followRepository.findByMemberIdAndTargetId(id, targetId)
+				.orElseThrow(NotFoundException::new)
+		);
 	}
 }

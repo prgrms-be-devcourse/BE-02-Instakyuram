@@ -38,6 +38,8 @@ import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.dto.MemberRequest;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberService;
+import com.kdt.instakyuram.member.service.ProfileService;
+import com.kdt.instakyuram.post.service.PostGiver;
 import com.kdt.instakyuram.security.WebSecurityConfigure;
 import com.kdt.instakyuram.security.jwt.JwtConfigure;
 import com.kdt.instakyuram.token.service.TokenService;
@@ -58,6 +60,12 @@ class MemberControllerTest {
 
 	@MockBean
 	private MemberService memberService;
+
+	@MockBean
+	PostGiver postGiver;
+
+	@MockBean
+	ProfileService profileService;
 
 	@Autowired
 	JwtConfigure jwtConfigure;

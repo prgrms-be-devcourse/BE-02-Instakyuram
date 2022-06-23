@@ -21,4 +21,15 @@ public record MemberResponse(
 
 	public record MemberListViewResponse(Long id, String username, String name) {
 	}
+
+	public record ProfileInfoResponse(
+		Long id,
+		String username,
+		String name,
+		String introduction,
+		Long postCount,
+		Long followerCount,
+		Long followCount
+	) {
+	}
 }

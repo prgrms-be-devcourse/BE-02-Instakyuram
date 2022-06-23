@@ -1,4 +1,4 @@
 package com.kdt.instakyuram.token.dto;
 
-public record TokenResponse(String refreshToken, String userId) {
+public record TokenResponse(String token, Long memberId) {
 }

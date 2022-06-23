@@ -36,6 +36,7 @@ import com.kdt.instakyuram.member.domain.MemberRepository;
 import com.kdt.instakyuram.member.dto.MemberConverter;
 import com.kdt.instakyuram.member.dto.MemberRequest;
 import com.kdt.instakyuram.member.dto.MemberResponse;
+import com.kdt.instakyuram.security.Role;
 import com.kdt.instakyuram.security.jwt.Jwt;
 import com.kdt.instakyuram.token.service.TokenService;
 
@@ -261,6 +262,7 @@ class MemberServiceTest {
 			"");
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
+		String[] roles = {String.valueOf(Role.MEMBER)};
 		MemberRequest.SigninRequest request = new MemberRequest.SigninRequest(
 			member.getUsername(),
 			"123456789"
@@ -269,7 +271,8 @@ class MemberServiceTest {
 			member.getId(),
 			member.getUsername(),
 			accessToken,
-			refreshToken
+			refreshToken,
+			roles
 		);
 
 		given(passwordEncoder.matches(request.password(), member.getPassword())).willReturn(true);

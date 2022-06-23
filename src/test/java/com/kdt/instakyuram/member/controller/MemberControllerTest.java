@@ -206,7 +206,8 @@ class MemberControllerTest {
 			member.getId(),
 			member.getUsername(),
 			accessToken,
-			refreshToken
+			refreshToken,
+			new String[] {String.valueOf(Role.MEMBER)}
 		);
 
 		String request = objectMapper.writeValueAsString(signinRequest);

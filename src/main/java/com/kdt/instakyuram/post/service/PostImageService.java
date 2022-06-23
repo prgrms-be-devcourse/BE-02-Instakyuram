@@ -27,7 +27,7 @@ public class PostImageService {
 	}
 
 	@Transactional
-	public void save(List<PostImage> postImages) {
+	public void save(Iterable<PostImage> postImages) {
 		postImageRepository.saveAll(postImages);
 	}
 

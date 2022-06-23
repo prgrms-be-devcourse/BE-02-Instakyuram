@@ -1,9 +1,11 @@
 package com.kdt.instakyuram.post.dto;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,19 +39,6 @@ public class PostConverter {
 		);
 	}
 
-	public PostImage toPostImage(MultipartFile file, Post post) {
-		String originalFileName = file.getOriginalFilename();
-		String serverFileName = UUID.randomUUID() + extractExt(originalFileName);
-
-		return PostImage.builder()
-			.post(post)
-			.originalFileName(originalFileName)
-			.serverFileName(serverFileName)
-			.path(path)
-			.size(file.getSize())
-			.build();
-	}
-
 	public PostImageResponse.ThumbnailResponse toThumbnailResponse(Long postId, PostImage postImage) {
 		return new PostImageResponse.ThumbnailResponse(
 			postId,
@@ -59,29 +48,26 @@ public class PostConverter {
 		);
 	}
 
-	public List<PostImage> toPostImages(List<MultipartFile> files, Post post) {
-		List<PostImage> postImages = new ArrayList<>();
+	public Map<PostImage, MultipartFile> toPostImages(List<MultipartFile> files, Post post) {
+		Map<PostImage, MultipartFile> postImagesMap = new HashMap<>();
+
 		for (MultipartFile file : files) {
 			String originalFileName = file.getOriginalFilename();
-			String serverFileName = UUID.randomUUID() + extractExt(originalFileName);
+			String serverFileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(originalFileName);
 
-			postImages.add(
+			postImagesMap.put(
 				PostImage.builder()
 					.post(post)
 					.originalFileName(originalFileName)
 					.serverFileName(serverFileName)
 					.path(path)
 					.size(file.getSize())
-					.build());
+					.build(),
+				file
+			);
 		}
 
-		return postImages;
-	}
-
-	private static String extractExt(String originalFileName) {
-		return originalFileName.substring(
-			originalFileName.lastIndexOf(".")
-		);
+		return postImagesMap;
 	}
 
 	public PostResponse.FindAllResponse toDetailResponse(MemberResponse memberResponse, Post post,

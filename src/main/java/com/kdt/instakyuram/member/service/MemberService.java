@@ -86,6 +86,15 @@ public class MemberService implements MemberGiver {
 			.toList();
 	}
 
+	@Override
+	public List<MemberResponse> findAllFollowingIncludeMe(Long id) {
+		List<Long> ids = followService.findByFollowingIds(id);
+
+		return memberRepository.findAllIdsInOrById(ids,id).stream()
+			.map(memberConverter::toMemberResponse)
+			.toList();
+	}
+
 	public MemberResponse.SigninResponse signin(String username, String password) {
 		Member foundMember = memberRepository.findByUsername(username)
 			.orElseThrow(() -> new NotFoundException("유저 정보가 일치하지 않습니다."));

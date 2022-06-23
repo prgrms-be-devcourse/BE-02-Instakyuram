@@ -73,7 +73,7 @@ public class PostService implements PostGiver {
 	}
 
 	public List<PostResponse.FindAllResponse> findAllRelated(Long memberId) {
-		List<Member> members = memberGiver.findAllFollowing(memberId).stream()
+		List<Member> members = memberGiver.findAllFollowingIncludeMe(memberId).stream()
 			.map(postConverter::toMember)
 			.toList();
 		List<Post> posts = postRepository.findByMemberIn(members);

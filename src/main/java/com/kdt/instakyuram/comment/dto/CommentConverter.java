@@ -21,6 +21,7 @@ public class CommentConverter {
 		MemberResponse memberResponse = toMemberResponse(comment.getMember());
 		return new CommentResponse(
 			comment.getId(),
+			comment.getPost().getId(),
 			comment.getContent(),
 			memberResponse
 		);

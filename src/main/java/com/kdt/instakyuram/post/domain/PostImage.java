@@ -28,7 +28,8 @@ public class PostImage {
 
 	private String path;
 
-	protected PostImage() {}
+	protected PostImage() {
+	}
 
 	@Builder
 	public PostImage(Long id, Post post, String originalFileName, String serverFileName, Long size, String path) {

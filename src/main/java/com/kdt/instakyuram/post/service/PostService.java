@@ -1,12 +1,15 @@
 package com.kdt.instakyuram.post.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.comment.service.CommentGiver;
 import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.member.domain.Member;
@@ -20,6 +23,9 @@ import com.kdt.instakyuram.post.dto.PostLikeResponse;
 import com.kdt.instakyuram.post.dto.PostResponse;
 import com.kdt.instakyuram.util.ImageManager;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class PostService implements PostGiver {
@@ -66,22 +72,38 @@ public class PostService implements PostGiver {
 		return new PostResponse.CreateResponse(savedPost.getId(), memberId, content);
 	}
 
-	public List<PostResponse.FindAllResponse> findAll(Long memberId) {
+	public List<PostResponse.FindAllResponse> findAllRelated(Long memberId) {
 		List<Member> members = memberGiver.findAllFollowing(memberId).stream()
 			.map(postConverter::toMember)
 			.toList();
 
-		return postRepository.findByMemberIn(members).stream()
-			.map(post ->
-				postConverter.toDetailResponse(
-					memberGiver.findById(members.iterator().next().getId()),
+		List<Post> posts = postRepository.findByMemberIn(members);
+
+		Map<Long, List<PostImageResponse>> postImages = postImageService.findByPostIn(posts)
+			.stream()
+			.collect(Collectors.groupingBy(PostImageResponse::postId));
+		Map<Long, List<CommentResponse>> comments = commentGiver.findByPostIn(posts)
+			.stream()
+			.collect(Collectors.groupingBy(CommentResponse::postId));
+		Map<Long, Long> postLikes = postLikeService.findByPostIn(posts)
+			.stream()
+			.collect(Collectors.groupingBy(PostLikeResponse::postId, Collectors.counting()));
+
+		return posts.stream()
+			.map(post -> {
+				var member = postConverter.toMemberResponse(post.getMember());
+				var postImageResponses = postImages.get(post.getId());
+				var commentResponses = comments.get(post.getId());
+				var totalPostLike = postLikes.getOrDefault(post.getId(), 0L).intValue();
+
+				return postConverter.toDetailResponse(
+					member,
 					post,
-					postImageService.findByPostId(post.getId()),
-					commentGiver.findByPostId(post.getId()),
-					postLikeService.countByPostId(post.getId())
-				)
-			)
-			.toList();
+					postImageResponses,
+					commentResponses,
+					totalPostLike
+				);
+			}).toList();
 	}
 
 	@Transactional
@@ -137,9 +159,8 @@ public class PostService implements PostGiver {
 			})
 			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
 
-		deletedImages.forEach(image -> {
-			ImageManager.delete(image.path(), image.serverFileName());
-		});
+		deletedImages.forEach(image ->
+			ImageManager.delete(image.path(), image.serverFileName()));
 
 		return id;
 	}

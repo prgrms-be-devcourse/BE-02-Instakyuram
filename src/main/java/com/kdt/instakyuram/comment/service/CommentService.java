@@ -12,6 +12,7 @@ import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
+import com.kdt.instakyuram.post.domain.Post;
 
 @Service
 public class CommentService implements CommentGiver {
@@ -41,6 +42,7 @@ public class CommentService implements CommentGiver {
 
 		return new CommentResponse(
 			savedComment.getId(),
+			postId,
 			savedComment.getContent(),
 			memberResponse
 		);
@@ -94,4 +96,10 @@ public class CommentService implements CommentGiver {
 			.orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
 	}
 
+	@Override
+	public List<CommentResponse> findByPostIn(List<Post> posts) {
+		return commentRepository.findByPostIn(posts).stream()
+			.map(commentConverter::toResponse)
+			.toList();
+	}
 }

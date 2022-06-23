@@ -8,14 +8,15 @@ import com.kdt.instakyuram.member.dto.MemberResponse;
 import lombok.Builder;
 
 @Builder
-public record PostResponse(Long id, MemberResponse memberResponse, String content, List<PostImageResponse> postImageResponse) {
+public record PostResponse(Long id, MemberResponse memberResponse, String content,
+						   List<PostImageResponse> postImageResponse) {
 
-	 public record CreateResponse(
+	public record CreateResponse(
 		Long id,
 		Long memberId,
 		String content
-
-	) { }
+	) {
+	}
 
 	@Builder
 	public record FindAllResponse(
@@ -24,9 +25,9 @@ public record PostResponse(Long id, MemberResponse memberResponse, String conten
 		MemberResponse member,
 		List<PostImageResponse> postImageResponse,
 		List<CommentResponse> commentResponse,
-		List<PostLikeResponse> postLikeResponse,
 		int totalPostLike
-	) { }
+	) {
+	}
 
 	public record UpdateResponse(
 		Long id,

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostLike;
 import com.kdt.instakyuram.post.domain.PostLikeRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
@@ -54,5 +55,11 @@ public class PostLikeService {
 	public void delete(Long id) {
 		List<PostLike> postLikes = postLikeRepository.findByPostId(id);
 		postLikeRepository.deleteAll(postLikes);
+	}
+
+	public List<PostLikeResponse> findByPostIn(List<Post> posts) {
+		return postLikeRepository.findByPostIn(posts).stream()
+			.map(postConverter::toPostLikeResponse)
+			.toList();
 	}
 }

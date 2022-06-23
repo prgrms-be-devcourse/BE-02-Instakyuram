@@ -10,13 +10,14 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.kdt.instakyuram.common.BaseEntity;
 import com.kdt.instakyuram.member.domain.Member;
 
 import lombok.Builder;
 
 @DynamicUpdate
 @Entity
-public class Post {
+public class Post extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

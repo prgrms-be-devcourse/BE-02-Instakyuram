@@ -11,10 +11,11 @@ import javax.persistence.ManyToOne;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.kdt.instakyuram.common.BaseEntity;
 import com.kdt.instakyuram.member.domain.Member;
 
 @Entity
-public class CommentLike {
+public class CommentLike extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

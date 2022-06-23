@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<th:block th:replace="fragments/head :: headFragment('')"></th:block>
+<head>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <title>login</title>
+</head>
+
+<script>
+    // 로그인 처리하기
+    function loginRequest() {
+        axios
+            .post("/api/members/signin",
+                {
+                    headers: {
+                        'Content-type': 'application/json',
+                    },
+                    username: document.getElementById("username").value,
+                    password: document.getElementById("password").value,
+                }
+            )
+            .then(response => {
+                window.location.href = "http://localhost:8080/";
+            })
+            .catch(error => {
+                alert("오류가 발생했습니다. \n" + error);
+            })
+    }
+</script>
+
+<body>
+<main>
+    <div class="logo">Instakyuram</div>
+        <div class="login_id">
+            <input type="text" id="username" name="username" placeholder="사용자 이름">
+        </div>
+        <div class="login_password">
+            <input type="password" id="password" name="password" placeholder="비밀번호">
+        </div>
+        <button class="login_btn" onclick="loginRequest()">Sign in</button>
+    <a th:href="@{/signup}">
+        <button class="login_btn">Sign up</button>
+    </a>
+</main>
+</body>
+</html>

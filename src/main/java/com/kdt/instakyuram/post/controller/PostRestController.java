@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kdt.instakyuram.common.ApiResponse;
+import com.kdt.instakyuram.post.dto.PostImageResponse;
 import com.kdt.instakyuram.post.dto.PostLikeRequest;
 import com.kdt.instakyuram.post.dto.PostLikeResponse;
 import com.kdt.instakyuram.post.dto.PostRequest;
@@ -38,11 +40,12 @@ public class PostRestController {
 
 	@GetMapping("/{memberId}")
 	public ApiResponse<List<PostResponse.FindAllResponse>> findAll(@PathVariable Long memberId) {
-		return new ApiResponse<>(postService.findAll(memberId));
+		return new ApiResponse<>(postService.findAllRelated(memberId));
 	}
 
 	@PatchMapping("/{id}")
-	public ApiResponse<PostResponse.UpdateResponse> update(@PathVariable Long id, @RequestBody PostRequest.UpdateRequest request) {
+	public ApiResponse<PostResponse.UpdateResponse> update(@PathVariable Long id,
+		@RequestBody PostRequest.UpdateRequest request) {
 		return new ApiResponse<>(postService.update(id, request.memberId(), request.content()));
 	}
 
@@ -63,9 +66,12 @@ public class PostRestController {
 	}
 
 	@GetMapping("/{id}/image/{serverFileName}")
-	public FileSystemResource getImage(@PathVariable Long id, @PathVariable String serverFileName)
-	{
+	public FileSystemResource getImage(@PathVariable Long id, @PathVariable String serverFileName) {
 		return postService.findImage(id, serverFileName);
 	}
 
+	@GetMapping("/thumbnails")
+	public ApiResponse<List<PostImageResponse.ThumbnailResponse>> getThumbnails(@RequestParam("username") String username) {
+		return new ApiResponse<>(postService.findPostThumbnailsByUsername(username));
+	}
 }

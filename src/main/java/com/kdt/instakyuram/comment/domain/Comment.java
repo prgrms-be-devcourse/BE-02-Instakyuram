@@ -19,7 +19,8 @@ import com.kdt.instakyuram.post.domain.Post;
 @Entity
 public class Comment {
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotBlank

@@ -21,7 +21,6 @@ public class Post {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-
 	@NotNull
 	private String content;
 
@@ -29,7 +28,8 @@ public class Post {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	protected Post(){}
+	protected Post() {
+	}
 
 	@Builder
 	public Post(Long id, String content, Member member) {

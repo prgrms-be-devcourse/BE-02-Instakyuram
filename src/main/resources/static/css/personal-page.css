@@ -1,0 +1,153 @@
+main {
+    background-color: #FAFAFA;
+    width: 100%;
+    flex-grow: 1;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+body {
+    height: 100%;
+}
+
+.main_container {
+    padding: 30px 20px 0;
+    height: 100%;
+    max-width: 935px;
+    display: flex;
+    flex-shrink: 0;
+    flex-grow: 1;
+    flex-direction: column;
+    margin: 0 auto 30px;
+    width: 100%;
+}
+
+.header_container {
+    flex-direction: row;
+    margin-bottom: 44px;
+    display: flex;
+    vertical-align: baseline;
+    position: relative;
+}
+
+.profile_info_container {
+    position: relative;
+    border-bottom: 1px #DBDBDB;
+    margin-bottom: 44px;
+    flex-grow: 2;
+    flex-shrink: 0;
+    flex-basis: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile_image_container {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin-right: 30px;
+    flex-shrink: 0;
+}
+
+.profile_image_sub_container {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.profile_info_top {
+    margin-bottom: 20px;
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 1;
+    min-width: 0;
+    display: flex;
+}
+
+.profile_info_mid {
+    margin-bottom: 20px;
+}
+
+.profile_image_sub_container img {
+    width: 100%;
+    height: 100%;
+}
+
+.profile_info_bottom {
+    font-size: 16px;
+}
+
+.profile_info_bottom .name,
+.profile_info_bottom .introduction {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.posts_container {
+
+}
+
+.tabs {
+    border-top: 1px solid #DBDBDB;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+    height: 52px;
+    display: flex;
+    font-size: 12px;
+}
+
+.tab_item_container {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab_item {
+    margin-left: 6px;
+}
+
+.follow_button {
+    background-color: #0995F6;
+    border: 1px solid #0995F6;
+    color: #FAFAFA;
+    outline: none;
+    border-radius: 3px;
+    margin-left: 10px;
+    padding: 0 24px;
+    height: 100%;
+}
+
+.profile_info_top .username {
+    font-size: 28px;
+}
+
+.article_container {
+    display: flex;
+    flex-direction: column;
+}
+
+.article_row {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 28px;
+
+}
+
+.article {
+    display: block;
+    margin-right: 28px;
+    width: 100%;
+
+    flex: 1 0 0%;
+    flex-direction: column;
+}
+
+.article_img {
+    height: 100%;
+    width: 100%;
+}

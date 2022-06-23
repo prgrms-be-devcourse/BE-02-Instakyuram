@@ -1,13 +1,9 @@
-
 package com.kdt.instakyuram.security;
-
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.*;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -99,18 +95,12 @@ public class WebSecurityConfigure {
 			.antMatchers("/api/members/signup", "/api/members/signin").permitAll()
 			.anyRequest().authenticated()
 			.and()
-			.formLogin()
-			.disable()
-			.csrf()
-			.disable()
-			.headers()
-			.disable()
-			.httpBasic()
-			.disable()
-			.rememberMe()
-			.disable()
-			.logout()
-			.disable()
+			.formLogin().disable()
+			.csrf().disable()
+			.headers().disable()
+			.httpBasic().disable()
+			.rememberMe().disable()
+			.logout().disable()
 			.sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()

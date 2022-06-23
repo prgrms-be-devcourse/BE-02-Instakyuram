@@ -50,6 +50,15 @@ public class PostConverter {
 			.build();
 	}
 
+	public PostImageResponse.ThumbnailResponse toThumbnailResponse(Long postId, PostImage postImage) {
+		return new PostImageResponse.ThumbnailResponse(
+			postId,
+			postImage.getServerFileName(),
+			postImage.getPath(),
+			postImage.getSize()
+		);
+	}
+
 	public List<PostImage> toPostImages(List<MultipartFile> files, Post post) {
 		List<PostImage> postImages = new ArrayList<>();
 		for (MultipartFile file : files) {
@@ -100,6 +109,7 @@ public class PostConverter {
 	public PostImageResponse toPostImageResponse(PostImage postImage) {
 		return PostImageResponse.builder()
 			.id(postImage.getId())
+			.postId(postImage.getPost().getId())
 			.path(postImage.getPath())
 			.serverFileName(postImage.getServerFileName())
 			.originalFileName(postImage.getOriginalFileName())
@@ -127,5 +137,9 @@ public class PostConverter {
 
 	public PostImageResponse.DeleteResponse toDeletePostImageResponse(PostImage postImage) {
 		return new PostImageResponse.DeleteResponse(postImage.getServerFileName(), postImage.getPath());
+	}
+
+	public PostLikeResponse toPostLikeResponse(PostLike postLike) {
+		return PostLikeResponse.builder().postId(postLike.getId()).build();
 	}
 }

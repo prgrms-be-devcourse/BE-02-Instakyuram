@@ -11,4 +11,7 @@ public interface PostImageRepository extends JpaRepository<PostImage, Long> {
 
 	Optional<PostImage> findByServerFileName(String serverFileName);
 
+	Optional<PostImage> findTop1ByPostId(Long postId);
+
+	List<PostImage> findByPostIn(List<Post> posts);
 }

@@ -28,15 +28,15 @@ public class PageDto {
 	}
 
 	public static class Response<DTO, DOMAIN> {
-		private List<DTO> responses;
-		private int totalPage;
-		private int page;
-		private int size;
-		private int start;
-		private int end;
-		private boolean hasPrevious;
-		private boolean hasNext;
-		private List<Integer> pageNumbers;
+		private final List<DTO> responses;
+		private final int totalPage;
+		private final int page;
+		private final int size;
+		private final int start;
+		private final int end;
+		private final boolean hasPrevious;
+		private final boolean hasNext;
+		private final List<Integer> pageNumbers;
 
 		public Response(Page<DOMAIN> result, Function<DOMAIN, DTO> toResponse) {
 			responses = result.stream().map(toResponse).toList();

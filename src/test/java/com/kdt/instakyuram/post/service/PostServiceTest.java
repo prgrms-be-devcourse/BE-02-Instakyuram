@@ -60,9 +60,10 @@ class PostServiceTest {
 	private final List<CommentResponse> COMMENT_RESPONSES = this.getDemoCommentResponses();
 	private final List<PostLikeResponse> POST_LIKE_RESPONSES = this.getDemoPostLikeResponses();
 	private final List<PostImageResponse> POST_IMAGE_RESPONSES = this.getDemoPostImageResponses();
-	MockMultipartFile MOCK_IMAGE1 = new MockMultipartFile("image1", "C-9vgadUAAAKE1w.jpg", ".png",
+
+	MockMultipartFile MOCK_IMAGE1 = new MockMultipartFile("image1", "sample.jpg", ".jpg",
 		"demo image1".getBytes());
-	MockMultipartFile MOCK_IMAGE2 = new MockMultipartFile("image2", "C-9vgadUAAAKE1w.jpg", ".png",
+	MockMultipartFile MOCK_IMAGE2 = new MockMultipartFile("image2", "sample.jpg", ".jpg",
 		"demo image2".getBytes());
 	private final Member MEMBER = MEMBERS.get(0);
 	private final MemberResponse MEMBER_RESPONSE = MEMBER_RESPONSES.get(0);
@@ -145,8 +146,7 @@ class PostServiceTest {
 		given(memberGiver.findById(MEMBER.getId())).willReturn(MEMBER_RESPONSE);
 		given(postConverter.toMember(MEMBER_RESPONSE)).willReturn(MEMBER);
 		given(postRepository.save(any())).willReturn(post);
-		given(postConverter.toPostImages(images, post)).willReturn(postImagesMap);
-		willDoNothing().given(postImageService).save(postImagesMap.keySet());
+		willDoNothing().given(postImageService).save(post.getId(),images);
 
 		//when
 		PostResponse.CreateResponse response = postService.create(MEMBER.getId(), post.getContent(), images);

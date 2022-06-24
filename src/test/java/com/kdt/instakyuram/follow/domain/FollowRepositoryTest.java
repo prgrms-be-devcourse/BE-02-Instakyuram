@@ -88,6 +88,7 @@ class FollowRepositoryTest {
 
 		//when
 		long followerCount = followRepository.countByTargetId(my.getId());
+
 		//then
 		Assertions.assertThat(followerCount).isEqualTo(3);
 	}
@@ -111,8 +112,6 @@ class FollowRepositoryTest {
 			.memberId(my.getId())
 			.targetId(targetB.getId())
 			.build());
-
-
 
 		//when
 		long followerCount = followRepository.countByMemberId(my.getId());

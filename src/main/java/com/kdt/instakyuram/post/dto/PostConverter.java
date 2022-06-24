@@ -1,13 +1,8 @@
 package com.kdt.instakyuram.post.dto;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.member.domain.Member;
@@ -18,9 +13,6 @@ import com.kdt.instakyuram.post.domain.PostLike;
 
 @Component
 public class PostConverter {
-
-	// 프로젝트 최상단의 picture에 이미지가 저장됩니다.
-	private final String path = System.getProperty("user.dir") + "/picture/";
 
 	public Member toMember(MemberResponse memberResponse) {
 		return Member.builder()
@@ -46,28 +38,6 @@ public class PostConverter {
 			postImage.getPath(),
 			postImage.getSize()
 		);
-	}
-
-	public Map<PostImage, MultipartFile> toPostImages(List<MultipartFile> files, Post post) {
-		Map<PostImage, MultipartFile> postImagesMap = new HashMap<>();
-
-		for (MultipartFile file : files) {
-			String originalFileName = file.getOriginalFilename();
-			String serverFileName = UUID.randomUUID() + "." + FilenameUtils.getExtension(originalFileName);
-
-			postImagesMap.put(
-				PostImage.builder()
-					.post(post)
-					.originalFileName(originalFileName)
-					.serverFileName(serverFileName)
-					.path(path)
-					.size(file.getSize())
-					.build(),
-				file
-			);
-		}
-
-		return postImagesMap;
 	}
 
 	public PostResponse.FindAllResponse toDetailResponse(MemberResponse memberResponse, Post post,
@@ -128,4 +98,5 @@ public class PostConverter {
 	public PostLikeResponse toPostLikeResponse(PostLike postLike) {
 		return PostLikeResponse.builder().postId(postLike.getId()).build();
 	}
+
 }

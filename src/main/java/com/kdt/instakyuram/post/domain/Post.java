@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -23,6 +24,7 @@ public class Post extends BaseEntity {
 	private Long id;
 
 	@NotNull
+	@Size(min = 5, max = 500, message = "5글자 ~ 500글자 까지만 입력하실 수 있습니다.")
 	private String content;
 
 	@ManyToOne

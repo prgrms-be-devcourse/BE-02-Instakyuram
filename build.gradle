@@ -65,8 +65,8 @@ tasks.named('test') {
 }
 
 flyway {
-    url = 'jdbc:mysql://localhost:3306/testdb'
-    user = 'test'
-    password = 'tt'
+    url = 'jdbc:mysql://localhost:3306/kyuram'
+    user = 'root'
+    password = 'password'
     encoding = 'UTF-8'
 }

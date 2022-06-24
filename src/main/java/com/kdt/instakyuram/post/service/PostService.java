@@ -62,15 +62,7 @@ public class PostService implements PostGiver {
 		);
 
 		Map<PostImage, MultipartFile> postImagesMap = postConverter.toPostImages(images, savedPost);
-		postImageService.save(postImagesMap.keySet());
-
-		postImagesMap.forEach(
-			(postImage, image) -> ImageManager.upload
-				(
-					image,
-					postImage.getServerFileName(), postImage.getPath()
-				)
-		);
+		ImageManager.uploads(postImagesMap.entrySet());
 
 		return new PostResponse.CreateResponse(savedPost.getId(), memberId, content);
 	}

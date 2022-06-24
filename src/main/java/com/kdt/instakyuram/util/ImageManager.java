@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -13,27 +17,38 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.exception.InvalidFileException;
 import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.post.domain.PostImage;
 
 public class ImageManager {
 
-	private ImageManager() {}
+	private ImageManager() {
+	}
 
 	private static final Logger logger = LoggerFactory.getLogger(ImageManager.class);
 	private static final String DEFAULT_PATH = System.getProperty("user.dir") + "/picture/";
 
-	// TODO : 추후 커스텀 예외로 처리할 것
-	public static void upload(MultipartFile image, String serverFileName, String path) {
-		try {
-			verifyDirectory(path);
-			verifyFile(image);
-			FileType.verifyType(FilenameUtils.getExtension(serverFileName.toUpperCase()));
+	public static void uploads(Set<Map.Entry<PostImage, MultipartFile>> entries) {
+		List<String> files = new ArrayList<>();
 
-			image.transferTo(new File(path + serverFileName));
-		} catch (
-			IOException e) {
-			logger.warn("이미지 파일을 저장하면서 오류가 발생하였습니다.");
-			throw new RuntimeException("이미지 파일을 저장하면서 오류가 발생하였습니다.", e);
-		}
+		entries.forEach(entry -> {
+				PostImage postImage = entry.getKey();
+				MultipartFile file = entry.getValue();
+
+				try {
+					FileType.verifyType(FilenameUtils.getExtension(postImage.getServerFileName().toUpperCase()));
+
+					file.transferTo(new File(postImage.getPath() + postImage.getServerFileName()));
+					files.add(postImage.getPath() + postImage.getServerFileName());
+				} catch (IOException e) {
+					rollBack(files);
+					throw new RuntimeException();
+				} catch (InvalidFileException e) {
+					rollBack(files);
+					throw new RuntimeException("DB Post, PostImage RollBack");
+				}
+			}
+		);
+
 	}
 
 	public static FileSystemResource getFileResource(String path, String fileName) {
@@ -47,6 +62,10 @@ public class ImageManager {
 		}
 
 		file.delete();
+	}
+
+	public static FileSystemResource getBasicImage() {
+		return new FileSystemResource(DEFAULT_PATH + "/basic.png");
 	}
 
 	private static void verifyFile(MultipartFile image) {
@@ -63,8 +82,16 @@ public class ImageManager {
 		}
 	}
 
-	public static FileSystemResource getBasicImage() {
-		return new FileSystemResource(DEFAULT_PATH + "/basic.png");
+	private static void rollBack(List<String> files) {
+		for (String path : files) {
+			File file = new File(path);
+			if (!file.exists()) {
+				return;
+			}
+
+			logger.warn("파일을 삭제합니다. [파일정보 : {}]", path);
+			file.delete();
+		}
 	}
 
 }

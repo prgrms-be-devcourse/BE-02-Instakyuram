@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.comment.service.CommentGiver;
+import com.kdt.instakyuram.exception.BusinessException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.service.MemberGiver;
@@ -116,7 +118,7 @@ public class PostService implements PostGiver {
 
 				return postConverter.toUpdateResponse(post);
 			})
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
 
 	}
 
@@ -128,7 +130,7 @@ public class PostService implements PostGiver {
 
 				return postLikeService.like(postId, memberId);
 			})
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+			.orElseThrow(() ->new BusinessException(ErrorCode.POST_NOT_FOUND));
 	}
 
 	@Transactional
@@ -139,13 +141,13 @@ public class PostService implements PostGiver {
 
 				return postLikeService.unlike(postResponse, memberId);
 			})
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
 	}
 
 	public FileSystemResource findImage(Long postId, String serverFileName) {
 		return postRepository.findById(postId)
 			.map(post -> postImageService.findByServerFileName(serverFileName))
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
 	}
 
 	@Transactional
@@ -159,7 +161,7 @@ public class PostService implements PostGiver {
 
 				return images;
 			})
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+			.orElseThrow(() ->new BusinessException(ErrorCode.POST_NOT_FOUND));
 
 		deletedImages.forEach(image ->
 			ImageManager.delete(image.path(), image.serverFileName()));

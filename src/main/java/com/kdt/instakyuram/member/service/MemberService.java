@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.kdt.instakyuram.common.PageDto;
+import com.kdt.instakyuram.exception.BusinessException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.follow.service.FollowService;
 import com.kdt.instakyuram.member.domain.Member;
@@ -43,7 +45,7 @@ public class MemberService implements MemberGiver {
 
 	public MemberResponse findById(Long id) {
 		Member foundMember = memberRepository.findById(id)
-			.orElseThrow(() -> new NotFoundException("유저 정보가 존재하지 않습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND, id.toString()));
 
 		return new MemberResponse(
 			foundMember.getId(),
@@ -57,7 +59,7 @@ public class MemberService implements MemberGiver {
 
 	public MemberResponse findByUsername(String username) {
 		Member foundMember = memberRepository.findByUsername(username)
-			.orElseThrow(() -> new NotFoundException("유저 정보가 존재하지 않습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
 		return new MemberResponse(
 			foundMember.getId(),
@@ -86,7 +88,7 @@ public class MemberService implements MemberGiver {
 		Page<Member> pagingMembers = memberRepository.findAll(requestPage);
 
 		if (pagingMembers.getContent().isEmpty()) {
-			throw new NotFoundException("사용자 목록이 존재하지 않습니다.");
+			throw new BusinessException(ErrorCode.MEMBER_NOT_FOUND);
 		}
 
 		return memberConverter.toPageResponse(pagingMembers);
@@ -111,9 +113,9 @@ public class MemberService implements MemberGiver {
 
 	public MemberResponse.SigninResponse signin(String username, String password) {
 		Member foundMember = memberRepository.findByUsername(username)
-			.orElseThrow(() -> new NotFoundException("유저 정보가 일치하지 않습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.AUTHENTICATION_FAILED));
 		if (!passwordEncoder.matches(password, foundMember.getPassword())) {
-			throw new NotFoundException("유저 정보가 일치하지 않습니다.");
+			throw new BusinessException(ErrorCode.AUTHENTICATION_FAILED);
 		}
 		String[] roles = {String.valueOf(Role.MEMBER)};
 		String accessToken = jwt.generateAccessToken(foundMember.getId(), roles);

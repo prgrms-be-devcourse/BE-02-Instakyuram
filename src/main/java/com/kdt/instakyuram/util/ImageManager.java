@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kdt.instakyuram.exception.InvalidFileException;
+import com.kdt.instakyuram.exception.ErrorCode;
+import com.kdt.instakyuram.exception.file.InvalidFileException;
 import com.kdt.instakyuram.exception.NotFoundException;
 
 public class ImageManager {
@@ -59,7 +60,7 @@ public class ImageManager {
 	private static void verifyDirectory(String path) {
 		if (!Files.exists(Path.of(path))) {
 			logger.warn("디렉토리를 찾을 수 없습니다. {}", path);
-			throw new NotFoundException("디렉토리를 찾을 수 없습니다.");
+			throw new NotFoundException(ErrorCode.DIRECTORY_NOT_FOUND);
 		}
 	}
 

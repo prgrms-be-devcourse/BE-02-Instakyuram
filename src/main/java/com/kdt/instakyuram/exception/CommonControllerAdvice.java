@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.kdt.instakyuram.exception.file.InvalidFileException;
+
 @ControllerAdvice
 public class CommonControllerAdvice {
 

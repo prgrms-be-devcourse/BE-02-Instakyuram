@@ -2,7 +2,7 @@ package com.kdt.instakyuram.util;
 
 import java.util.Arrays;
 
-import com.kdt.instakyuram.exception.InvalidFileException;
+import com.kdt.instakyuram.exception.file.InvalidFileException;
 
 public enum FileType {
 	JPEG,

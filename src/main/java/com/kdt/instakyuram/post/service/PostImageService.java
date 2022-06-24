@@ -6,7 +6,8 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.BusinessException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostImageRepository;
@@ -40,7 +41,7 @@ public class PostImageService {
 	public FileSystemResource findByServerFileName(String serverFileName) {
 		return postImageRepository.findByServerFileName(serverFileName)
 			.map(postImage -> ImageManager.getFileResource(postImage.getPath(), postImage.getServerFileName()))
-			.orElseThrow(() -> new NotFoundException("이미지가 존재하지 않습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.POST_IMAGE_NOT_FOUND));
 	}
 
 	@Transactional
@@ -56,7 +57,7 @@ public class PostImageService {
 	public PostImageResponse.ThumbnailResponse findThumbnailByPostId(Long postId) {
 		return postImageRepository.findTop1ByPostId(postId)
 			.map(postImage -> postConverter.toThumbnailResponse(postId, postImage))
-			.orElseThrow(() -> new NotFoundException("이미지가 존재하지 않습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.POST_IMAGE_NOT_FOUND));
 	}
 
 	public List<PostImageResponse> findByPostIn(List<Post> posts) {

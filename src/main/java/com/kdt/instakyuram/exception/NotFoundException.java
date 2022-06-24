@@ -1,14 +1,24 @@
 package com.kdt.instakyuram.exception;
 
 public class NotFoundException extends RuntimeException {
-	public NotFoundException() {
+
+	private final ErrorCode errorCode;
+
+	public NotFoundException(ErrorCode errorCode) {
+		this.errorCode = errorCode;
 	}
 
-	public NotFoundException(String message) {
+	public NotFoundException(ErrorCode errorCode, String message) {
 		super(message);
+		this.errorCode = errorCode;
 	}
 
-	public NotFoundException(String message, Throwable cause) {
+	public NotFoundException(ErrorCode errorCode, String message, Throwable cause) {
 		super(message, cause);
+		this.errorCode = errorCode;
+	}
+
+	public ErrorCode errorCode() {
+		return errorCode;
 	}
 }

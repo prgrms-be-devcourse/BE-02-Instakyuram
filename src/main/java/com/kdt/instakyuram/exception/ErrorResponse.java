@@ -1,11 +1,11 @@
 package com.kdt.instakyuram.exception;
 
-public class ErrorResponse {
-	private final String code;
-	private final String message;
+public class ErrorResponse<T> {
+	private final String errorCode;
+	private final T response;
 
-	public ErrorResponse(String code, String message) {
-		this.code = code;
-		this.message = message;
+	public ErrorResponse(String errorCode, T response) {
+		this.response = response;
+		this.errorCode = errorCode;
 	}
 }

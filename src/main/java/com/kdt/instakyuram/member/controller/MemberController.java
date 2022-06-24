@@ -54,7 +54,7 @@ public class MemberController {
 		MemberResponse foundMember = memberService.findByUsername(username);
 
 		if(auth != null) {
-			model.addAttribute("auth", Long.valueOf(auth.id()).equals(foundMember.id()));
+			model.addAttribute("auth", auth.id().equals(foundMember.id()));
 		}
 		model.addAttribute("thumbnails", postGiver.findPostThumbnailsByMemberId(foundMember.id()));
 		model.addAttribute("profileInfo", profileService.findProfileInfoByUsername(username));

@@ -116,11 +116,11 @@ public class MemberService implements MemberGiver {
 			throw new NotFoundException("유저 정보가 일치하지 않습니다.");
 		}
 		String[] roles = {String.valueOf(Role.MEMBER)};
-		String accessToken = jwt.generateAccessToken(Jwt.Claims.from(foundMember.getId().toString(), roles));
+		String accessToken = jwt.generateAccessToken(foundMember.getId(), roles);
 		String refreshToken = jwt.generateRefreshToken();
 		tokenService.save(refreshToken, foundMember.getId());
 
-		return new MemberResponse.SigninResponse(foundMember.getId(), username, accessToken, refreshToken);
+		return new MemberResponse.SigninResponse(foundMember.getId(), username, accessToken, refreshToken, roles);
 	}
 
 	public Long countMyFollowing(Long memberId) {

@@ -23,17 +23,17 @@ public class FollowRestController {
 	@GetMapping("/{memberId}")
 	public ApiResponse<Boolean> isFollowed(@AuthenticationPrincipal JwtAuthentication auth,
 		@PathVariable Long memberId) {
-		return new ApiResponse<>(followService.isFollowed(Long.parseLong(auth.id()), memberId));
+		return new ApiResponse<>(followService.isFollowed(auth.id(), memberId));
 	}
 
 	@GetMapping("/follow/{memberId}")
 	public ApiResponse<Boolean> follow(@AuthenticationPrincipal JwtAuthentication auth, @PathVariable Long memberId) {
-		return new ApiResponse<>(followService.follow(Long.valueOf(auth.id()), memberId));
+		return new ApiResponse<>(followService.follow(auth.id(), memberId));
 	}
 
 	@GetMapping("/unfollow/{memberId}")
 	public ApiResponse<Boolean> unfollow(@AuthenticationPrincipal JwtAuthentication auth, @PathVariable Long memberId) {
-		followService.unFollow(Long.valueOf(auth.id()), memberId);
+		followService.unFollow(auth.id(), memberId);
 		return new ApiResponse<>(true);
 	}
 }

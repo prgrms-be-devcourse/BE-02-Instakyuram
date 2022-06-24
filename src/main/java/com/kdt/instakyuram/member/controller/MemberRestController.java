@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +21,9 @@ import com.kdt.instakyuram.common.ApiResponse;
 import com.kdt.instakyuram.member.dto.MemberRequest;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberService;
+import com.kdt.instakyuram.security.jwt.Jwt;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
+import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
 import com.kdt.instakyuram.security.jwt.JwtConfigure;
 import com.kdt.instakyuram.token.service.TokenService;
 
@@ -30,11 +34,14 @@ public class MemberRestController {
 	private final MemberService memberService;
 	private final TokenService tokenService;
 	private final JwtConfigure jwtConfigure;
+	private final Jwt jwt;
 
-	public MemberRestController(MemberService memberService, TokenService tokenService, JwtConfigure jwtConfigure) {
+	public MemberRestController(MemberService memberService, TokenService tokenService, JwtConfigure jwtConfigure,
+		Jwt jwt) {
 		this.memberService = memberService;
 		this.tokenService = tokenService;
 		this.jwtConfigure = jwtConfigure;
+		this.jwt = jwt;
 	}
 
 	@GetMapping("/{userId}")
@@ -48,14 +55,22 @@ public class MemberRestController {
 	}
 
 	@PostMapping("/signin")
-	public ApiResponse<MemberResponse.SigninResponse> signIn(@RequestBody MemberRequest.SignupRequest request,
-		HttpServletResponse response) {
-		MemberResponse.SigninResponse signinResponse = this.memberService.signin(request.username(),
-			request.password());
+	public ApiResponse<MemberResponse.SigninResponse> signIn(@RequestBody MemberRequest.SignupRequest signupRequest,
+		HttpServletRequest request, HttpServletResponse response) {
+		MemberResponse.SigninResponse signinResponse = this.memberService.signin(signupRequest.username(),
+			signupRequest.password());
 		ResponseCookie accessTokenCookie = ResponseCookie.from(jwtConfigure.accessToken().header(),
 			signinResponse.accessToken()).path("/").build();
 		ResponseCookie refreshTokenCookie = ResponseCookie.from(jwtConfigure.refreshToken().header(),
 			signinResponse.refreshToken()).path("/").build();
+
+		Jwt.Claims claims = jwt.verify(signinResponse.accessToken());
+		JwtAuthentication authentication = new JwtAuthentication(signinResponse.accessToken(),
+			signinResponse.id());
+		JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(authentication, null,
+			jwt.getAuthorities(claims));
+		authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+		SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 		response.setHeader("Set-Cookie", accessTokenCookie.toString());
 		response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
@@ -65,7 +80,7 @@ public class MemberRestController {
 	@PostMapping("/signout")
 	public ApiResponse<String> signout(@AuthenticationPrincipal JwtAuthentication principal, HttpServletRequest request,
 		HttpServletResponse response) {
-		tokenService.save(principal.token(), Long.parseLong(principal.id()));
+		tokenService.save(principal.token(), principal.id());
 		Arrays.stream(request.getCookies())
 			.filter(cookie -> cookie.getName().equals(jwtConfigure.refreshToken().header()))
 			.findFirst()
@@ -73,7 +88,9 @@ public class MemberRestController {
 		Cookie accessTokenCookie = new Cookie(jwtConfigure.accessToken().header(), null);
 		Cookie refreshTokenCookie = new Cookie(jwtConfigure.refreshToken().header(), null);
 		accessTokenCookie.setMaxAge(0);
+		accessTokenCookie.setPath("/");
 		refreshTokenCookie.setMaxAge(0);
+		refreshTokenCookie.setPath("/");
 		response.addCookie(accessTokenCookie);
 		response.addCookie(refreshTokenCookie);
 

@@ -16,7 +16,7 @@ public record MemberResponse(
 		String username) {
 	}
 
-	public record SigninResponse(Long id, String username, String accessToken, String refreshToken) {
+	public record SigninResponse(Long id, String username, String accessToken, String refreshToken, String[] roles) {
 	}
 
 	public record MemberListViewResponse(Long id, String username, String name) {

@@ -19,11 +19,11 @@ public class TokenService {
 	public TokenResponse findByToken(String token) {
 		Token foundToken = tokenRepository.findById(token).orElseThrow(JwtTokenNotFoundException::new);
 
-		return new TokenResponse(foundToken.getRefreshToken(), foundToken.getUserId().toString());
+		return new TokenResponse(foundToken.token(), foundToken.getMemberId());
 	}
 
 	public String save(String refreshToken, Long userId) {
-		return tokenRepository.save(new Token(refreshToken, userId)).getRefreshToken();
+		return tokenRepository.save(new Token(refreshToken, userId)).token();
 	}
 
 	public void deleteByToken(String token) {

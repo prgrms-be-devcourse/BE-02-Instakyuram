@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,22 +32,16 @@ public class LocalFileService implements FileStorage {
 	@Override
 	public void upload(Map<String, MultipartFile> files, ResourcePath path) {
 		List<String> fullPathsForRollBack = new ArrayList<>();
-		Resource directory = resourceLoader.getResource(DEFAULT_PATH + path.getPrefix());// get dir();
-		AtomicInteger count = new AtomicInteger();
+		Resource directory = resourceLoader.getResource(DEFAULT_PATH + path.getPrefix());
 
 		files.forEach((serverFileName, file) -> {
 				try {
 					String fullPrefix = directory.getURI().getPath();
 					String fullPath = fullPrefix + serverFileName;
 
-					if (count.get() == 2) { // todo: 일부러 롤백 내기
-						throw new IOException();
-					}
-
 					fullPathsForRollBack.add(fullPath);
 
 					file.transferTo(new File(fullPath));
-					count.getAndIncrement();
 				} catch (IOException e) {
 					rollback(fullPathsForRollBack);
 					throw new FileWriteException("파일을 저장하면서 오류가 발생했습니다.");
@@ -57,7 +50,6 @@ public class LocalFileService implements FileStorage {
 		);
 	}
 
-	// /post  serverFileName
 	@Override
 	public FileSystemResource get(String fullPath) {
 		Resource resource = resourceLoader.getResource(DEFAULT_PATH + fullPath);

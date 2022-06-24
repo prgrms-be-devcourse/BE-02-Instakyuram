@@ -98,6 +98,48 @@ class MemberServiceIntegrationTest {
 		});
 	}
 
+	@Test
+	@Transactional
+	@DisplayName("나 포함 팔로잉 목록 멤버를 조회")
+	void testFindAllFollowingIncludeMe() {
+		//given
+		List<Member> members = getDemoMembers();
+
+		Member member = members.get(0);
+		Member targetA = members.get(1);
+		Member targetB = members.get(2);
+
+		entityManager.persist(Follow.builder()
+			.memberId(member.getId())
+			.targetId(targetA.getId())
+			.build());
+
+		entityManager.persist(Follow.builder()
+			.memberId(member.getId())
+			.targetId(targetB.getId())
+			.build());
+
+		List<MemberResponse> expectedFollowings = List.of(targetA, targetB,member).stream()
+			.map(memberConverter::toMemberResponse)
+			.toList();
+
+		//when
+		List<MemberResponse> followings = memberGiver.findAllFollowingIncludeMe(member.getId());
+
+		//then
+		assertThat(followings.size()).isEqualTo(expectedFollowings.size());
+
+		AtomicInteger index = new AtomicInteger();
+
+		followings.forEach(following -> {
+			MatcherAssert.assertThat(
+				following,
+				Matchers.samePropertyValuesAs(expectedFollowings.get(index.getAndIncrement()))
+			);
+		});
+	}
+
+
 	@Transactional
 	public List<Member> getDemoMembers() {
 

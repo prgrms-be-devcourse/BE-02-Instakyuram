@@ -16,6 +16,4 @@ public interface MemberGiver {
 	MemberResponse.SigninResponse signin(String username, String password);
 
 	MemberResponse.SignupResponse signup(MemberRequest.SignupRequest request);
-
-	List<MemberResponse> findAllFollowingIncludeMe(Long id);
 }

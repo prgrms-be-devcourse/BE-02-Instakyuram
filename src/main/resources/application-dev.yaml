@@ -9,20 +9,19 @@ spring:
     url: jdbc:mysql://localhost:3306/kyuram
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-    defer-datasource-initialization: true
-  sql:
-    init:
-      data-locations: classpath:/db/seed/data.sql
-      mode: always
   servlet:
     multipart:
       maxFileSize: 5MB
       maxRequestSize: 30MB
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration, classpath:db/seed
 logging:
   level:
     org.hibernate.type.descriptor.sql: trace

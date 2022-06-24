@@ -7,10 +7,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.kdt.instakyuram.common.BaseEntity;
+
 import lombok.Builder;
 
 @Entity
-public class PostImage {
+public class PostImage extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

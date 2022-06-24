@@ -8,12 +8,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.kdt.instakyuram.common.BaseEntity;
 import com.kdt.instakyuram.member.domain.Member;
 
 import lombok.Builder;
 
 @Entity
-public class PostLike {
+public class PostLike extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

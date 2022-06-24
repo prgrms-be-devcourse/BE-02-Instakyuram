@@ -1,19 +1,25 @@
 package com.kdt.instakyuram.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.comment.service.CommentGiver;
@@ -21,6 +27,7 @@ import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
+import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
 import com.kdt.instakyuram.post.dto.PostImageResponse;
@@ -53,11 +60,15 @@ class PostServiceTest {
 	private final List<CommentResponse> COMMENT_RESPONSES = this.getDemoCommentResponses();
 	private final List<PostLikeResponse> POST_LIKE_RESPONSES = this.getDemoPostLikeResponses();
 	private final List<PostImageResponse> POST_IMAGE_RESPONSES = this.getDemoPostImageResponses();
+	MockMultipartFile MOCK_IMAGE1 = new MockMultipartFile("image1", "C-9vgadUAAAKE1w.jpg", ".png",
+		"demo image1".getBytes());
+	MockMultipartFile MOCK_IMAGE2 = new MockMultipartFile("image2", "C-9vgadUAAAKE1w.jpg", ".png",
+		"demo image2".getBytes());
 	private final Member MEMBER = MEMBERS.get(0);
 	private final MemberResponse MEMBER_RESPONSE = MEMBER_RESPONSES.get(0);
 
 	@Test
-	@DisplayName("내가 팔로우 한 모든 사람들의 게시글을 조회한다.")
+	@DisplayName("내가 팔로우 한 모든 사람들의 게시글과 내 게시글을 조회한다.")
 	void findAllRelated() {
 		Post post1 = POSTS.get(0);
 		Post post2 = POSTS.get(1);
@@ -106,6 +117,42 @@ class PostServiceTest {
 
 		//then
 		assertThat(foundPosts).hasSameElementsAs(POST_FIND_ALL_RESPONSES);
+	}
+
+	@Test
+	@DisplayName("Post를 작성할 수 있다.")
+	void create() {
+		Post post = POSTS.get(0);
+		List<MultipartFile> images = List.of(MOCK_IMAGE1);
+		PostImage image1 = PostImage.builder()
+			.post(post)
+			.originalFileName(MOCK_IMAGE1.getOriginalFilename())
+			.serverFileName(UUID.randomUUID() + "." + FilenameUtils.getExtension(MOCK_IMAGE1.getOriginalFilename()))
+			.path(System.getProperty("user.dir") + "/picture/")
+			.size(MOCK_IMAGE1.getSize())
+			.build();
+		PostImage image2 = PostImage.builder()
+			.post(post)
+			.originalFileName(MOCK_IMAGE2.getOriginalFilename())
+			.serverFileName(UUID.randomUUID() + "." + FilenameUtils.getExtension(MOCK_IMAGE2.getOriginalFilename()))
+			.path(System.getProperty("user.dir") + "/picture/")
+			.size(MOCK_IMAGE2.getSize())
+			.build();
+		Map<PostImage, MultipartFile> postImagesMap = Map.of(image1, MOCK_IMAGE1, image2, MOCK_IMAGE2);
+		PostResponse.CreateResponse createResponse = new PostResponse.CreateResponse(post.getId(), MEMBER.getId(),
+			post.getContent());
+
+		given(memberGiver.findById(MEMBER.getId())).willReturn(MEMBER_RESPONSE);
+		given(postConverter.toMember(MEMBER_RESPONSE)).willReturn(MEMBER);
+		given(postRepository.save(any())).willReturn(post);
+		given(postConverter.toPostImages(images, post)).willReturn(postImagesMap);
+		willDoNothing().given(postImageService).save(postImagesMap.keySet());
+
+		//when
+		PostResponse.CreateResponse response = postService.create(MEMBER.getId(), post.getContent(), images);
+
+		//then
+		assertThat(response).isEqualTo(createResponse);
 	}
 
 	private List<Member> getDemoMembers() {

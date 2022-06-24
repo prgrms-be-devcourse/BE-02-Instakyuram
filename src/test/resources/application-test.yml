@@ -14,6 +14,10 @@ spring:
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:testdb
+  flyway:
+    enabled: false
+    baseline-on-migrate: false
+    locations: classpath:db/migration, classpath:db/seed
   # sql 파일 x
 
 jwt:

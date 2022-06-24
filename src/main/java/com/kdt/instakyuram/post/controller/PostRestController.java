@@ -2,7 +2,10 @@ package com.kdt.instakyuram.post.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kdt.instakyuram.common.ApiResponse;
 import com.kdt.instakyuram.post.dto.PostImageResponse;
-import com.kdt.instakyuram.post.dto.PostLikeRequest;
 import com.kdt.instakyuram.post.dto.PostLikeResponse;
 import com.kdt.instakyuram.post.dto.PostRequest;
 import com.kdt.instakyuram.post.dto.PostResponse;
 import com.kdt.instakyuram.post.service.PostService;
+import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -34,7 +37,7 @@ public class PostRestController {
 	@PostMapping
 	public ApiResponse<PostResponse.CreateResponse> posting(PostRequest.CreateRequest request) {
 		return new ApiResponse<>(postService.create(
-			request.memberId(), request.content(), request.postImages()
+			jwtAuthentication.id(), request.content(), request.postImages()
 		));
 	}
 
@@ -45,24 +48,27 @@ public class PostRestController {
 
 	@PatchMapping("/{id}")
 	public ApiResponse<PostResponse.UpdateResponse> update(@PathVariable Long id,
+		@AuthenticationPrincipal JwtAuthentication jwtAuthentication,
 		@RequestBody PostRequest.UpdateRequest request) {
-		return new ApiResponse<>(postService.update(id, request.memberId(), request.content()));
+		return new ApiResponse<>(postService.update(id, jwtAuthentication.id(), request.content()));
 	}
 
 	@DeleteMapping("/{id}")
-	public ApiResponse<Long> delete(@PathVariable Long id, @RequestBody PostRequest.DeleteRequest request) {
-		return new ApiResponse<>(postService.delete(id, request.memberId()));
+	public ApiResponse<Long> delete(@PathVariable Long id,
+		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
+		return new ApiResponse<>(postService.delete(id, jwtAuthentication.id()));
 	}
 
 	@PostMapping("/{id}/like")
-	public ApiResponse<PostLikeResponse> like(@PathVariable Long id, @RequestBody PostLikeRequest postLikeRequest) {
-		return new ApiResponse<>(postService.like(id, postLikeRequest.memberId()));
+	public ApiResponse<PostLikeResponse> like(@PathVariable Long id,
+		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
+		return new ApiResponse<>(postService.like(id, jwtAuthentication.id()));
 	}
 
 	@PostMapping("/{id}/unlike")
 	public ApiResponse<PostLikeResponse> unlike(@PathVariable Long id,
-		@RequestBody PostLikeRequest postLikeRequest) {
-		return new ApiResponse<>(postService.unlike(id, postLikeRequest.memberId()));
+		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
+		return new ApiResponse<>(postService.unlike(id, jwtAuthentication.id()));
 	}
 
 	@GetMapping("/{id}/image/{serverFileName}")
@@ -71,7 +77,9 @@ public class PostRestController {
 	}
 
 	@GetMapping("/thumbnails")
-	public ApiResponse<List<PostImageResponse.ThumbnailResponse>> getThumbnails(@RequestParam("username") String username) {
+	public ApiResponse<List<PostImageResponse.ThumbnailResponse>> getThumbnails(
+		@RequestParam("username") String username) {
 		return new ApiResponse<>(postService.findPostThumbnailsByUsername(username));
 	}
+
 }

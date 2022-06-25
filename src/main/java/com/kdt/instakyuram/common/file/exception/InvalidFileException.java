@@ -1,6 +1,6 @@
-package com.kdt.instakyuram.exception;
+package com.kdt.instakyuram.common.file.exception;
 
-public class InvalidFileException extends RuntimeException {
+public class InvalidFileException extends FileWriteException {
 	public InvalidFileException() {
 	}
 

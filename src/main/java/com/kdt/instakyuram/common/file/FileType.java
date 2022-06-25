@@ -1,8 +1,8 @@
-package com.kdt.instakyuram.util;
+package com.kdt.instakyuram.common.file;
 
 import java.util.Arrays;
 
-import com.kdt.instakyuram.exception.InvalidFileException;
+import com.kdt.instakyuram.common.file.exception.InvalidFileException;
 
 public enum FileType {
 	JPEG,
@@ -13,7 +13,7 @@ public enum FileType {
 
 	public static void verifyType(String extension) {
 		Arrays.stream(FileType.values())
-			.filter(e -> e.toString().equals(extension))
+			.filter(e -> e.toString().equalsIgnoreCase(extension))
 			.findFirst()
 			.orElseThrow(() -> new InvalidFileException("지원하지 않는 파일 타입입니다."));
 	}

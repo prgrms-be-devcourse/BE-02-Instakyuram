@@ -11,11 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.comment.service.CommentGiver;
+import com.kdt.instakyuram.common.file.exception.FileWriteException;
 import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
-import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
 import com.kdt.instakyuram.post.dto.PostImageResponse;
@@ -48,11 +48,9 @@ public class PostService implements PostGiver {
 		this.postLikeService = postLikeService;
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = {FileWriteException.class})
 	public PostResponse.CreateResponse create(Long memberId, String content, List<MultipartFile> images) {
-		Member member = postConverter.toMember(
-			memberGiver.findById(memberId)
-		);
+		Member member = postConverter.toMember(memberGiver.findById(memberId));
 
 		Post savedPost = postRepository.save(
 			Post.builder()
@@ -61,8 +59,7 @@ public class PostService implements PostGiver {
 				.build()
 		);
 
-		Map<PostImage, MultipartFile> postImagesMap = postConverter.toPostImages(images, savedPost);
-		ImageManager.uploads(postImagesMap.entrySet());
+		postImageService.save(savedPost.getId(), images);
 
 		return new PostResponse.CreateResponse(savedPost.getId(), memberId, content);
 	}

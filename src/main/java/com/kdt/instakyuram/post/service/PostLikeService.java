@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kdt.instakyuram.exception.BusinessException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostLike;
 import com.kdt.instakyuram.post.domain.PostLikeRepository;
@@ -30,7 +32,7 @@ public class PostLikeService {
 	@Transactional
 	public PostLikeResponse like(Long postId, Long memberId) {
 		if (postLikeRepository.existsPostLikeByPostIdAndMemberId(postId, memberId)) {
-			throw new IllegalArgumentException("이미 좋아요 상태입니다.");
+			throw new BusinessException(ErrorCode.POST_ALREADY_LIKED);
 		}
 
 		postLikeRepository.save(postConverter.toPostLike(postId, memberId));
@@ -48,7 +50,7 @@ public class PostLikeService {
 
 				return new PostLikeResponse(post.id(), likes, false);
 			})
-			.orElseThrow(() -> new IllegalArgumentException("이미 좋아요 취소 상태입니다. "));
+			.orElseThrow(() -> new BusinessException(ErrorCode.POST_ALREADY_UNLIKE));
 	}
 
 	@Transactional

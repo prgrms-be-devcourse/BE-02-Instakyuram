@@ -17,7 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.follow.domain.Follow;
 import com.kdt.instakyuram.follow.domain.FollowRepository;
 
@@ -171,7 +171,7 @@ class FollowServiceTest {
 		//then
 		assertThatThrownBy(() -> {
 			followService.unFollow(memberId, targetId);
-		}).isInstanceOf(NotFoundException.class);
+		}).isInstanceOf(EntityNotFoundException.class);
 
 		verify(followRepository, times(1)).findByMemberIdAndTargetId(memberId, targetId);
 	}

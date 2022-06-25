@@ -15,9 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kdt.instakyuram.common.file.FileType;
 import com.kdt.instakyuram.common.file.exception.InvalidFileException;
-import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.post.domain.PostImage;
 
 public class ImageManager {
@@ -36,7 +34,8 @@ public class ImageManager {
 				MultipartFile file = entry.getValue();
 
 				try {
-					FileType.verifyType(FilenameUtils.getExtension(postImage.getServerFileName().toUpperCase()));
+					com.kdt.instakyuram.util.FileType.verifyType(
+						FilenameUtils.getExtension(postImage.getServerFileName().toUpperCase()));
 
 					file.transferTo(new File(postImage.getPath() + postImage.getServerFileName()));
 					files.add(postImage.getPath() + postImage.getServerFileName());

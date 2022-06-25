@@ -1,5 +1,6 @@
 package com.kdt.instakyuram.post.service;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -10,13 +11,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.common.file.FileStorage;
 import com.kdt.instakyuram.common.file.ResourcePath;
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostImageRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
 import com.kdt.instakyuram.post.dto.PostImageConverter;
 import com.kdt.instakyuram.post.dto.PostImageResponse;
+import com.kdt.instakyuram.util.ImageManager;
 
 @Service
 @Transactional(readOnly = true)
@@ -53,10 +56,10 @@ public class PostImageService {
 	}
 
 	public FileSystemResource findByServerFileName(String serverFileName) {
-
 		return postImageRepository.findByServerFileName(serverFileName)
 			.map(postImage -> fileStorage.get(postImage.getFullPath()))
-			.orElseThrow(() -> new NotFoundException("이미지가 존재하지 않습니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_IMAGE_NOT_FOUND,
+				MessageFormat.format("serverFileName = {0}", serverFileName)));
 	}
 
 	@Transactional
@@ -72,7 +75,8 @@ public class PostImageService {
 	public PostImageResponse.ThumbnailResponse findThumbnailByPostId(Long postId) {
 		return postImageRepository.findTop1ByPostId(postId)
 			.map(postImage -> postConverter.toThumbnailResponse(postId, postImage))
-			.orElseThrow(() -> new NotFoundException("이미지가 존재하지 않습니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_IMAGE_NOT_FOUND,
+				MessageFormat.format("post ID = {0}", postId)));
 	}
 
 	public List<PostImageResponse> findByPostIn(List<Post> posts) {
@@ -80,5 +84,4 @@ public class PostImageService {
 			.map(postConverter::toPostImageResponse)
 			.toList();
 	}
-
 }

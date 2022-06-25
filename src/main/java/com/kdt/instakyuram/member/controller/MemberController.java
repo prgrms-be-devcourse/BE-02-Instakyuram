@@ -50,10 +50,11 @@ public class MemberController {
 	}
 
 	@GetMapping("/{username}")
-	public String personalPage(@PathVariable String username, Model model, @AuthenticationPrincipal JwtAuthentication auth) {
+	public String personalPage(@PathVariable String username, Model model,
+		@AuthenticationPrincipal JwtAuthentication auth) {
 		MemberResponse foundMember = memberService.findByUsername(username);
 
-		if(auth != null) {
+		if (auth != null) {
 			model.addAttribute("auth", auth.id().equals(foundMember.id()));
 		}
 		model.addAttribute("thumbnails", postGiver.findPostThumbnailsByMemberId(foundMember.id()));
@@ -63,7 +64,11 @@ public class MemberController {
 	}
 
 	@GetMapping("/signin")
-	public String singinPage() {
+	public String singinPage(@AuthenticationPrincipal JwtAuthentication principal) {
+		if (principal == null) {
 			return "signin";
+		} else {
+			return "redirect:/";
+		}
 	}
 }

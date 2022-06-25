@@ -1,11 +1,13 @@
 package com.kdt.instakyuram.follow.service;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.follow.domain.Follow;
 import com.kdt.instakyuram.follow.domain.FollowRepository;
 
@@ -50,7 +52,8 @@ public class FollowService {
 	public void unFollow(Long id, Long targetId) {
 		followRepository.delete(
 			followRepository.findByMemberIdAndTargetId(id, targetId)
-				.orElseThrow(NotFoundException::new)
+				.orElseThrow(() -> new EntityNotFoundException(ErrorCode.FOLLOW_NOT_FOUND,
+					MessageFormat.format("Member ID = {0}, Target ID = {1}", id, targetId)))
 		);
 	}
 }

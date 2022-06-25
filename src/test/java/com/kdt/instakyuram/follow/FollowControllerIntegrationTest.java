@@ -194,7 +194,7 @@ public class FollowControllerIntegrationTest {
 			.andDo(print());
 
 		//then
-		perform.andExpect(status().isBadRequest());
+		perform.andExpect(status().isNotFound());
 	}
 
 	@Transactional

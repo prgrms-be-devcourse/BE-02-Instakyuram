@@ -2,8 +2,6 @@ package com.kdt.instakyuram.post.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +33,8 @@ public class PostRestController {
 	}
 
 	@PostMapping
-	public ApiResponse<PostResponse.CreateResponse> posting(PostRequest.CreateRequest request) {
+	public ApiResponse<PostResponse.CreateResponse> posting(PostRequest.CreateRequest request,
+		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
 		return new ApiResponse<>(postService.create(
 			jwtAuthentication.id(), request.content(), request.postImages()
 		));

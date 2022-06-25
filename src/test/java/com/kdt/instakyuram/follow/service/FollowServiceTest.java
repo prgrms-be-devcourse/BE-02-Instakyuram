@@ -1,11 +1,13 @@
 package com.kdt.instakyuram.follow.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.follow.domain.Follow;
 import com.kdt.instakyuram.follow.domain.FollowRepository;
 
@@ -94,6 +97,83 @@ class FollowServiceTest {
 		assertThat(myFollowing).isEqualTo(expectedMyFollower);
 
 		verify(followRepository, times(1)).countByTargetId(myId);
+	}
+
+	@Test
+	@DisplayName("팔로우 할 수 있는 대상인지? true-팔로우 할 수 있음")
+	void testPossibleFollow() {
+		//given
+		Long memberId = 1L;
+		Long targetId = 2L;
+		boolean notExist = false;
+
+		given(followRepository.existsByMemberIdAndTargetId(memberId, targetId)).willReturn(notExist);
+
+		//when
+		boolean isFollow = followService.isFollowed(memberId, targetId);
+
+		//then
+		assertThat(isFollow).isTrue();
+
+		verify(followRepository, times(1)).existsByMemberIdAndTargetId(memberId, targetId);
+	}
+
+	@Test
+	@DisplayName("팔로우 할 수 있는 대상인지? false-할수 없음")
+	void testNoPossibleFollow() {
+		//given
+		Long memberId = 1L;
+		Long targetId = 2L;
+
+		boolean exist = true;
+		given(followRepository.existsByMemberIdAndTargetId(memberId, targetId)).willReturn(exist);
+
+		//when
+		boolean isFollow = followService.isFollowed(1L, 2L);
+
+		//then
+		assertThat(isFollow).isFalse();
+
+		verify(followRepository, times(1)).existsByMemberIdAndTargetId(memberId, targetId);
+	}
+
+	@Test
+	@DisplayName("언팔로우 테스트")
+	void testUnFollow() {
+		//given
+		Long memberId = 1L;
+		Long targetId = 2L;
+
+		Follow follow = Follow.builder()
+			.memberId(memberId)
+			.targetId(targetId)
+			.build();
+
+		given(followRepository.findByMemberIdAndTargetId(memberId, targetId)).willReturn(Optional.of(follow));
+
+		//when
+		followService.unFollow(memberId, targetId);
+
+		//then
+		verify(followRepository, times(1)).findByMemberIdAndTargetId(memberId, targetId);
+	}
+
+	@Test
+	@DisplayName("언팔로우 테스트 : 팔로우한 기록이 없을 때 예외를 발생시킨디.")
+	void testFailUnFollow() {
+		//given
+		Long memberId = 1L;
+		Long targetId = 2L;
+
+		given(followRepository.findByMemberIdAndTargetId(memberId, targetId)).willReturn(Optional.empty());
+
+		//when
+		//then
+		assertThatThrownBy(() -> {
+			followService.unFollow(memberId, targetId);
+		}).isInstanceOf(NotFoundException.class);
+
+		verify(followRepository, times(1)).findByMemberIdAndTargetId(memberId, targetId);
 	}
 
 }

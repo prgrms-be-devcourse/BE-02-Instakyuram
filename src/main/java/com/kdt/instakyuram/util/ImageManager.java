@@ -15,7 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kdt.instakyuram.exception.InvalidFileException;
+import com.kdt.instakyuram.common.file.FileType;
+import com.kdt.instakyuram.common.file.exception.InvalidFileException;
 import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.post.domain.PostImage;
 

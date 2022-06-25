@@ -89,7 +89,7 @@ class ProfileImageIntegrationTest {
 	 *   만약 임시 데이터를 사용하기 위해서는 해당 메소드를 한번 호출하면 해결된다.
 	 */
 	private void setMockAnonymousAuthenticationToken() {
-		SimpleGrantedAuthority role_anonymous = new SimpleGrantedAuthority("ROLE_ANONYMOUS");
+		SimpleGrantedAuthority role_anonymous = new SimpleGrantedAuthority("ROLE_MEMBER");
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(role_anonymous);
 		Authentication authentication = new AnonymousAuthenticationToken("anonymous", "anonymous", authorities);

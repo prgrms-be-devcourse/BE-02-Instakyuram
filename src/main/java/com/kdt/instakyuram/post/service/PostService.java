@@ -1,5 +1,6 @@
 package com.kdt.instakyuram.post.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -158,15 +159,13 @@ public class PostService implements PostGiver {
 
 	@Override
 	public List<PostImageResponse.ThumbnailResponse> findPostThumbnailsByMemberId(Long memberId) {
-		return postRepository.findAllByMemberId(memberId).stream()
-			.map(Post::getId)
-			.map(postImageService::findThumbnailByPostId)
-			.toList();
-	}
+		List<Post> posts = postRepository.findAllByMemberId(memberId);
 
-	@Override
-	public List<PostImageResponse.ThumbnailResponse> findPostThumbnailsByUsername(String username) {
-		return postRepository.findAllByUsername(username).stream()
+		if (posts.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		return posts.stream()
 			.map(Post::getId)
 			.map(postImageService::findThumbnailByPostId)
 			.toList();
@@ -178,4 +177,5 @@ public class PostService implements PostGiver {
 			.map(postConverter::toResponse)
 			.toList();
 	}
+
 }

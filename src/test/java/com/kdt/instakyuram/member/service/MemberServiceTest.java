@@ -29,7 +29,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.kdt.instakyuram.common.PageDto;
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.BusinessException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.follow.service.FollowService;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.domain.MemberRepository;
@@ -119,7 +120,7 @@ class MemberServiceTest {
 		//then
 		assertThatThrownBy(() -> {
 			memberService.findAll(pageRequest);
-		}).isInstanceOf(NotFoundException.class);
+		}).isInstanceOf(EntityNotFoundException.class);
 	}
 
 	private List<Member> getMembers() {
@@ -300,7 +301,7 @@ class MemberServiceTest {
 
 		//when, then
 		assertThatThrownBy(() -> memberService.signin(signinRequest.username(), signinRequest.password())).isInstanceOf(
-			NotFoundException.class);
+			BusinessException.class);
 
 		verify(memberRepository, times(1)).findByUsername(signinRequest.username());
 		verify(passwordEncoder, times(1)).matches(signinRequest.password(), member.getPassword());
@@ -390,7 +391,7 @@ class MemberServiceTest {
 		given(memberRepository.findById(notExistId)).willReturn(Optional.empty());
 
 		//when
-		assertThatThrownBy(() -> memberService.findById(notExistId)).isInstanceOf(NotFoundException.class);
+		assertThatThrownBy(() -> memberService.findById(notExistId)).isInstanceOf(EntityNotFoundException.class);
 
 		verify(memberRepository, times(1)).findById(notExistId);
 	}

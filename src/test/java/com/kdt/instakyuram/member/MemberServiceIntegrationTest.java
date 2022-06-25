@@ -22,7 +22,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.BusinessException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.follow.domain.Follow;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.domain.MemberRepository;
@@ -203,7 +204,7 @@ class MemberServiceIntegrationTest {
 
 		//when, then
 		assertThatThrownBy(() -> memberGiver.signin(signinRequest.username(), signinRequest.password())).isInstanceOf(
-			NotFoundException.class);
+			BusinessException.class);
 	}
 
 	@Test
@@ -215,7 +216,7 @@ class MemberServiceIntegrationTest {
 
 		//when, then
 		assertThatThrownBy(() -> memberGiver.signin(signinRequest.username(), signinRequest.password())).isInstanceOf(
-			NotFoundException.class);
+			BusinessException.class);
 	}
 
 	@Test
@@ -334,7 +335,7 @@ class MemberServiceIntegrationTest {
 		Long notExistId = -987654321L;
 
 		//when, then
-		assertThatThrownBy(() -> memberGiver.findById(notExistId)).isInstanceOf(NotFoundException.class);
+		assertThatThrownBy(() -> memberGiver.findById(notExistId)).isInstanceOf(EntityNotFoundException.class);
 	}
 
 	@Test

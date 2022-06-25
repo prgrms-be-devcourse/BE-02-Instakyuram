@@ -1,5 +1,6 @@
 package com.kdt.instakyuram.member.service;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -8,7 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.kdt.instakyuram.common.PageDto;
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.BusinessException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.follow.service.FollowService;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.domain.MemberRepository;
@@ -43,7 +46,8 @@ public class MemberService implements MemberGiver {
 
 	public MemberResponse findById(Long id) {
 		Member foundMember = memberRepository.findById(id)
-			.orElseThrow(() -> new NotFoundException("유저 정보가 존재하지 않습니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
+				MessageFormat.format("Member ID = {0}", id)));
 
 		return new MemberResponse(
 			foundMember.getId(),
@@ -57,7 +61,8 @@ public class MemberService implements MemberGiver {
 
 	public MemberResponse findByUsername(String username) {
 		Member foundMember = memberRepository.findByUsername(username)
-			.orElseThrow(() -> new NotFoundException("유저 정보가 존재하지 않습니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
+				MessageFormat.format("Username = {0}", username)));
 
 		return new MemberResponse(
 			foundMember.getId(),
@@ -86,7 +91,7 @@ public class MemberService implements MemberGiver {
 		Page<Member> pagingMembers = memberRepository.findAll(requestPage);
 
 		if (pagingMembers.getContent().isEmpty()) {
-			throw new NotFoundException("사용자 목록이 존재하지 않습니다.");
+			throw new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
 		}
 
 		return memberConverter.toPageResponse(pagingMembers);
@@ -104,16 +109,18 @@ public class MemberService implements MemberGiver {
 	public List<MemberResponse> findAllFollowingIncludeMe(Long id) {
 		List<Long> ids = followService.findByFollowingIds(id);
 
-		return memberRepository.findAllIdsInOrById(ids,id).stream()
+		return memberRepository.findAllIdsInOrById(ids, id).stream()
 			.map(memberConverter::toMemberResponse)
 			.toList();
 	}
 
 	public MemberResponse.SigninResponse signin(String username, String password) {
 		Member foundMember = memberRepository.findByUsername(username)
-			.orElseThrow(() -> new NotFoundException("유저 정보가 일치하지 않습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.AUTHENTICATION_FAILED,
+				MessageFormat.format("Username = {0}, Password ={1}", username, password)));
 		if (!passwordEncoder.matches(password, foundMember.getPassword())) {
-			throw new NotFoundException("유저 정보가 일치하지 않습니다.");
+			throw new BusinessException(ErrorCode.AUTHENTICATION_FAILED,
+				MessageFormat.format("Password = {0}", password));
 		}
 		String[] roles = {String.valueOf(Role.MEMBER)};
 		String accessToken = jwt.generateAccessToken(foundMember.getId(), roles);

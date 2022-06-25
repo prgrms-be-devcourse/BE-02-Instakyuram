@@ -1,12 +1,14 @@
 package com.kdt.instakyuram.post.service;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostImageRepository;
@@ -40,7 +42,8 @@ public class PostImageService {
 	public FileSystemResource findByServerFileName(String serverFileName) {
 		return postImageRepository.findByServerFileName(serverFileName)
 			.map(postImage -> ImageManager.getFileResource(postImage.getPath(), postImage.getServerFileName()))
-			.orElseThrow(() -> new NotFoundException("이미지가 존재하지 않습니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_IMAGE_NOT_FOUND,
+				MessageFormat.format("serverFileName = {0}", serverFileName)));
 	}
 
 	@Transactional
@@ -56,7 +59,8 @@ public class PostImageService {
 	public PostImageResponse.ThumbnailResponse findThumbnailByPostId(Long postId) {
 		return postImageRepository.findTop1ByPostId(postId)
 			.map(postImage -> postConverter.toThumbnailResponse(postId, postImage))
-			.orElseThrow(() -> new NotFoundException("이미지가 존재하지 않습니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_IMAGE_NOT_FOUND,
+				MessageFormat.format("post ID = {0}", postId)));
 	}
 
 	public List<PostImageResponse> findByPostIn(List<Post> posts) {

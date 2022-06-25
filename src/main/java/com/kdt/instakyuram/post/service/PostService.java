@@ -1,5 +1,6 @@
 package com.kdt.instakyuram.post.service;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,7 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.comment.service.CommentGiver;
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
@@ -108,7 +110,8 @@ public class PostService implements PostGiver {
 
 				return postConverter.toUpdateResponse(post);
 			})
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
+				MessageFormat.format("Post ID = {0}, Member ID = {1}", id, memberId)));
 
 	}
 
@@ -120,7 +123,8 @@ public class PostService implements PostGiver {
 
 				return postLikeService.like(postId, memberId);
 			})
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
+				MessageFormat.format("Post ID = {0}, Member ID = {1}", postId, memberId)));
 	}
 
 	@Transactional
@@ -131,13 +135,15 @@ public class PostService implements PostGiver {
 
 				return postLikeService.unlike(postResponse, memberId);
 			})
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
+				MessageFormat.format("Post ID = {0}, Member ID = {1}", postId, memberId)));
 	}
 
 	public FileSystemResource findImage(Long postId, String serverFileName) {
 		return postRepository.findById(postId)
 			.map(post -> postImageService.findByServerFileName(serverFileName))
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
+				MessageFormat.format("Post ID = {0}, ServerFileName = {1}", postId, serverFileName)));
 	}
 
 	@Transactional
@@ -151,7 +157,8 @@ public class PostService implements PostGiver {
 
 				return images;
 			})
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
+				MessageFormat.format("Post ID = {0}, Member ID = {1}", id, memberId)));
 
 		deletedImages.forEach(image ->
 			ImageManager.delete(image.path(), image.serverFileName()));

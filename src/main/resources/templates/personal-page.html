@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/personal-page.css}"/>
-    <title th:text="${profileInfo.username}">username</title>
-</head>
-
-<th:block th:replace="fragments/head :: headFragment('')"></th:block>
+<th:block th:replace="fragments/head :: headFragment(${profileInfo.username})"></th:block>
+<link rel="stylesheet" th:href="@{/css/personal-page.css}"/>
+<title th:text="${profileInfo.username}">username</title>
 <body>
-<div th:replace="~{fragments/header :: headerFragment}"></div>
+<div th:replace="fragments/header :: headerFragment(username=${profileInfo.username})"></div>
 <main class="personal_main">
     <div class="main_container">
         <div class="header_container" th:object="${profileInfo}">
@@ -59,16 +55,16 @@
 <script th:inline="javascript">
     const toFollowButton = () => {
         document.querySelector(".follow_button").innerText = "팔로우";
-        document.querySelector('.follow_button').setAttribute("onClick","followUser()");
+        document.querySelector('.follow_button').setAttribute("onClick", "followUser()");
     }
 
     const toUnFollowButton = () => {
         document.querySelector(".follow_button").innerText = "언팔로우";
-        document.querySelector('.follow_button').setAttribute("onClick","unFollowUser()");
+        document.querySelector('.follow_button').setAttribute("onClick", "unFollowUser()");
     }
 
     const login = () => {
-        location.href="/members/signin";
+        location.href = "/members/signin";
     }
 
     const followUser = () => {
@@ -105,8 +101,8 @@
             method: "GET",
             url: '/api/friendships/[[${profileInfo.id}]]'
         }).then((res) => {
-            if(res.data.response) {
-               toUnFollowButton();
+            if (res.data.response) {
+                toUnFollowButton();
             } else {
                 toFollowButton();
             }
@@ -117,10 +113,10 @@
 
     if ([[${auth}]] == null) {
         document.querySelector('.follow_button').innerText = "로그인";
-        document.querySelector('.follow_button').setAttribute("onClick","login()");
+        document.querySelector('.follow_button').setAttribute("onClick", "login()");
     } else if ([[${auth}]] === true) {
         document.querySelector('.follow_button').innerText = "프로필 편집";
-        document.querySelector('.follow_button').setAttribute("onClick","editProfile()");
+        document.querySelector('.follow_button').setAttribute("onClick", "editProfile()");
     } else {
         checkFollowing();
     }

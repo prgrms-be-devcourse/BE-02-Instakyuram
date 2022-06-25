@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,7 +25,7 @@ import com.kdt.instakyuram.token.service.TokenService;
 
 @EnableWebSecurity
 @Configuration
-@ConfigurationPropertiesScan("com.kdt.instakyuram.security")
+@EnableConfigurationProperties({JwtConfigure.class})
 public class WebSecurityConfigure {
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -63,11 +63,8 @@ public class WebSecurityConfigure {
 	public AccessDeniedHandler accessDeniedHandler() {
 		log.warn("accessDeniedHandler");
 		return (request, response, e) -> {
+			response.sendRedirect("/members/signin");
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.setContentType("text/plain;charset=UTF-8");
-			response.getWriter().write("ACCESS DENIED");
-			response.getWriter().flush();
-			response.getWriter().close();
 		};
 	}
 
@@ -75,10 +72,7 @@ public class WebSecurityConfigure {
 	public AuthenticationEntryPoint authenticationEntryPoint() {
 		return (request, response, e) -> {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.setContentType("text/plain;charset=UTF-8");
-			response.getWriter().write("UNAUTHORIZED");
-			response.getWriter().flush();
-			response.getWriter().close();
+			response.sendRedirect("/members/signin");
 		};
 	}
 
@@ -92,7 +86,7 @@ public class WebSecurityConfigure {
 		Exception {
 		http
 			.authorizeRequests()
-			.antMatchers("/api/members/signup", "/api/members/signin").permitAll()
+			.antMatchers("/api/members/signup", "/api/members/signin", "/members/signin").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.formLogin().disable()

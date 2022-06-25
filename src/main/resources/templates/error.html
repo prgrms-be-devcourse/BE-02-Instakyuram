@@ -3,7 +3,7 @@
 <th:block th:replace="fragments/head :: headFragment('페이지를 찾을 수 없습니다.')"></th:block>
 <link rel="stylesheet" th:href="@{/css/error.css}" />
 <body>
-<div th:replace="~{fragments/header :: headerFragment}"></div>
+<div th:replace="fragments/header :: headerFragment(username = 'signin')"></div>
 <main>
     <div class="main_container">
         <h2 class="error_title">죄송합니다. 페이지를 사용할 수 없습니다.</h2>

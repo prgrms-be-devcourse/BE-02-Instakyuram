@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import org.assertj.core.api.Assertions;
@@ -69,7 +70,7 @@ class FollowRepositoryTest {
 		Member my = members.get(0);
 		Member fromA = members.get(1);
 		Member fromB = members.get(2);
-		Member fromC = members.get(2);
+		Member fromC = members.get(3);
 
 		followRepository.save(Follow.builder()
 			.memberId(fromA.getId())

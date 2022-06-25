@@ -5,8 +5,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.kdt.instakyuram.common.BaseEntity;
+
 @Entity
-public class PostTag {
+public class PostTag extends BaseEntity {
 	@Id
 	private Long id;
 

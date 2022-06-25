@@ -100,6 +100,15 @@ public class MemberService implements MemberGiver {
 			.toList();
 	}
 
+	@Override
+	public List<MemberResponse> findAllFollowingIncludeMe(Long id) {
+		List<Long> ids = followService.findByFollowingIds(id);
+
+		return memberRepository.findAllIdsInOrById(ids,id).stream()
+			.map(memberConverter::toMemberResponse)
+			.toList();
+	}
+
 	public MemberResponse.SigninResponse signin(String username, String password) {
 		Member foundMember = memberRepository.findByUsername(username)
 			.orElseThrow(() -> new NotFoundException("유저 정보가 일치하지 않습니다."));
@@ -107,11 +116,11 @@ public class MemberService implements MemberGiver {
 			throw new NotFoundException("유저 정보가 일치하지 않습니다.");
 		}
 		String[] roles = {String.valueOf(Role.MEMBER)};
-		String accessToken = jwt.generateAccessToken(Jwt.Claims.from(foundMember.getId().toString(), roles));
+		String accessToken = jwt.generateAccessToken(foundMember.getId(), roles);
 		String refreshToken = jwt.generateRefreshToken();
 		tokenService.save(refreshToken, foundMember.getId());
 
-		return new MemberResponse.SigninResponse(foundMember.getId(), username, accessToken, refreshToken);
+		return new MemberResponse.SigninResponse(foundMember.getId(), username, accessToken, refreshToken, roles);
 	}
 
 	public Long countMyFollowing(Long memberId) {

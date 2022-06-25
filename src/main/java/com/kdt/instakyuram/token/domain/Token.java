@@ -12,31 +12,31 @@ import com.kdt.instakyuram.common.BaseEntity;
 public class Token extends BaseEntity {
 
 	@Id
-	private String refreshToken;
+	private String token;
 
-	private Long userId;
+	private Long memberId;
 
 	protected Token() {
 	}
 
-	public Token(String refreshToken, Long userId) {
-		this.refreshToken = refreshToken;
-		this.userId = userId;
+	public Token(String token, Long memberId) {
+		this.token = token;
+		this.memberId = memberId;
 	}
 
-	public String getRefreshToken() {
-		return refreshToken;
+	public String token() {
+		return token;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public Long getMemberId() {
+		return memberId;
 	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-			.append("refreshToken", refreshToken)
-			.append("userId", userId)
+			.append("token", token)
+			.append("memberId", memberId)
 			.append("createdAt", super.getCreatedAt())
 			.append("updatedAt", super.getUpdatedAt())
 			.append("createdBy", super.getCreatedBy())

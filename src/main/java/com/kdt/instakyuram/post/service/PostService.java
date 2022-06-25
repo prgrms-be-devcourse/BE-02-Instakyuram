@@ -11,11 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.comment.service.CommentGiver;
+import com.kdt.instakyuram.common.file.exception.FileWriteException;
 import com.kdt.instakyuram.exception.NotFoundException;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
-import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
 import com.kdt.instakyuram.post.dto.PostImageResponse;
@@ -48,11 +48,9 @@ public class PostService implements PostGiver {
 		this.postLikeService = postLikeService;
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = {FileWriteException.class})
 	public PostResponse.CreateResponse create(Long memberId, String content, List<MultipartFile> images) {
-		Member member = postConverter.toMember(
-			memberGiver.findById(memberId)
-		);
+		Member member = postConverter.toMember(memberGiver.findById(memberId));
 
 		Post savedPost = postRepository.save(
 			Post.builder()
@@ -61,22 +59,15 @@ public class PostService implements PostGiver {
 				.build()
 		);
 
-		List<PostImage> postImages = postConverter.toPostImages(images, savedPost);
-		postImageService.save(postImages);
-
-		for (int i = 0; i < postImages.size(); i++) {
-			PostImage postImage = postImages.get(i);
-			ImageManager.upload(images.get(i), postImage.getServerFileName(), postImage.getPath());
-		}
+		postImageService.save(savedPost.getId(), images);
 
 		return new PostResponse.CreateResponse(savedPost.getId(), memberId, content);
 	}
 
 	public List<PostResponse.FindAllResponse> findAllRelated(Long memberId) {
-		List<Member> members = memberGiver.findAllFollowing(memberId).stream()
+		List<Member> members = memberGiver.findAllFollowingIncludeMe(memberId).stream()
 			.map(postConverter::toMember)
 			.toList();
-
 		List<Post> posts = postRepository.findByMemberIn(members);
 
 		Map<Long, List<PostImageResponse>> postImages = postImageService.findByPostIn(posts)

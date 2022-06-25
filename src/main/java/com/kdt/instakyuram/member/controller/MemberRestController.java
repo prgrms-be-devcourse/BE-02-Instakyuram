@@ -66,7 +66,7 @@ public class MemberRestController {
 
 		Jwt.Claims claims = jwt.verify(signinResponse.accessToken());
 		JwtAuthentication authentication = new JwtAuthentication(signinResponse.accessToken(),
-			signinResponse.id());
+			signinResponse.id(), signinResponse.username());
 		JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(authentication, null,
 			jwt.getAuthorities(claims));
 		authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

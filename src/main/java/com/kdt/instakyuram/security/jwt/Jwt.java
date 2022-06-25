@@ -48,12 +48,13 @@ public class Jwt {
 			builder.withExpiresAt(new Date(now.getTime() + accessTokenProperties.expirySeconds() * 1000L));
 		}
 		builder.withClaim("memberId", claims.memberId);
+		builder.withClaim("username", claims.username);
 		builder.withArrayClaim("roles", claims.roles);
 
 		return builder.sign(algorithm);
 	}
 
-	public String generateAccessToken(Long id, String[] roles) {
+	public String generateAccessToken(Long id, String username, String[] roles) {
 		Date now = new Date();
 		JWTCreator.Builder builder = JWT.create();
 
@@ -65,6 +66,7 @@ public class Jwt {
 			builder.withExpiresAt(new Date(now.getTime() + accessTokenProperties.expirySeconds() * 1000L));
 		}
 		builder.withClaim("memberId", id);
+		builder.withClaim("username", username);
 		builder.withArrayClaim("roles", roles);
 		return builder.sign(algorithm);
 	}
@@ -103,6 +105,7 @@ public class Jwt {
 
 	public static class Claims {
 		Long memberId;
+		String username;
 		String[] roles;
 		Date iat;
 		Date exp;
@@ -114,6 +117,10 @@ public class Jwt {
 			Claim memberId = decodedJWT.getClaim("memberId");
 			if (!memberId.isNull()) {
 				this.memberId = memberId.asLong();
+			}
+			Claim username = decodedJWT.getClaim("username");
+			if (!memberId.isNull()) {
+				this.username = username.asString();
 			}
 			Claim roles = decodedJWT.getClaim("roles");
 			if (!roles.isNull()) {

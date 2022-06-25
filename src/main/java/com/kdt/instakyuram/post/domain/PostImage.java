@@ -6,8 +6,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 import com.kdt.instakyuram.common.BaseEntity;
+import com.kdt.instakyuram.util.FileType;
 
 import lombok.Builder;
 
@@ -22,12 +26,17 @@ public class PostImage extends BaseEntity {
 	@JoinColumn(name = "post_id", referencedColumnName = "id")
 	private Post post;
 
+	@NotBlank
 	private String originalFileName;
 
+	@NotBlank
 	private String serverFileName;
 
+	@NotNull
+	@Positive(message = "사이즈는 0이상이어야 합니다.")
 	private Long size;
 
+	@NotBlank(message = "파일 경로는 필수입니다.")
 	private String path;
 
 	protected PostImage() {
@@ -35,6 +44,8 @@ public class PostImage extends BaseEntity {
 
 	@Builder
 	public PostImage(Long id, Post post, String originalFileName, String serverFileName, Long size, String path) {
+		FileType.verifyType(getExtension(serverFileName));
+
 		this.id = id;
 		this.post = post;
 		this.originalFileName = originalFileName;
@@ -65,6 +76,16 @@ public class PostImage extends BaseEntity {
 
 	public String getPath() {
 		return path;
+	}
+
+	public String getFullPath() {
+		return this.path + "/" + this.getServerFileName();
+	}
+
+	private String getExtension(String serverFileName) {
+		return serverFileName.substring(
+			serverFileName.lastIndexOf(".") + 1
+		);
 	}
 
 }

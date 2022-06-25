@@ -34,3 +34,8 @@ jwt:
   refreshToken:
     header: rtoken
     expiry-seconds: 120
+cors:
+  allowed:
+    api: /api/**
+    url: "http://localhost:3000"
+    method: GET, POST, PATCH, DELETE

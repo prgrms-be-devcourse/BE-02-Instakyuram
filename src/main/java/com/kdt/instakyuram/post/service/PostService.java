@@ -1,6 +1,7 @@
 package com.kdt.instakyuram.post.service;
 
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,12 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.comment.service.CommentGiver;
+import com.kdt.instakyuram.common.file.exception.FileWriteException;
 import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
-import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostRepository;
 import com.kdt.instakyuram.post.dto.PostConverter;
 import com.kdt.instakyuram.post.dto.PostImageResponse;
@@ -50,11 +51,9 @@ public class PostService implements PostGiver {
 		this.postLikeService = postLikeService;
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = {FileWriteException.class})
 	public PostResponse.CreateResponse create(Long memberId, String content, List<MultipartFile> images) {
-		Member member = postConverter.toMember(
-			memberGiver.findById(memberId)
-		);
+		Member member = postConverter.toMember(memberGiver.findById(memberId));
 
 		Post savedPost = postRepository.save(
 			Post.builder()
@@ -63,8 +62,7 @@ public class PostService implements PostGiver {
 				.build()
 		);
 
-		Map<PostImage, MultipartFile> postImagesMap = postConverter.toPostImages(images, savedPost);
-		ImageManager.uploads(postImagesMap.entrySet());
+		postImageService.save(savedPost.getId(), images);
 
 		return new PostResponse.CreateResponse(savedPost.getId(), memberId, content);
 	}
@@ -111,7 +109,7 @@ public class PostService implements PostGiver {
 				return postConverter.toUpdateResponse(post);
 			})
 			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
-				MessageFormat.format("Post ID = {0}, Member ID = {1}", id, memberId)));
+				MessageFormat.format("Post ID = {0}, Member ID = {1}, Content = {2}", id, memberId, content)));
 
 	}
 
@@ -168,15 +166,13 @@ public class PostService implements PostGiver {
 
 	@Override
 	public List<PostImageResponse.ThumbnailResponse> findPostThumbnailsByMemberId(Long memberId) {
-		return postRepository.findAllByMemberId(memberId).stream()
-			.map(Post::getId)
-			.map(postImageService::findThumbnailByPostId)
-			.toList();
-	}
+		List<Post> posts = postRepository.findAllByMemberId(memberId);
 
-	@Override
-	public List<PostImageResponse.ThumbnailResponse> findPostThumbnailsByUsername(String username) {
-		return postRepository.findAllByUsername(username).stream()
+		if (posts.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		return posts.stream()
 			.map(Post::getId)
 			.map(postImageService::findThumbnailByPostId)
 			.toList();

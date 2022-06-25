@@ -36,17 +36,16 @@ public class FollowService {
 	}
 
 	public boolean isFollowed(Long memberId, Long targetId) {
-		return followRepository.findByMemberIdAndTargetId(memberId, targetId).isPresent();
+		return !followRepository.existsByMemberIdAndTargetId(memberId, targetId);
 	}
 
 	@Transactional
-	public boolean follow(Long id, Long targetId) {
+	public void follow(Long id, Long targetId) {
 		followRepository.save(Follow.builder()
 			.memberId(id)
 			.targetId(targetId)
 			.build()
 		);
-		return true;
 	}
 
 	@Transactional

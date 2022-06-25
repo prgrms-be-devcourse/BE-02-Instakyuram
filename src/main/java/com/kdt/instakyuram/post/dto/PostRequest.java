@@ -15,12 +15,8 @@ public record PostRequest() {
 	}
 
 	public record UpdateRequest(
-		Long memberId,
 		String content
 	) {
 	}
 
-	public record DeleteRequest(Long memberId
-	) {
-	}
 }

@@ -1,54 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<th:block th:fragment="headerFragment">
+<div th:fragment="headerFragment()" th:with="username=${username} ?: 'signin'">
     <header>
-        <div class="header__logo">
-            <a class="navbar-brand" th:href="@{/}">
-                <img class="header__logo__img" th:src="@{/images/logo.png}" alt="logo"/>
-            </a>
+        <div class="nav_container">
+            <div class="header__logo">
+                <a class="navbar-brand" th:href="@{/}">
+                    <img class="header__logo__img" th:src="@{/images/logo.png}" alt="logo"/>
+                </a>
+            </div>
+            <div class="header__search">
+                <input class="header__search__input" type="text" placeholder="  검색"/>
+            </div>
+            <ul class="navbar">
+                <li class="navbar__menu__item">
+                    <a th:href="@{/}">
+                        <img class="menu__icon" th:src="@{/images/icon/home.png}" alt="home"/>
+                    </a>
+                </li>
+                <li class="navbar__menu__item">
+                    <a th:href="@{/posts/upload}">
+                        <img class="menu__icon" th:src="@{/images/icon/add_box.png}" alt="add"/>
+                    </a>
+                </li>
+                <li class="navbar__menu__item">
+                    <a href="#">
+                        <img
+                                class="menu__icon"
+                                th:src="@{/images/icon/explore.png}"
+                                alt="explore"
+                        />
+                    </a>
+                </li>
+                <li class="navbar__menu__item">
+                    <a href="#">
+                        <img
+                                class="menu__icon"
+                                th:src="@{/images/icon/favorite.png}"
+                                alt="favorite"
+                        />
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{|/members/${username}|}">
+                        <img
+                                class="menu__icon"
+                                th:src="@{/images/icon/account.png}"
+                                alt="account"
+                        />
+                    </a>
+
+                </li>
+            </ul>
         </div>
-        <div class="header__search">
-            <input class="header__search__input" type="text" placeholder="  검색"/>
-        </div>
-        <ul class="navbar">
-            <li class="navbar__menu__item">
-                <a th:href="@{/}">
-                    <img class="menu__icon" th:src="@{/images/icon/home.png}" alt="home"/>
-                </a>
-            </li>
-            <li class="navbar__menu__item">
-                <a th:href="@{/posts/upload}">
-                    <img class="menu__icon" th:src="@{/images/icon/add_box.png}" alt="add"/>
-                </a>
-            </li>
-            <li class="navbar__menu__item">
-                <a href="#">
-                    <img
-                            class="menu__icon"
-                            th:src="@{/images/icon/explore.png}"
-                            alt="explore"
-                    />
-                </a>
-            </li>
-            <li class="navbar__menu__item">
-                <a href="#">
-                    <img
-                            class="menu__icon"
-                            th:src="@{/images/icon/favorite.png}"
-                            alt="favorite"
-                    />
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <img
-                            class="menu__icon"
-                            th:src="@{/images/icon/account.png}"
-                            alt="account"
-                    />
-                </a>
-            </li>
-        </ul>
     </header>
-</th:block>
+</div>
 </html>

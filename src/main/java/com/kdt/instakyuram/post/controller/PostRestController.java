@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kdt.instakyuram.common.ApiResponse;
@@ -77,8 +76,8 @@ public class PostRestController {
 
 	@GetMapping("/thumbnails")
 	public ApiResponse<List<PostImageResponse.ThumbnailResponse>> getThumbnails(
-		@RequestParam("username") String username) {
-		return new ApiResponse<>(postService.findPostThumbnailsByUsername(username));
+		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
+		return new ApiResponse<>(postService.findPostThumbnailsByMemberId(jwtAuthentication.id()));
 	}
 
 }

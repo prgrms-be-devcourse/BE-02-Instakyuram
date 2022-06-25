@@ -36,6 +36,7 @@ import com.kdt.instakyuram.member.domain.MemberRepository;
 import com.kdt.instakyuram.member.dto.MemberConverter;
 import com.kdt.instakyuram.member.dto.MemberRequest;
 import com.kdt.instakyuram.member.dto.MemberResponse;
+import com.kdt.instakyuram.security.Role;
 import com.kdt.instakyuram.security.jwt.Jwt;
 import com.kdt.instakyuram.token.service.TokenService;
 
@@ -190,6 +191,64 @@ class MemberServiceTest {
 	}
 
 	@Test
+	@DisplayName("나 포함, 팔로잉한 사용자 목록 조회")
+	void testFindAllFollowingIncludeMe() {
+		List<Member> members = getDemoMembers();
+
+		Member member = members.get(0);
+		Member targetA = members.get(1);
+		Member targetB = members.get(2);
+
+		List<Member> followings = List.of(targetA, targetB);
+		List<Member> followingsIncludeMe = List.of(targetA, targetB, member);
+		List<Long> followingIds = followings.stream().map(Member::getId).toList();
+
+		List<MemberResponse> expectedResponses = new ArrayList<>(followings.stream()
+			.map(following -> MemberResponse.builder()
+				.id(following.getId())
+				.email(following.getEmail())
+				.username(following.getUsername())
+				.name(following.getName())
+				.phoneNumber(following.getPhoneNumber())
+				.introduction("")
+				.build())
+			.toList());
+
+		expectedResponses.add(MemberResponse.builder().
+			id(member.getId())
+			.email(member.getEmail())
+			.username(member.getEmail())
+			.name(member.getName())
+			.phoneNumber(member.getPhoneNumber())
+			.introduction("")
+			.build());
+
+		ArrayList<Long> followingIdsIncludeMe = new ArrayList<>(followingIds);
+		followingIdsIncludeMe.add(member.getId());
+
+		// given
+		given(followService.findByFollowingIds(member.getId())).willReturn(followingIds);
+		given(memberRepository.findAllIdsInOrById(followingIds, member.getId())).willReturn(followingsIncludeMe);
+		given(memberConverter.toMemberResponse(targetA)).willReturn(expectedResponses.get(0));
+		given(memberConverter.toMemberResponse(targetB)).willReturn(expectedResponses.get(1));
+		given(memberConverter.toMemberResponse(member)).willReturn(expectedResponses.get(2));
+
+		// when
+		List<MemberResponse> followingMemberResponses = memberService.findAllFollowingIncludeMe(member.getId());
+
+		// then
+		assertThat(followingMemberResponses).hasSameSizeAs(followingIdsIncludeMe);
+
+		AtomicInteger index = new AtomicInteger();
+		followingMemberResponses.forEach(response -> {
+			MatcherAssert.assertThat(
+				expectedResponses.get(index.getAndIncrement()),
+				Matchers.samePropertyValuesAs(response)
+			);
+		});
+	}
+
+	@Test
 	@DisplayName("Sign up 테스트")
 	void testSignup() {
 		//given
@@ -261,6 +320,7 @@ class MemberServiceTest {
 			"");
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
+		String[] roles = {String.valueOf(Role.MEMBER)};
 		MemberRequest.SigninRequest request = new MemberRequest.SigninRequest(
 			member.getUsername(),
 			"123456789"
@@ -269,12 +329,13 @@ class MemberServiceTest {
 			member.getId(),
 			member.getUsername(),
 			accessToken,
-			refreshToken
+			refreshToken,
+			roles
 		);
 
 		given(passwordEncoder.matches(request.password(), member.getPassword())).willReturn(true);
 		given(memberRepository.findByUsername(request.username())).willReturn(Optional.of(member));
-		given(jwt.generateAccessToken(any(Jwt.Claims.class))).willReturn(accessToken);
+		given(jwt.generateAccessToken(any(Long.class), any(String[].class))).willReturn(accessToken);
 		given(jwt.generateRefreshToken()).willReturn(refreshToken);
 		given(tokenService.save(refreshToken, member.getId())).willReturn(refreshToken);
 
@@ -284,7 +345,7 @@ class MemberServiceTest {
 		//then
 		verify(passwordEncoder, times(1)).matches(request.password(), member.getPassword());
 		verify(memberRepository, times(1)).findByUsername(request.username());
-		verify(jwt, times(1)).generateAccessToken(any(Jwt.Claims.class));
+		verify(jwt, times(1)).generateAccessToken(any(Long.class), any(String[].class));
 		verify(jwt, times(1)).generateRefreshToken();
 		verify(tokenService, times(1)).save(refreshToken, member.getId());
 

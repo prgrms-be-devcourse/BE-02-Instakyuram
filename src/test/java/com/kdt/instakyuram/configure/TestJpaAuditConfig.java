@@ -26,7 +26,7 @@ public class TestJpaAuditConfig {
 
 			JwtAuthentication user = (JwtAuthentication)authentication.getPrincipal();
 
-			return Optional.ofNullable(user.id());
+			return Optional.ofNullable(user.id().toString());
 		};
 	}
 }

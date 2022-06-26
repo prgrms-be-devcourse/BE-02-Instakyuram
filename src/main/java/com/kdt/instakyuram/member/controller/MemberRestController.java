@@ -24,7 +24,6 @@ import com.kdt.instakyuram.member.service.MemberService;
 import com.kdt.instakyuram.security.jwt.Jwt;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
-import com.kdt.instakyuram.security.jwt.JwtConfigure;
 import com.kdt.instakyuram.token.service.TokenService;
 
 @RestController
@@ -56,9 +55,9 @@ public class MemberRestController {
 		HttpServletRequest request, HttpServletResponse response) {
 		MemberResponse.SigninResponse signinResponse = this.memberService.signin(signupRequest.username(),
 			signupRequest.password());
-		ResponseCookie accessTokenCookie = ResponseCookie.from(jwtConfigure.accessToken().header(),
+		ResponseCookie accessTokenCookie = ResponseCookie.from(jwt.accessTokenProperties().header(),
 			signinResponse.accessToken()).path("/").build();
-		ResponseCookie refreshTokenCookie = ResponseCookie.from(jwtConfigure.refreshToken().header(),
+		ResponseCookie refreshTokenCookie = ResponseCookie.from(jwt.refreshTokenProperties().header(),
 			signinResponse.refreshToken()).path("/").build();
 
 		Jwt.Claims claims = jwt.verify(signinResponse.accessToken());
@@ -79,11 +78,11 @@ public class MemberRestController {
 		HttpServletResponse response) {
 		tokenService.save(principal.token(), principal.id());
 		Arrays.stream(request.getCookies())
-			.filter(cookie -> cookie.getName().equals(jwtConfigure.refreshToken().header()))
+			.filter(cookie -> cookie.getName().equals(jwt.refreshTokenProperties().header()))
 			.findFirst()
 			.ifPresent(cookie -> tokenService.deleteByToken(cookie.getValue()));
-		Cookie accessTokenCookie = new Cookie(jwtConfigure.accessToken().header(), null);
-		Cookie refreshTokenCookie = new Cookie(jwtConfigure.refreshToken().header(), null);
+		Cookie accessTokenCookie = new Cookie(jwt.accessTokenProperties().header(), null);
+		Cookie refreshTokenCookie = new Cookie(jwt.refreshTokenProperties().header(), null);
 		accessTokenCookie.setMaxAge(0);
 		accessTokenCookie.setPath("/");
 		refreshTokenCookie.setMaxAge(0);

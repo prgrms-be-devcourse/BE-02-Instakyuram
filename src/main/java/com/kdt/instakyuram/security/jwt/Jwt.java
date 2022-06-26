@@ -105,6 +105,14 @@ public class Jwt {
 			.collect(Collectors.toList());
 	}
 
+	public AccessTokenProperties accessTokenProperties() {
+		return accessTokenProperties;
+	}
+
+	public RefreshTokenProperties refreshTokenProperties() {
+		return refreshTokenProperties;
+	}
+
 	public static class Claims {
 		Long memberId;
 		String username;

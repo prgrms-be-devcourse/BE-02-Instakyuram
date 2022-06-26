@@ -1,10 +1,13 @@
 package com.kdt.instakyuram.member.controller;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,9 +18,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kdt.instakyuram.common.ApiResponse;
+import com.kdt.instakyuram.exception.NotAuthenticationException;
 import com.kdt.instakyuram.member.dto.MemberRequest;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberService;
@@ -96,4 +101,27 @@ public class MemberRestController {
 
 		return new ApiResponse<>("signed out");
 	}
+
+	@GetMapping("/{username}/followers")
+	public ApiResponse<List<MemberResponse.FollowerResponse>> getAdditionalFollowers(@PathVariable String username,
+		@Valid @RequestParam @NotNull Long lastIdx,
+		@AuthenticationPrincipal JwtAuthentication auth) {
+		if (auth == null) {
+			throw new NotAuthenticationException("로그인이 필요합니다.");
+		}
+
+		return new ApiResponse<>(memberService.getFollowers(auth.id(), username, lastIdx));
+	}
+
+	@GetMapping("/{username}/followings")
+	public ApiResponse<List<MemberResponse.FollowingResponse>> getAdditionalFollowings(@PathVariable String username,
+		@Valid @RequestParam @NotNull Long lastIdx,
+		@AuthenticationPrincipal JwtAuthentication auth) {
+		if (auth == null) {
+			throw new NotAuthenticationException("로그인이 필요합니다.");
+		}
+
+		return new ApiResponse<>(memberService.getFollowings(auth.id(), username, lastIdx));
+	}
+
 }

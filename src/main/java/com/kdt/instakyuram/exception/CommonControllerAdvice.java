@@ -36,6 +36,15 @@ public class CommonControllerAdvice {
 			.addObject("errorMessage", e.getMessage());
 	}
 
+	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler(NotAuthenticationException.class)
+	public ModelAndView handleNotAuthenticationException(NotAuthenticationException e) {
+		log.warn("ERROR-1 : {}", e.getMessage(), e);
+
+		return new ModelAndView("error")
+			.addObject("errorMessage", e.getMessage());
+	}
+
 	@ExceptionHandler({SizeLimitExceededException.class, FileSizeLimitExceededException.class,
 		InvalidFileException.class})
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

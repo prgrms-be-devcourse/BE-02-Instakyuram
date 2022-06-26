@@ -1,5 +1,6 @@
 package com.kdt.instakyuram.comment.service;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -8,12 +9,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kdt.instakyuram.comment.domain.Comment;
 import com.kdt.instakyuram.comment.domain.CommentRepository;
 import com.kdt.instakyuram.comment.dto.CommentConverter;
+import com.kdt.instakyuram.comment.dto.CommentFindAllResponse;
 import com.kdt.instakyuram.comment.dto.CommentResponse;
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
 
+@Transactional(readOnly = true)
 @Service
 public class CommentService implements CommentGiver {
 
@@ -56,7 +60,8 @@ public class CommentService implements CommentGiver {
 				commentRepository.delete(comment);
 				return true;
 			})
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUND,
+				MessageFormat.format("id = {0} memberId = {1}", id, memberId)));
 	}
 
 	@Transactional
@@ -68,14 +73,15 @@ public class CommentService implements CommentGiver {
 
 				return commentLikeService.like(commentResponse, memberResponse);
 			})
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
 	}
 
 	@Transactional
 	public CommentResponse.LikeResponse unlike(Long id, Long memberId) {
 		return commentRepository.findById(id)
 			.map(comment -> commentLikeService.unlike(id, memberId))
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUND,
+				MessageFormat.format("id = {0} memberId = {1}", id, memberId)));
 	}
 
 	@Override
@@ -85,6 +91,7 @@ public class CommentService implements CommentGiver {
 			.toList();
 	}
 
+	@Transactional
 	@Override
 	public void delete(Long id) {
 		commentRepository.findById(id)
@@ -93,7 +100,8 @@ public class CommentService implements CommentGiver {
 				commentRepository.delete(comment);
 				return true;
 			})
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
+			.orElseThrow(
+				() -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUND, MessageFormat.format("id = {0}", id)));
 	}
 
 	@Override
@@ -101,5 +109,9 @@ public class CommentService implements CommentGiver {
 		return commentRepository.findByPostIn(posts).stream()
 			.map(commentConverter::toResponse)
 			.toList();
+	}
+
+	public List<CommentFindAllResponse> findAll(Long postId, Long memberId) {
+		return commentRepository.findAllByPostIdAndMemberId(postId, memberId);
 	}
 }

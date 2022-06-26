@@ -106,11 +106,7 @@ public class MemberControllerIntegrationTest {
 		//then
 		MvcResult result = mockMvc.perform(
 			get("/members?page=" + request.page() + "&size=" + request.size())
-		).andExpect(status().isBadRequest()).andReturn();
-
-		String errorHtml = result.getResponse().getContentAsString();
-		Assertions.assertThat(errorHtml).contains(errorPageTitle);
-
+		).andExpect(status().isNotFound()).andReturn();
 	}
 
 	@Test

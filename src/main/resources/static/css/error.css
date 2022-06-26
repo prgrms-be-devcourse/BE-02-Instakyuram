@@ -1,0 +1,19 @@
+.main_container {
+    padding: 30px 20px 0;
+    height: 100%;
+    max-width: 935px;
+    display: flex;
+    flex-shrink: 0;
+    flex-grow: 1;
+    flex-direction: column;
+    margin: 0 auto 30px;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+}
+
+
+.error_message_container{
+
+    display: flex;
+}

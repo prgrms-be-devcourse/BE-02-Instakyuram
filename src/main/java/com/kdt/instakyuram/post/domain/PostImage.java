@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 import com.kdt.instakyuram.common.BaseEntity;
-import com.kdt.instakyuram.common.file.FileType;
+import com.kdt.instakyuram.util.FileType;
 
 import lombok.Builder;
 

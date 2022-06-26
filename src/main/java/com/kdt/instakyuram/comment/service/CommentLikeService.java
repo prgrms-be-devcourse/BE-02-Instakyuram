@@ -1,5 +1,6 @@
 package com.kdt.instakyuram.comment.service;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,8 @@ import com.kdt.instakyuram.comment.domain.CommentLike;
 import com.kdt.instakyuram.comment.domain.CommentLikeRepository;
 import com.kdt.instakyuram.comment.dto.CommentConverter;
 import com.kdt.instakyuram.comment.dto.CommentResponse;
+import com.kdt.instakyuram.exception.BusinessException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 
 @Service
@@ -23,7 +26,8 @@ public class CommentLikeService {
 
 	public CommentResponse.LikeResponse like(CommentResponse comment, MemberResponse member) {
 		if (commentLikeRepository.existsCommentLikeByCommentIdAndMemberId(comment.id(), member.id())) {
-			throw new IllegalArgumentException("이미 좋아요 상태 입니다.");
+			throw new BusinessException(ErrorCode.POST_ALREADY_LIKED,
+				MessageFormat.format("commentId = {0}, memberId = {1}", comment.id(), member.id()));
 		}
 
 		CommentLike commentLike = commentConverter.toCommentLike(comment, member);
@@ -45,7 +49,8 @@ public class CommentLikeService {
 
 				return new CommentResponse.LikeResponse(id, likes, false);
 			})
-			.orElseThrow(() -> new IllegalArgumentException("이미 좋아요 취소 상태 입니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.POST_ALREADY_UNLIKE,
+				MessageFormat.format("commentId = {0}, memberId = {1}", id, memberId)));
 	}
 
 	public void delete(Long commentId) {

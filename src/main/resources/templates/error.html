@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>오류 페이지</title>
-</head>
+<th:block th:replace="fragments/head :: headFragment('페이지를 찾을 수 없습니다.')"></th:block>
+<link rel="stylesheet" th:href="@{/css/error.css}" />
 <body>
-<h1>[[${{errorMessage}}]]</h1>
+<div th:replace="fragments/header :: headerFragment(username = 'signin')"></div>
+<main>
+    <div class="main_container">
+        <h2 class="error_title">죄송합니다. 페이지를 사용할 수 없습니다.</h2>
+        <div class="error_message_container">
+            <div>
+            클릭하신 링크가 잘못되었거나 페이지가 삭제되었습니다.
+                <a th:href="@{/}">Instakyuram으로 돌아가기.</a>
+            </div>
+
+        </div>
+
+    </div>
+</main>
 </body>
 </html>

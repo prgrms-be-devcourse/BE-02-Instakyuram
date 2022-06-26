@@ -2,6 +2,8 @@ package com.kdt.instakyuram.post.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kdt.instakyuram.common.ApiResponse;
@@ -32,7 +35,7 @@ public class PostRestController {
 	}
 
 	@PostMapping
-	public ApiResponse<PostResponse.CreateResponse> posting(PostRequest.CreateRequest request,
+	public ApiResponse<PostResponse.CreateResponse> posting(@Valid PostRequest.CreateRequest request,
 		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
 		return new ApiResponse<>(postService.create(
 			jwtAuthentication.id(), request.content(), request.postImages()
@@ -76,8 +79,8 @@ public class PostRestController {
 
 	@GetMapping("/thumbnails")
 	public ApiResponse<List<PostImageResponse.ThumbnailResponse>> getThumbnails(
-		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
-		return new ApiResponse<>(postService.findPostThumbnailsByMemberId(jwtAuthentication.id()));
+		@RequestParam String username) {
+		return new ApiResponse<>(postService.findPostThumbnailsByUsername(username));
 	}
 
 }

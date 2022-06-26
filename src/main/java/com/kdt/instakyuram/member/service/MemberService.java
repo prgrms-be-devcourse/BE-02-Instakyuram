@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,7 +48,8 @@ public class MemberService implements MemberGiver {
 
 	public MemberResponse findById(Long id) {
 		Member foundMember = memberRepository.findById(id)
-			.orElseThrow(() -> new NotFoundException("유저 정보가 존재하지 않습니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
+				MessageFormat.format("Member ID = {0}", id)));
 
 		return new MemberResponse(
 			foundMember.getId(),
@@ -60,7 +63,8 @@ public class MemberService implements MemberGiver {
 
 	public MemberResponse findByUsername(String username) {
 		Member foundMember = memberRepository.findByUsername(username)
-			.orElseThrow(() -> new NotFoundException("유저 정보가 존재하지 않습니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
+				MessageFormat.format("Username = {0}", username)));
 
 		return new MemberResponse(
 			foundMember.getId(),
@@ -89,7 +93,7 @@ public class MemberService implements MemberGiver {
 		Page<Member> pagingMembers = memberRepository.findAll(requestPage);
 
 		if (pagingMembers.getContent().isEmpty()) {
-			throw new NotFoundException("사용자 목록이 존재하지 않습니다.");
+			throw new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
 		}
 
 		return memberConverter.toPageResponse(pagingMembers);
@@ -114,12 +118,14 @@ public class MemberService implements MemberGiver {
 
 	public MemberResponse.SigninResponse signin(String username, String password) {
 		Member foundMember = memberRepository.findByUsername(username)
-			.orElseThrow(() -> new NotFoundException("유저 정보가 일치하지 않습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.AUTHENTICATION_FAILED,
+				MessageFormat.format("Username = {0}, Password ={1}", username, password)));
 		if (!passwordEncoder.matches(password, foundMember.getPassword())) {
-			throw new NotFoundException("유저 정보가 일치하지 않습니다.");
+			throw new BusinessException(ErrorCode.AUTHENTICATION_FAILED,
+				MessageFormat.format("Password = {0}", password));
 		}
 		String[] roles = {String.valueOf(Role.MEMBER)};
-		String accessToken = jwt.generateAccessToken(foundMember.getId(), roles);
+		String accessToken = jwt.generateAccessToken(foundMember.getId(), foundMember.getUsername(), roles);
 		String refreshToken = jwt.generateRefreshToken();
 		tokenService.save(refreshToken, foundMember.getId());
 
@@ -133,7 +139,6 @@ public class MemberService implements MemberGiver {
 	public Long countMyFollower(Long memberId) {
 		return followService.countMyFollower(memberId);
 	}
-
 
 	/**
 	 * note: 인증된 사용자가 다른 사람의 팔로우를 볼때!

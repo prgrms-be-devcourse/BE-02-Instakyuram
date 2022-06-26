@@ -30,7 +30,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.kdt.instakyuram.common.PageDto;
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.BusinessException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.follow.service.FollowService;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.domain.MemberRepository;
@@ -120,7 +121,7 @@ class MemberServiceTest {
 		//then
 		assertThatThrownBy(() -> {
 			memberService.findAll(pageRequest);
-		}).isInstanceOf(NotFoundException.class);
+		}).isInstanceOf(EntityNotFoundException.class);
 	}
 
 	private List<Member> getMembers() {
@@ -301,7 +302,7 @@ class MemberServiceTest {
 
 		//when, then
 		assertThatThrownBy(() -> memberService.signin(signinRequest.username(), signinRequest.password())).isInstanceOf(
-			NotFoundException.class);
+			BusinessException.class);
 
 		verify(memberRepository, times(1)).findByUsername(signinRequest.username());
 		verify(passwordEncoder, times(1)).matches(signinRequest.password(), member.getPassword());
@@ -336,7 +337,7 @@ class MemberServiceTest {
 
 		given(passwordEncoder.matches(request.password(), member.getPassword())).willReturn(true);
 		given(memberRepository.findByUsername(request.username())).willReturn(Optional.of(member));
-		given(jwt.generateAccessToken(any(Long.class), any(String[].class))).willReturn(accessToken);
+		given(jwt.generateAccessToken(any(Long.class), any(String.class), any(String[].class))).willReturn(accessToken);
 		given(jwt.generateRefreshToken()).willReturn(refreshToken);
 		given(tokenService.save(refreshToken, member.getId())).willReturn(refreshToken);
 
@@ -346,7 +347,7 @@ class MemberServiceTest {
 		//then
 		verify(passwordEncoder, times(1)).matches(request.password(), member.getPassword());
 		verify(memberRepository, times(1)).findByUsername(request.username());
-		verify(jwt, times(1)).generateAccessToken(any(Long.class), any(String[].class));
+		verify(jwt, times(1)).generateAccessToken(any(Long.class), any(String.class), any(String[].class));
 		verify(jwt, times(1)).generateRefreshToken();
 		verify(tokenService, times(1)).save(refreshToken, member.getId());
 
@@ -391,7 +392,7 @@ class MemberServiceTest {
 		given(memberRepository.findById(notExistId)).willReturn(Optional.empty());
 
 		//when
-		assertThatThrownBy(() -> memberService.findById(notExistId)).isInstanceOf(NotFoundException.class);
+		assertThatThrownBy(() -> memberService.findById(notExistId)).isInstanceOf(EntityNotFoundException.class);
 
 		verify(memberRepository, times(1)).findById(notExistId);
 	}

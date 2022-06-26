@@ -20,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.token.dto.TokenResponse;
 import com.kdt.instakyuram.token.service.TokenService;
 
@@ -86,7 +87,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String accessToken) {
 		List<GrantedAuthority> authorities = this.jwt.getAuthorities(claims);
 		if (claims.memberId != null && !authorities.isEmpty()) {
-			JwtAuthentication authentication = new JwtAuthentication(accessToken, claims.memberId);
+			JwtAuthentication authentication = new JwtAuthentication(accessToken, claims.memberId, claims.username);
 			JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(authentication, null, authorities);
 			authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
@@ -135,7 +136,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 				return true;
 			}
-		} catch (JwtRefreshTokenNotFoundException | JWTVerificationException e) {
+		} catch (EntityNotFoundException | JWTVerificationException e) {
 			log.warn(e.getMessage());
 
 			return false;

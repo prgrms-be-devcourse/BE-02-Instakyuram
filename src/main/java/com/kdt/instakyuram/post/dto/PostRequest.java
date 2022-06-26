@@ -15,7 +15,7 @@ public record PostRequest() {
 
 	public record CreateRequest(
 		@NotNull
-		@Size(max = 2200, message = "최대 2200글자 까지만 입력하실 수 있습니다.")
+		@Size(max = 200, message = "최대 2200글자 까지만 입력하실 수 있습니다.")
 		String content,
 		List<MultipartFile> postImages
 	) {
@@ -33,7 +33,7 @@ public record PostRequest() {
 						MessageFormat.format("업로드 파일 중 크기가 0이하인 파일이 존재합니다. [파일이름 : {0}]",
 							file.getOriginalFilename()));
 				}
-				if (file.getOriginalFilename() == null) {
+				if (Objects.equals(file.getOriginalFilename(), "") || file.getOriginalFilename() == null ) {
 					throw new InvalidFileException("파일의 이름이 존재하지 않습니다.");
 				}
 			}
@@ -41,7 +41,7 @@ public record PostRequest() {
 	}
 
 	public record UpdateRequest(
-		@Size(max = 2200, message = "최대 2200글자 까지만 입력하실 수 있습니다.")
+		@Size(max = 200, message = "최대 2200글자 까지만 입력하실 수 있습니다.")
 		String content
 	) {
 	}

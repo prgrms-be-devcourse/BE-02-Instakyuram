@@ -9,5 +9,7 @@ public interface PostGiver {
 
 	List<PostImageResponse.ThumbnailResponse> findPostThumbnailsByMemberId(Long memberId);
 
+	List<PostImageResponse.ThumbnailResponse> findPostThumbnailsByUsername(String username);
+
 	List<PostResponse> findAllByMemberId(Long memberId);
 }

@@ -178,6 +178,20 @@ public class PostService implements PostGiver {
 			.toList();
 	}
 
+	@Override
+	public List<PostImageResponse.ThumbnailResponse> findPostThumbnailsByUsername(String username) {
+		List<Post> posts = postRepository.findAllByUsername(username);
+
+		if (posts.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		return posts.stream()
+			.map(Post::getId)
+			.map(postImageService::findThumbnailByPostId)
+			.toList();
+	}
+
 	public List<PostResponse> findAllByMemberId(Long memberId) {
 		return postRepository.findAllByMemberId(memberId)
 			.stream()

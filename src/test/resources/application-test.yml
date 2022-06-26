@@ -1,4 +1,8 @@
 spring:
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+    cache-duration: PT1H
   h2:
     console:
       enabled: true

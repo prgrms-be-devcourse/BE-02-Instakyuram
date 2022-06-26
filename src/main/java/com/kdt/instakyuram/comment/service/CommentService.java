@@ -13,6 +13,8 @@ import com.kdt.instakyuram.comment.dto.CommentFindAllResponse;
 import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.exception.ErrorCode;
+import com.kdt.instakyuram.exception.ErrorCodeV2;
+import com.kdt.instakyuram.exception.ServiceNotFoundException;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
@@ -113,5 +115,11 @@ public class CommentService implements CommentGiver {
 
 	public List<CommentFindAllResponse> findAll(Long postId, Long memberId) {
 		return commentRepository.findAllByPostIdAndMemberId(postId, memberId);
+	}
+
+	public CommentResponse findById(Long id) {
+		return commentRepository.findById(id)
+			.map(commentConverter::toResponse)
+			.orElseThrow(() -> new ServiceNotFoundException(ErrorCodeV2.COMMENT_NOT_FOUND, id));
 	}
 }

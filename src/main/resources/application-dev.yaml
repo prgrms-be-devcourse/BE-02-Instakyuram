@@ -2,6 +2,10 @@ spring:
   config:
     activate:
       on-profile: dev
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+    cache-duration: PT1H
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     username: root

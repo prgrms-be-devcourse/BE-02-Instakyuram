@@ -9,7 +9,9 @@ public record MemberResponse(
 	String name,
 	String email,
 	String phoneNumber,
-	String introduction) {
+	String introduction,
+	String profileImageName
+) {
 
 	public record SignupResponse(
 		Long id,
@@ -29,7 +31,8 @@ public record MemberResponse(
 		String introduction,
 		Long postCount,
 		Long followerCount,
-		Long followCount
+		Long followCount,
+		String profileImageName
 	) {
 	}
 }

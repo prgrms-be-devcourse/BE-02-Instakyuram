@@ -55,7 +55,8 @@ public class MemberService implements MemberGiver {
 			foundMember.getName(),
 			foundMember.getEmail(),
 			foundMember.getPhoneNumber(),
-			foundMember.getIntroduction()
+			foundMember.getIntroduction(),
+			foundMember.getProfileImageName()
 		);
 	}
 

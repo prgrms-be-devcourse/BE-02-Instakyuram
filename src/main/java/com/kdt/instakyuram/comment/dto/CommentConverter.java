@@ -49,7 +49,8 @@ public class CommentConverter {
 			member.getName(),
 			member.getEmail(),
 			member.getPhoneNumber(),
-			member.getIntroduction()
+			member.getIntroduction(),
+			member.getProfileImageName()
 		);
 	}
 

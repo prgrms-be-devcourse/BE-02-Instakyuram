@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 
 @ConstructorBinding
 @ConfigurationProperties(prefix = "cors.allowed")
-public record CorsConfigure(
+public record CorsConfigProperties(
 	String api,
 	String[] url,
 	String[] method

@@ -12,11 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.kdt.instakyuram.member.domain.Member;
 
-@ActiveProfiles("test")
 @DataJpaTest
 class PostRepositoryTest {
 
@@ -33,7 +31,7 @@ class PostRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("팔로잉한 멤버의 게시글 조회")
+	@DisplayName("팔로잉한 멤버의 게시글 조회한다.")
 	void findByMemberIn() {
 		//given
 		List<Member> followings = this.getDemoMembers();

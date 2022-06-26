@@ -54,8 +54,8 @@ public class PostLikeService {
 	}
 
 	@Transactional
-	public void delete(Long id) {
-		List<PostLike> postLikes = postLikeRepository.findByPostId(id);
+	public void delete(Long postId) {
+		List<PostLike> postLikes = postLikeRepository.findByPostId(postId);
 		postLikeRepository.deleteAll(postLikes);
 	}
 

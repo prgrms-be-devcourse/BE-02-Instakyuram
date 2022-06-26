@@ -27,6 +27,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -194,6 +195,7 @@ class MemberRestControllerTest {
 		verify(memberService, times(1)).getFollowings(authId, username, basicIdx);
 	}
 
+	@WithMockUser
 	@Nested
 	@DisplayName("사용자가 팔로잉/ 팔로워에 대한 추가적인 정보를 위해 lastIdx(cursor) 값을 ")
 	class Validation {

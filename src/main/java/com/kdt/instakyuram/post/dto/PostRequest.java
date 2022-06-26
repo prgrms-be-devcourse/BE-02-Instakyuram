@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.common.file.exception.InvalidFileException;
@@ -28,13 +29,13 @@ public record PostRequest() {
 
 		private static void verifyFile(List<MultipartFile> files) {
 			for (MultipartFile file : files) {
+				if (StringUtils.isEmpty(file.getOriginalFilename())) {
+					throw new InvalidFileException("파일의 이름이 존재하지 않습니다.");
+				}
 				if (file.getSize() <= 0) {
 					throw new InvalidFileException(
 						MessageFormat.format("업로드 파일 중 크기가 0이하인 파일이 존재합니다. [파일이름 : {0}]",
 							file.getOriginalFilename()));
-				}
-				if (Objects.equals(file.getOriginalFilename(), "") || file.getOriginalFilename() == null ) {
-					throw new InvalidFileException("파일의 이름이 존재하지 않습니다.");
 				}
 			}
 		}

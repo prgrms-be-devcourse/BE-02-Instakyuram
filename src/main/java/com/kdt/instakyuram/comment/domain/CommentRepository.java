@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.kdt.instakyuram.post.domain.Post;
 
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustom {
 
 	@Query("SELECT c FROM Comment c JOIN FETCH c.member m WHERE c.post.id = :postId")
 	List<Comment> findAllByPostId(Long postId);

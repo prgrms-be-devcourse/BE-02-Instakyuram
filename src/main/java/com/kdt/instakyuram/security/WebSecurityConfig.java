@@ -72,7 +72,7 @@ public class WebSecurityConfig {
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return web -> web.ignoring().antMatchers("/css/**", "/js/**", "/webjars/**", "/images/**");
+		return web -> web.ignoring().antMatchers(this.securityConfigProperties.patterns().ignoring());
 	}
 
 	@Bean
@@ -80,7 +80,7 @@ public class WebSecurityConfig {
 		Exception {
 		http
 			.authorizeRequests()
-			.antMatchers("/api/members/signup", "/api/members/signin", "/members/signin").permitAll()
+			.antMatchers(this.securityConfigProperties.patterns().permitAll()).permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.formLogin().disable()

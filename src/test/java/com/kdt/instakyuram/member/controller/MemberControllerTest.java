@@ -42,21 +42,21 @@ import com.kdt.instakyuram.member.service.MemberService;
 import com.kdt.instakyuram.member.service.ProfileService;
 import com.kdt.instakyuram.post.service.PostGiver;
 import com.kdt.instakyuram.security.Role;
-import com.kdt.instakyuram.security.WebSecurityConfigure;
+import com.kdt.instakyuram.security.SecurityConfigProperties;
+import com.kdt.instakyuram.security.WebSecurityConfig;
 import com.kdt.instakyuram.security.jwt.Jwt;
-import com.kdt.instakyuram.security.jwt.JwtConfigure;
 import com.kdt.instakyuram.token.service.TokenService;
 
 @WithMockUser(roles = "MEMBER")
-@WebMvcTest({MemberRestController.class, MemberController.class, WebSecurityConfigure.class})
-@EnableConfigurationProperties(JwtConfigure.class)
+@WebMvcTest({MemberRestController.class, MemberController.class, WebSecurityConfig.class})
+@EnableConfigurationProperties(SecurityConfigProperties.class)
 class MemberControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@Autowired
-	private ObjectMapper mapper;
+	SecurityConfigProperties securityConfiguresProperties;
 
 	@Autowired
 	ObjectMapper objectMapper;
@@ -69,9 +69,6 @@ class MemberControllerTest {
 
 	@MockBean
 	ProfileService profileService;
-
-	@Autowired
-	JwtConfigure jwtConfigure;
 
 	@MockBean
 	TokenService tokenService;
@@ -224,6 +221,8 @@ class MemberControllerTest {
 		String request = objectMapper.writeValueAsString(signinRequest);
 		String response = objectMapper.writeValueAsString(new ApiResponse<>(signinResponse));
 
+		given(jwt.refreshTokenProperties()).willReturn(this.securityConfiguresProperties.jwt().refreshToken());
+		given(jwt.accessTokenProperties()).willReturn(this.securityConfiguresProperties.jwt().accessToken());
 		given(jwt.verify(accessToken)).willReturn(claim);
 		given(memberService.signin(any(String.class), any(String.class))).willReturn(signinResponse);
 

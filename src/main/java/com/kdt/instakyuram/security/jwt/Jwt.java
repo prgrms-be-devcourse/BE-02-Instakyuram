@@ -15,18 +15,20 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.kdt.instakyuram.security.SecurityConfigProperties.JwtConfigure.AccessTokenProperties;
+import com.kdt.instakyuram.security.SecurityConfigProperties.JwtConfigure.RefreshTokenProperties;
 
 import lombok.Builder;
 
 public class Jwt {
 	private final String issuer;
-	private final JwtConfigure.AccessTokenProperties accessTokenProperties;
-	private final JwtConfigure.RefreshTokenProperties refreshTokenProperties;
+	private final AccessTokenProperties accessTokenProperties;
+	private final RefreshTokenProperties refreshTokenProperties;
 	private final Algorithm algorithm;
 	private final JWTVerifier jwtVerifier;
 
-	public Jwt(String issuer, String clientSecret, JwtConfigure.AccessTokenProperties accessTokenProperties,
-		JwtConfigure.RefreshTokenProperties refreshTokenProperties) {
+	public Jwt(String issuer, String clientSecret, AccessTokenProperties accessTokenProperties,
+		RefreshTokenProperties refreshTokenProperties) {
 		this.issuer = issuer;
 		this.algorithm = Algorithm.HMAC512(clientSecret);
 		this.accessTokenProperties = accessTokenProperties;

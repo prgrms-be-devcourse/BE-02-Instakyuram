@@ -33,14 +33,11 @@ public class MemberRestController {
 
 	private final MemberService memberService;
 	private final TokenService tokenService;
-	private final JwtConfigure jwtConfigure;
 	private final Jwt jwt;
 
-	public MemberRestController(MemberService memberService, TokenService tokenService, JwtConfigure jwtConfigure,
-		Jwt jwt) {
+	public MemberRestController(MemberService memberService, TokenService tokenService, Jwt jwt) {
 		this.memberService = memberService;
 		this.tokenService = tokenService;
-		this.jwtConfigure = jwtConfigure;
 		this.jwt = jwt;
 	}
 

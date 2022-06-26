@@ -2,8 +2,6 @@ package com.kdt.instakyuram.security;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,19 +18,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.kdt.instakyuram.security.jwt.Jwt;
 import com.kdt.instakyuram.security.jwt.JwtAuthenticationFilter;
-import com.kdt.instakyuram.security.jwt.JwtConfigure;
 import com.kdt.instakyuram.token.service.TokenService;
 
 @EnableWebSecurity
 @Configuration
-@EnableConfigurationProperties({JwtConfigure.class})
-public class WebSecurityConfigure {
-	private final Logger log = LoggerFactory.getLogger(getClass());
+@EnableConfigurationProperties({SecurityConfigProperties.class})
+public class WebSecurityConfig {
+	private final SecurityConfigProperties securityConfigProperties;
 
-	private final JwtConfigure jwtConfigure;
-
-	public WebSecurityConfigure(JwtConfigure jwtConfigure) {
-		this.jwtConfigure = jwtConfigure;
+	public WebSecurityConfig(SecurityConfigProperties securityConfigProperties) {
+		this.securityConfigProperties = securityConfigProperties;
 	}
 
 	@Bean
@@ -43,17 +38,17 @@ public class WebSecurityConfigure {
 	@Bean
 	public Jwt jwt() {
 		return new Jwt(
-			this.jwtConfigure.issuer(),
-			this.jwtConfigure.clientSecret(),
-			this.jwtConfigure.accessToken(),
-			this.jwtConfigure.refreshToken()
+			this.securityConfigProperties.jwt().issuer(),
+			this.securityConfigProperties.jwt().clientSecret(),
+			this.securityConfigProperties.jwt().accessToken(),
+			this.securityConfigProperties.jwt().refreshToken()
 		);
 	}
 
 	public JwtAuthenticationFilter jwtAuthenticationFilter(Jwt jwt, TokenService tokenService) {
 		return new JwtAuthenticationFilter(
-			this.jwtConfigure.accessToken().header(),
-			this.jwtConfigure.refreshToken().header(),
+			this.securityConfigProperties.jwt().accessToken().header(),
+			this.securityConfigProperties.jwt().refreshToken().header(),
 			jwt,
 			tokenService
 		);
@@ -61,7 +56,6 @@ public class WebSecurityConfigure {
 
 	@Bean
 	public AccessDeniedHandler accessDeniedHandler() {
-		log.warn("accessDeniedHandler");
 		return (request, response, e) -> {
 			response.sendRedirect("/members/signin");
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);

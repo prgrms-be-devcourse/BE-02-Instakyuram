@@ -4,12 +4,12 @@ package com.kdt.instakyuram.configure;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
-import com.kdt.instakyuram.security.WebSecurityConfigure;
-import com.kdt.instakyuram.security.jwt.JwtConfigure;
+import com.kdt.instakyuram.security.SecurityConfigProperties;
+import com.kdt.instakyuram.security.WebSecurityConfig;
 import com.kdt.instakyuram.token.service.TokenService;
 
-@Import({WebSecurityConfigure.class, TokenService.class})
-@EnableConfigurationProperties(JwtConfigure.class)
+@Import({WebSecurityConfig.class, TokenService.class})
+@EnableConfigurationProperties(SecurityConfigProperties.class)
 public class WebSecurityTestConfigure {
 }
 

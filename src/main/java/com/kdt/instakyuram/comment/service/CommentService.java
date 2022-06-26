@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kdt.instakyuram.comment.domain.Comment;
 import com.kdt.instakyuram.comment.domain.CommentRepository;
 import com.kdt.instakyuram.comment.dto.CommentConverter;
+import com.kdt.instakyuram.comment.dto.CommentFindAllResponse;
 import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.exception.ErrorCode;
@@ -16,6 +17,7 @@ import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
 
+@Transactional(readOnly = true)
 @Service
 public class CommentService implements CommentGiver {
 
@@ -106,5 +108,9 @@ public class CommentService implements CommentGiver {
 		return commentRepository.findByPostIn(posts).stream()
 			.map(commentConverter::toResponse)
 			.toList();
+	}
+
+	public List<CommentFindAllResponse> findAll(Long postId, Long memberId) {
+		return commentRepository.findAllByPostIdAndMemberId(postId, memberId);
 	}
 }

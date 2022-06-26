@@ -91,6 +91,7 @@ public class CommentService implements CommentGiver {
 			.toList();
 	}
 
+	@Transactional
 	@Override
 	public void delete(Long id) {
 		commentRepository.findById(id)

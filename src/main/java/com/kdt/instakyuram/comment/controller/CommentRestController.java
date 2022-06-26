@@ -29,9 +29,12 @@ public class CommentRestController {
 	}
 
 	@PostMapping
-	public ApiResponse<CommentResponse> create(@RequestBody CommentRequest.CreateRequest request) {
+	public ApiResponse<CommentResponse> create(
+		@AuthenticationPrincipal JwtAuthentication authentication,
+		@RequestBody CommentRequest.CreateRequest request
+	) {
 		CommentResponse commentResponse = commentService.create(
-			request.postId(), request.memberId(), request.content()
+			request.postId(), authentication.id(), request.content()
 		);
 
 		return new ApiResponse<>(commentResponse);
@@ -39,19 +42,19 @@ public class CommentRestController {
 
 	@DeleteMapping("/{id}")
 	public void delete(
-		@PathVariable Long id,
-		@RequestBody CommentRequest.DeleteRequest request
+		@AuthenticationPrincipal JwtAuthentication authentication,
+		@PathVariable Long id
 	) {
-		commentService.delete(id, request.memberId());
+		commentService.delete(id, authentication.id());
 	}
 
 	@PostMapping("/{id}/like")
 	public ApiResponse<CommentResponse.LikeResponse> like(
-		@PathVariable Long id,
-		@RequestBody CommentRequest.LikeRequest request
+		@AuthenticationPrincipal JwtAuthentication authentication,
+		@PathVariable Long id
 	) {
 		CommentResponse.LikeResponse commentResponse = commentService.like(
-			id, request.memberId()
+			id, authentication.id()
 		);
 
 		return new ApiResponse<>(commentResponse);
@@ -59,11 +62,11 @@ public class CommentRestController {
 
 	@PostMapping("{id}/unlike")
 	public ApiResponse<CommentResponse.LikeResponse> unlike(
-		@PathVariable Long id,
-		@RequestBody CommentRequest.LikeRequest request
+		@AuthenticationPrincipal JwtAuthentication authentication,
+		@PathVariable Long id
 	) {
 		CommentResponse.LikeResponse commentResponse = commentService.unlike(
-			id, request.memberId()
+			id, authentication.id()
 		);
 
 		return new ApiResponse<>(commentResponse);

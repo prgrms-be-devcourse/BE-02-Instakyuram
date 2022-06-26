@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.exception.BusinessException;
@@ -71,7 +72,8 @@ public class MemberService implements MemberGiver {
 			foundMember.getName(),
 			foundMember.getEmail(),
 			foundMember.getPhoneNumber(),
-			foundMember.getIntroduction()
+			foundMember.getIntroduction(),
+			foundMember.getProfileImageName()
 		);
 	}
 
@@ -138,4 +140,13 @@ public class MemberService implements MemberGiver {
 	public Long countMyFollower(Long memberId) {
 		return followService.countMyFollower(memberId);
 	}
+
+	@Transactional
+	public String updateProfileImage(Long id, String profileImageName) {
+		return this.memberRepository.findById(id)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
+				MessageFormat.format("Member ID = {0}", id)))
+			.updateProfileImage(profileImageName);
+	}
+
 }

@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.profileimage;
+package com.kdt.instakyuram.profileimage.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -32,7 +32,7 @@ import com.kdt.instakyuram.profileimage.domain.ProfileImageRepository;
 @WithMockUser("MEMBER")
 @AutoConfigureMockMvc
 @SpringBootTest
-class ProfileImageIntegrationTest {
+class ProfileImageControllerIntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;

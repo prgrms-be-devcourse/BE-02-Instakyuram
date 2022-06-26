@@ -5,15 +5,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.kdt.instakyuram.common.PageDto;
-import com.kdt.instakyuram.exception.NotFoundException;
+import com.kdt.instakyuram.exception.BusinessException;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
+import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.follow.service.FollowService;
 import com.kdt.instakyuram.member.domain.Member;
 import com.kdt.instakyuram.member.domain.MemberRepository;
@@ -142,6 +142,7 @@ public class MemberService implements MemberGiver {
 
 	/**
 	 * note: 인증된 사용자가 다른 사람의 팔로우를 볼때!
+	 *
 	 * @param authId
 	 * @param username
 	 * @param lastIdx
@@ -153,7 +154,8 @@ public class MemberService implements MemberGiver {
 			memberRepository.findByUsername(username)
 				.map(Member::getId)
 				.orElseThrow(
-					() -> new NotFoundException(MessageFormat.format("해당 username 이 {0}인 사용자가 존재하지 않습니다", username))),
+					() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
+						MessageFormat.format("해당 username 이 {0}인 사용자가 존재하지 않습니다", username))),
 			lastIdx
 		);
 
@@ -182,7 +184,8 @@ public class MemberService implements MemberGiver {
 			memberRepository.findByUsername(username)
 				.map(Member::getId)
 				.orElseThrow(
-					() -> new NotFoundException(MessageFormat.format("해당 username 이 {0}인 사용자가 존재하지 않습니다", username))),
+					() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
+						MessageFormat.format("해당 username 이 {0}인 사용자가 존재하지 않습니다", username))),
 			lastIdx
 		);
 
@@ -207,7 +210,9 @@ public class MemberService implements MemberGiver {
 
 	public boolean isSame(String username, Long authId) {
 		Member authMember = memberRepository.findById(authId)
-			.orElseThrow(() -> new NotFoundException(MessageFormat.format("해당 id가 {0}인 auth 를 찾을 수 없습니다.", authId)));
+			.orElseThrow(
+				() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
+					MessageFormat.format("해당 id가 {0}인 auth 를 찾을 수 없습니다.", authId)));
 
 		return authMember.getUsername().equals(username);
 	}

@@ -66,7 +66,7 @@ public class PostRestController {
 		return new ApiResponse<>(postService.like(id, jwtAuthentication.id()));
 	}
 
-	@PostMapping("/{id}/unlike")
+	@DeleteMapping("/{id}/unlike")
 	public ApiResponse<PostLikeResponse> unlike(@PathVariable Long id,
 		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
 		return new ApiResponse<>(postService.unlike(id, jwtAuthentication.id()));

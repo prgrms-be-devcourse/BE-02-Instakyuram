@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.member;
+package com.kdt.instakyuram.member.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -252,7 +252,7 @@ public class MemberControllerIntegrationTest {
 		SimpleGrantedAuthority role_anonymous = new SimpleGrantedAuthority("ROLE_MEMBER");
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(role_anonymous);
-		JwtAuthentication jwtAuthentication = new JwtAuthentication("random-token", authId);
+		JwtAuthentication jwtAuthentication = new JwtAuthentication("random-token", authId, "programmers");
 		Authentication authentication = new JwtAuthenticationToken(jwtAuthentication, "anonymous", authorities);
 
 		SecurityContext context = SecurityContextHolder.createEmptyContext();

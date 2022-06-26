@@ -1,4 +1,4 @@
-package com.kdt.instakyuram;
+package com.kdt.instakyuram.member.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,7 +37,7 @@ import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-public class MemberRestControllerTest {
+class MemberRestControllerIntegrationTest {
 
 	@Autowired
 	private EntityManager entityManager;
@@ -151,7 +151,7 @@ public class MemberRestControllerTest {
 		SimpleGrantedAuthority role_anonymous = new SimpleGrantedAuthority("ROLE_MEMBER");
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(role_anonymous);
-		JwtAuthentication jwtAuthentication = new JwtAuthentication("random-token", authId);
+		JwtAuthentication jwtAuthentication = new JwtAuthentication("random-token", authId, "programmers");
 		Authentication authentication = new JwtAuthenticationToken(jwtAuthentication, "anonymous", authorities);
 
 		SecurityContext context = SecurityContextHolder.createEmptyContext();

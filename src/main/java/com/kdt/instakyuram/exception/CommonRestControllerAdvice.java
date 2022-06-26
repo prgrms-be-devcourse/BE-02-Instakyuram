@@ -92,7 +92,7 @@ public class CommonRestControllerAdvice {
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<ErrorResponse<ErrorCode>> handleDataIntegrityViolationException(
 		DataIntegrityViolationException e) {
-		this.log.warn("ERROR-100 - {} : {}", e, e);
+		this.log.warn("{}", e.toString(), e);
 		ErrorCode errorCode = ErrorCode.DATA_INTEGRITY_VIOLATION;
 
 		return new ResponseEntity<>(new ErrorResponse<>(errorCode), errorCode.getStatus());

@@ -15,7 +15,7 @@ public record PostRequest() {
 
 	public record CreateRequest(
 		@NotNull
-		@Size(max = 200, message = "최대 2200글자 까지만 입력하실 수 있습니다.")
+		@Size(max = 200, message = "최대 200글자 까지만 입력하실 수 있습니다.")
 		String content,
 		List<MultipartFile> postImages
 	) {
@@ -41,7 +41,7 @@ public record PostRequest() {
 	}
 
 	public record UpdateRequest(
-		@Size(max = 200, message = "최대 2200글자 까지만 입력하실 수 있습니다.")
+		@Size(max = 200, message = "최대 200글자 까지만 입력하실 수 있습니다.")
 		String content
 	) {
 	}

@@ -233,7 +233,7 @@ public class FollowControllerIntegrationTest {
 		SimpleGrantedAuthority role_anonymous = new SimpleGrantedAuthority("ROLE_MEMBER");
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(role_anonymous);
-		JwtAuthentication jwtAuthentication = new JwtAuthentication("random-token", authId);
+		JwtAuthentication jwtAuthentication = new JwtAuthentication("random-token", authId, "anonymous");
 		Authentication authentication = new JwtAuthenticationToken(jwtAuthentication, "anonymous", authorities);
 
 		SecurityContext context = SecurityContextHolder.createEmptyContext();

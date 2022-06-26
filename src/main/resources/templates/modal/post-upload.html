@@ -9,8 +9,10 @@
     <title>post-upload</title>
 </head>
 <th:block th:replace="fragments/head :: headFragment('')"></th:block>
-<div th:replace="~{fragments/header :: headerFragment}"></div>
+<link rel="stylesheet" th:href="@{/css/post-upload.css}"/>
+<div th:replace="~{fragments/header :: headerFragment()}"></div>
 <body style="margin: 50px;">
+<main>
 <div class="mb-3">
     <label for="fileUpload" class="form-label">이미지 첨부</label>
     <input class="form-control" type="file" id="fileUpload" accept="image/*" multiple>
@@ -96,6 +98,7 @@
         })
     })
 </script>
+</main>
 </body>
 
 </html>

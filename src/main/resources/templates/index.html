@@ -1,8 +1,10 @@
 <!doctype html>
 <html lang="en">
-<th:block th:replace="fragments/head :: headFragment('Voucher List')"></th:block>
+<th:block th:replace="fragments/head :: headFragment('instakyuram')"></th:block>
 <body>
-<div th:replace="~{fragments/header :: headerFragment}"></div>
-<h2 class="title">Hello World!</h2>
+<div th:replace="fragments/header :: headerFragment(username=${member.username})"></div>
+<main>
+    <h2 class="title" th:text="${member.username}"></h2>
+</main>
 </body>
 </html>

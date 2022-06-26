@@ -87,7 +87,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String accessToken) {
 		List<GrantedAuthority> authorities = this.jwt.getAuthorities(claims);
 		if (claims.memberId != null && !authorities.isEmpty()) {
-			JwtAuthentication authentication = new JwtAuthentication(accessToken, claims.memberId);
+			JwtAuthentication authentication = new JwtAuthentication(accessToken, claims.memberId, claims.username);
 			JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(authentication, null, authorities);
 			authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

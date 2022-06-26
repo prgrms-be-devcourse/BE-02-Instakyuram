@@ -123,7 +123,7 @@ public class MemberService implements MemberGiver {
 				MessageFormat.format("Password = {0}", password));
 		}
 		String[] roles = {String.valueOf(Role.MEMBER)};
-		String accessToken = jwt.generateAccessToken(foundMember.getId(), roles);
+		String accessToken = jwt.generateAccessToken(foundMember.getId(), foundMember.getUsername(), roles);
 		String refreshToken = jwt.generateRefreshToken();
 		tokenService.save(refreshToken, foundMember.getId());
 

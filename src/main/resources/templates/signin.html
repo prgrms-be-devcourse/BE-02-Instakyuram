@@ -1,9 +1,9 @@
-<!doctype html>
 <html lang="en">
 <th:block th:replace="fragments/head :: headFragment('')"></th:block>
 <head>
     <link rel="stylesheet" th:href="@{/css/login.css}"/>
     <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+
     <title>login</title>
 </head>
 
@@ -31,17 +31,32 @@
 
 <body>
 <main>
-    <div class="logo">Instakyuram</div>
-        <div class="login_id">
-            <input type="text" id="username" name="username" placeholder="사용자 이름">
+    <div class="signin_container">
+        <div class="animation_Container">
+            <div class="image_Container">
+                <img th:src="@{/images/mainA_1.jpeg}" class="image_animation">
+                <img th:src="@{/images/mainA_2.jpeg}" class="image_animation">
+                <img th:src="@{/images/mainA_3.jpeg}" class="image_animation change_animation2">
+                <img th:src="@{/images/mainA_4.jpeg}" class="image_animation change_animation2">
+            </div>
         </div>
-        <div class="login_password">
-            <input type="password" id="password" name="password" placeholder="비밀번호">
+        <div>
+            <div class="logo">Instakyuram</div>
+            <div class="login_id">
+                <input type="text" id="username" name="username" placeholder="사용자 이름">
+            </div>
+            <div class="login_password">
+                <input type="password" id="password" name="password" placeholder="비밀번호">
+            </div>
+            <div class="button_container">
+                <button class="login_btn" onclick="loginRequest()">Sign in</button>
+                <a th:href="@{/signup}">
+                    <button class="login_btn">Sign up</button>
+                </a>
+            </div>
         </div>
-        <button class="login_btn" onclick="loginRequest()">Sign in</button>
-    <a th:href="@{/signup}">
-        <button class="login_btn">Sign up</button>
-    </a>
+    </div>
 </main>
 </body>
+<script type="text/javascript" th:src="@{/js/login_animation.js}"></script>
 </html>

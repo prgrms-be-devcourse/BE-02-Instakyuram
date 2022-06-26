@@ -6,9 +6,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -176,4 +182,83 @@ class FollowServiceTest {
 		verify(followRepository, times(1)).findByMemberIdAndTargetId(memberId, targetId);
 	}
 
+	@Test
+	@DisplayName("나를 팔로우한 팔로워 찾아오기 [이미 봤던 사람 이후로 30개씩] - 2번째 팔로워 대상들")
+	void testFindByFollower() {
+		//given
+		Long targetId = 1L;
+		Long alreadyLookUpMemberId = 30L;
+
+		List<Follow> nextFollowerIds = LongStream.rangeClosed(alreadyLookUpMemberId + 1, alreadyLookUpMemberId + 60)
+			.boxed()
+			.map(value -> Follow.builder().targetId(targetId).memberId(value).build())
+			.toList();
+
+		given(
+			followRepository.findTop30ByTargetIdAndMemberIdGreaterThanOrderByMemberId(targetId, alreadyLookUpMemberId))
+			.willReturn(nextFollowerIds);
+
+		//when
+		followService.findByMyFollower(targetId, alreadyLookUpMemberId);
+
+		//then
+		verify(followRepository, times(1)).findTop30ByTargetIdAndMemberIdGreaterThanOrderByMemberId(targetId,
+			alreadyLookUpMemberId);
+	}
+
+	@Test
+	@DisplayName("내가 팔로잉한 사람들 찾아오기 [이미 봤던 사람 이후로 30개씩] - 2번째 팔로잉 대상들")
+	void testFindByFollowings() {
+		//given
+		Long memberId = 1L;
+		Long alreadyLookUpMemberId = 30L;
+
+		List<Follow> nextFollowerIds = LongStream.rangeClosed(alreadyLookUpMemberId + 1, alreadyLookUpMemberId + 60)
+			.boxed()
+			.map(value -> Follow.builder().targetId(value).memberId(memberId).build())
+			.toList();
+
+		given(
+			followRepository.findTop30ByMemberIdAndTargetIdGreaterThanOrderByTargetId(memberId, alreadyLookUpMemberId))
+			.willReturn(nextFollowerIds);
+
+		//when
+		List<Long> followings = followService.findByMyFollowings(memberId, alreadyLookUpMemberId);
+
+		//then
+		verify(followRepository, times(1)).findTop30ByMemberIdAndTargetIdGreaterThanOrderByTargetId(memberId,
+			alreadyLookUpMemberId);
+	}
+
+	@Test
+	@DisplayName("인증된 사용자가 팔로잉한 목록 조회하기 [인증된 사용자가 타 팔로잉 한 사람이 있는경우 ui에 언팔로우 버튼이 활성화 되어야함]")
+	void testGetAuthFollowings() {
+		//given
+		Long authId = 2L;
+		List<Long> promisingFollowings = LongStream.rangeClosed(1, 10).boxed().toList();
+		List<Follow> authFollowings = List.of(
+			Follow.builder()
+				.memberId(authId)
+				.targetId(3L)
+				.build(),
+			Follow.builder()
+				.memberId(authId)
+				.targetId(7L)
+				.build()
+		);
+
+		Set<Follow> expectedAuthFollowing = new HashSet<>(authFollowings);
+
+		given(followRepository.findByMemberIdAndTargetIdIn(authId, promisingFollowings)).willReturn(
+			authFollowings);
+
+		//when
+		Set<Long> authfollowing = followService.getAuthFollowings(authId, promisingFollowings);
+
+		//then
+		assertThat(authfollowing.size()).isEqualTo(expectedAuthFollowing.size());
+		MatcherAssert.assertThat(authfollowing, Matchers.samePropertyValuesAs(expectedAuthFollowing));
+
+		verify(followRepository, times(1)).findByMemberIdAndTargetIdIn(authId, promisingFollowings);
+	}
 }

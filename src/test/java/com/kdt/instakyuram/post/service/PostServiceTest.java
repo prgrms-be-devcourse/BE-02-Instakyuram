@@ -4,10 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -146,13 +149,38 @@ class PostServiceTest {
 		given(memberGiver.findById(MEMBER.getId())).willReturn(MEMBER_RESPONSE);
 		given(postConverter.toMember(MEMBER_RESPONSE)).willReturn(MEMBER);
 		given(postRepository.save(any())).willReturn(post);
-		willDoNothing().given(postImageService).save(post.getId(),images);
+		willDoNothing().given(postImageService).save(post.getId(), images);
 
 		//when
 		PostResponse.CreateResponse response = postService.create(MEMBER.getId(), post.getContent(), images);
 
 		//then
 		assertThat(response).isEqualTo(createResponse);
+	}
+
+	@Test
+	@DisplayName("Post를 수정할 수 있다.")
+	void update() {
+		Post post = POSTS.get(0);
+		String content = "게시글 수정하는 테스트입니다.";
+
+		PostResponse.UpdateResponse response =
+			new PostResponse.UpdateResponse(post.getId(), post.getContent());
+
+		// GIVEN
+		given(postRepository.findByIdAndMemberId(post.getId(), post.getMember().getId()))
+			.willReturn(Optional.of(post));
+		given(postConverter.toUpdateResponse(post)).willReturn(response);
+
+		// WHEN
+		PostResponse.UpdateResponse updatedResponse = postService.update(post.getId(),
+			post.getMember().getId(), content);
+
+		// THEN
+		assertThat(updatedResponse).isEqualTo(response);
+		verify(postRepository, times(1))
+			.findByIdAndMemberId(post.getId(), post.getMember().getId());
+		verify(postConverter, times(1)).toUpdateResponse(post);
 	}
 
 	private List<Member> getDemoMembers() {

@@ -1,20 +1,48 @@
 package com.kdt.instakyuram.post.dto;
 
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.kdt.instakyuram.common.file.exception.InvalidFileException;
 
 public record PostRequest() {
 
 	public record CreateRequest(
-		// todo : [IK-203] memberId 가 필요없을 것 같습니당 없애면 말씀 해주세용
-		Long memberId,
+		@NotNull
+		@Size(max = 200, message = "최대 200글자 까지만 입력하실 수 있습니다.")
 		String content,
 		List<MultipartFile> postImages
 	) {
+		public CreateRequest {
+			if (Objects.isNull(postImages)) {
+				throw new InvalidFileException("첨부된 이미지가 없습니다.");
+			}
+			verifyFile(postImages);
+		}
+
+		private static void verifyFile(List<MultipartFile> files) {
+			for (MultipartFile file : files) {
+				if (StringUtils.isEmpty(file.getOriginalFilename())) {
+					throw new InvalidFileException("파일의 이름이 존재하지 않습니다.");
+				}
+				if (file.getSize() <= 0) {
+					throw new InvalidFileException(
+						MessageFormat.format("업로드 파일 중 크기가 0이하인 파일이 존재합니다. [파일이름 : {0}]",
+							file.getOriginalFilename()));
+				}
+			}
+		}
 	}
 
 	public record UpdateRequest(
+		@Size(max = 200, message = "최대 200글자 까지만 입력하실 수 있습니다.")
 		String content
 	) {
 	}

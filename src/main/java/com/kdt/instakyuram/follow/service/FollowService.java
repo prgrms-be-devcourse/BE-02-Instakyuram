@@ -74,7 +74,7 @@ public class FollowService {
 
 	}
 
-	public Set<Long> getAuthFollowings(Long authId, List<Long> promisingFollowings) {
+	public Set<Long> findAuthFollowings(Long authId, List<Long> promisingFollowings) {
 		return followRepository.findByMemberIdAndTargetIdIn(authId, promisingFollowings).stream()
 			.map(Follow::getTargetId)
 			.collect(Collectors.toSet());

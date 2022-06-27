@@ -70,6 +70,7 @@ class MemberRestControllerIntegrationTest {
 			get("/api/members/" + target.getUsername() + "/followers?lastIdx=" + lastIdx)
 		).andDo(print());
 
+		//then
 		MvcResult result = perform.andExpect(status().isOk()).andReturn();
 		String body = result.getResponse().getContentAsString();
 		ApiResponse<List<MemberResponse.FollowerResponse>> listApiResponse = mapper.readValue(

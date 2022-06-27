@@ -163,7 +163,7 @@ public class MemberService implements MemberGiver {
 			return Collections.emptyList();
 		}
 
-		Set<Long> authFollowings = followService.getAuthFollowings(authId, myFollowerIds);
+		Set<Long> authFollowings = followService.findAuthFollowings(authId, myFollowerIds);
 
 		return memberRepository.findByIdInOrderById(myFollowerIds).stream()
 			.map(member -> {
@@ -193,7 +193,7 @@ public class MemberService implements MemberGiver {
 			return Collections.emptyList();
 		}
 
-		Set<Long> authFollowings = followService.getAuthFollowings(authId, myFollowingIds);
+		Set<Long> authFollowings = followService.findAuthFollowings(authId, myFollowingIds);
 
 		return memberRepository.findByIdInOrderById(myFollowingIds).stream()
 			.map(member -> {

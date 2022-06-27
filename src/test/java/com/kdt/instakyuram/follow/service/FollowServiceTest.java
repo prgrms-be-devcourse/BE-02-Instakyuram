@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 import org.hamcrest.MatcherAssert;
@@ -253,7 +252,7 @@ class FollowServiceTest {
 			authFollowings);
 
 		//when
-		Set<Long> authfollowing = followService.getAuthFollowings(authId, promisingFollowings);
+		Set<Long> authfollowing = followService.findAuthFollowings(authId, promisingFollowings);
 
 		//then
 		assertThat(authfollowing.size()).isEqualTo(expectedAuthFollowing.size());

@@ -462,7 +462,7 @@ class MemberServiceTest {
 
 		given(memberRepository.findByUsername(username)).willReturn(Optional.of(member));
 		given(followService.findByMyFollower(member.getId(), 0L)).willReturn(followingIds);
-		given(followService.getAuthFollowings(authId, followingIds)).willReturn(authFollowings);
+		given(followService.findAuthFollowings(authId, followingIds)).willReturn(authFollowings);
 		given(memberRepository.findByIdInOrderById(followingIds)).willReturn(followers);
 
 		//when
@@ -474,7 +474,7 @@ class MemberServiceTest {
 
 		verify(memberRepository, times(1)).findByUsername(username);
 		verify(followService, times(1)).findByMyFollower(member.getId(), 0L);
-		verify(followService, times(1)).getAuthFollowings(authId, followingIds);
+		verify(followService, times(1)).findAuthFollowings(authId, followingIds);
 		verify(memberRepository, times(1)).findByIdInOrderById(followingIds);
 	}
 
@@ -532,7 +532,7 @@ class MemberServiceTest {
 
 		given(memberRepository.findByUsername(username)).willReturn(Optional.of(member));
 		given(followService.findByMyFollowings(member.getId(), 0L)).willReturn(followingIds);
-		given(followService.getAuthFollowings(authId, followingIds)).willReturn(authFollowings);
+		given(followService.findAuthFollowings(authId, followingIds)).willReturn(authFollowings);
 		given(memberRepository.findByIdInOrderById(followingIds)).willReturn(followings);
 
 		//when
@@ -544,7 +544,7 @@ class MemberServiceTest {
 
 		verify(memberRepository, times(1)).findByUsername(username);
 		verify(followService, times(1)).findByMyFollowings(member.getId(), 0L);
-		verify(followService, times(1)).getAuthFollowings(authId, followingIds);
+		verify(followService, times(1)).findAuthFollowings(authId, followingIds);
 		verify(memberRepository, times(1)).findByIdInOrderById(followingIds);
 	}
 

@@ -1,7 +1,9 @@
 package com.kdt.instakyuram.member.service;
 
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -136,5 +138,82 @@ public class MemberService implements MemberGiver {
 
 	public Long countMyFollower(Long memberId) {
 		return followService.countMyFollower(memberId);
+	}
+
+	/**
+	 * note: 인증된 사용자가 다른 사람의 팔로우를 볼때!
+	 *
+	 * @param authId
+	 * @param username
+	 * @param lastIdx
+	 * @return
+	 */
+	public List<MemberResponse.FollowerResponse> getFollowers(Long authId, String username, Long lastIdx) {
+
+		List<Long> myFollowerIds = followService.findByMyFollower(
+			memberRepository.findByUsername(username)
+				.map(Member::getId)
+				.orElseThrow(
+					() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
+						MessageFormat.format("해당 username 이 {0}인 사용자가 존재하지 않습니다", username))),
+			lastIdx
+		);
+
+		if (myFollowerIds.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		Set<Long> authFollowings = followService.findAuthFollowings(authId, myFollowerIds);
+
+		return memberRepository.findByIdInOrderById(myFollowerIds).stream()
+			.map(member -> {
+				boolean isMe = member.getId().equals(authId);
+
+				if (authFollowings.contains(member.getId())) {
+					return memberConverter.toFollower(member, true, isMe);
+				}
+
+				return memberConverter.toFollower(member, false, isMe);
+			})
+			.toList();
+	}
+
+	public List<MemberResponse.FollowingResponse> getFollowings(Long authId, String username, Long lastIdx) {
+
+		List<Long> myFollowingIds = followService.findByMyFollowings(
+			memberRepository.findByUsername(username)
+				.map(Member::getId)
+				.orElseThrow(
+					() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
+						MessageFormat.format("해당 username 이 {0}인 사용자가 존재하지 않습니다", username))),
+			lastIdx
+		);
+
+		if (myFollowingIds.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		Set<Long> authFollowings = followService.findAuthFollowings(authId, myFollowingIds);
+
+		return memberRepository.findByIdInOrderById(myFollowingIds).stream()
+			.map(member -> {
+				boolean isMe = member.getId().equals(authId);
+
+				if (authFollowings.contains(member.getId())) {
+					return memberConverter.toFollowings(member, true, isMe);
+				}
+
+				return memberConverter.toFollowings(member, false, isMe);
+			})
+			.toList();
+	}
+
+	public boolean isSame(String username, Long authId) {
+		Member authMember = memberRepository.findById(authId)
+			.orElseThrow(
+				() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
+					MessageFormat.format("해당 id가 {0}인 auth 를 찾을 수 없습니다.", authId)));
+
+		return authMember.getUsername().equals(username);
 	}
 }

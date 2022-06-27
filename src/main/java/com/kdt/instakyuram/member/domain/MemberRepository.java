@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	List<Member> findByIdIn(List<Long> memberIds);
+	List<Member> findByIdInOrderById(List<Long> memberIds);
 
 	Optional<Member> findByUsername(String username);
 

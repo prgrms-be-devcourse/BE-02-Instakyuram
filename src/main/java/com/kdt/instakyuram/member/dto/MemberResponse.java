@@ -32,4 +32,13 @@ public record MemberResponse(
 		Long followCount
 	) {
 	}
+
+	@Builder
+	public record FollowerResponse(Long id, String username, String name, boolean isAlsoAuthFollowing, boolean isMe) {
+	}
+
+	@Builder
+	public record FollowingResponse(Long id, String username, String name, boolean isAlsoAuthFollowing, boolean isMe) {
+	}
+
 }

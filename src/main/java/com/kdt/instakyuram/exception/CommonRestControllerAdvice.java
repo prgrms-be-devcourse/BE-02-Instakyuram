@@ -92,16 +92,17 @@ public class CommonRestControllerAdvice {
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<ErrorResponse<ErrorCode>> handleDataIntegrityViolationException(
 		DataIntegrityViolationException e) {
-		this.log.warn("ERROR-100 - {} : {}", e, e);
+		this.log.warn("{}", e.toString(), e);
 		ErrorCode errorCode = ErrorCode.DATA_INTEGRITY_VIOLATION;
 
 		return new ResponseEntity<>(new ErrorResponse<>(errorCode), errorCode.getStatus());
 	}
 
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ErrorResponse<ErrorCode>> handleUnExpectedException(Exception e) {
-		this.log.warn(e.getMessage(), e);
-		ErrorCode errorCode = ErrorCode.INTERNAL_SEVER_ERROR;
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<ErrorResponse<ErrorCode>> handleRuntimeException(RuntimeException e) {
+		this.log.warn("{}", e.toString(), e);
+		ErrorCode errorCode = ErrorCode.RUNTIME_EXCEPTION;
 
 		return new ResponseEntity<>(new ErrorResponse<>(errorCode), errorCode.getStatus());
 	}

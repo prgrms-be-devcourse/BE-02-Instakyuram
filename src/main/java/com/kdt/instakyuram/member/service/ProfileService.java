@@ -57,7 +57,7 @@ public class ProfileService {
 
 	public FileSystemResource findProfileImage(Long memberId) {
 		MemberResponse member = this.memberService.findById(memberId);
-		System.out.println(member.profileImageName());
+
 		return this.profileImageService.findProfileImage(member.profileImageName());
 	}
 }

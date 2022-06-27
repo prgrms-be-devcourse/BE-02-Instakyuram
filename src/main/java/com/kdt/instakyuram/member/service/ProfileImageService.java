@@ -9,7 +9,6 @@ import com.kdt.instakyuram.common.file.FileStorage;
 import com.kdt.instakyuram.common.file.ResourcePath;
 import com.kdt.instakyuram.common.file.exception.FileReadException;
 
-@Transactional(readOnly = true)
 @Service
 public class ProfileImageService {
 	private final FileStorage fileStorage;
@@ -26,7 +25,6 @@ public class ProfileImageService {
 		}
 	}
 
-	@Transactional
 	public void update(MultipartFile profileImage, String profileImageName) {
 		this.fileStorage.upload(profileImageName, profileImage, ResourcePath.PROFILE);
 	}

@@ -1,15 +1,15 @@
 * {
     box-sizing: border-box;
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     width: 100%;
     height: 100vh;
     background-color: #FAFAFA;
-    margin:0;
-    top:0;
+    margin: 0;
+    top: 0;
 }
 
 ul {
@@ -18,22 +18,23 @@ ul {
 
 /* Header */
 header {
-    top:0;
+    top: 0;
     display: flex;
     height: 4.8rem;
-    width:100%;
+    width: 100%;
     padding: 0.5em 1em;
     background-color: #FFFFFF;
     border-bottom: 1px solid rgb(219, 219, 219);
-    position:fixed;
+    position: fixed;
     justify-content: center;
+    z-index: 100;
 }
 
 body main {
     background-color: #FAFAFA;
     width: 100%;
-    height:100%;
-    margin-top:80px;
+    height: 100%;
+    margin-top: 80px;
     align-items: center;
 }
 
@@ -67,10 +68,12 @@ body main {
     display: flex;
     align-items: center;
 }
+
 .nav_container {
-    display:flex;
-    height:100%
+    display: flex;
+    height: 100%
 }
+
 .navbar__menu__item {
     cursor: pointer;
     margin-right: 1em;

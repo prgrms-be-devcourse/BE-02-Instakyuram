@@ -10,7 +10,7 @@
 </head>
 <th:block th:replace="fragments/head :: headFragment('')"></th:block>
 <link rel="stylesheet" th:href="@{/css/post-upload.css}"/>
-<div th:replace="~{fragments/header :: headerFragment()}"></div>
+<div th:replace="~{fragments/header :: headerFragment(username = (${auth == null} ? '/signin' : ${auth?.username}))}"></div>
 <body style="margin: 50px;">
 <main>
 <div class="mb-3">

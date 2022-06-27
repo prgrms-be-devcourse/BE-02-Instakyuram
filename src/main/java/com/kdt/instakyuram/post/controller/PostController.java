@@ -16,14 +16,18 @@ public class PostController {
 	}
 
 	@GetMapping("/posts/upload")
-	public String renderUpload() {
+	public String renderUpload(@AuthenticationPrincipal JwtAuthentication auth, Model model)
+	{
+		model.addAttribute("auth", auth);
+
 		return "/modal/post-upload";
 	}
 
 	@GetMapping("/")
-	public String indexPage(@AuthenticationPrincipal JwtAuthentication principal, Model model)
+	public String indexPage(@AuthenticationPrincipal JwtAuthentication auth, Model model)
 	{
-		model.addAttribute("member", principal);
+		model.addAttribute("member", auth);
+
 		return "index";
 	}
 }

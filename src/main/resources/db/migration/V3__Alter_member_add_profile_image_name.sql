@@ -1,0 +1,1 @@
+ALTER TABLE member ADD profile_image_name  VARCHAR(45);

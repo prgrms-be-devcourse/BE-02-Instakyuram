@@ -4,15 +4,14 @@
 <link rel="stylesheet" th:href="@{/css/personal-page.css}"/>
 <title th:text="${profileInfo.username}">username</title>
 <body>
-<div th:replace="fragments/header :: headerFragment(username=${profileInfo.username})"></div>
+<div th:replace="fragments/header :: headerFragment(username = (${auth == null} ? '/signin' : ${auth?.username}))"></div>
 <main class="personal_main">
     <div class="main_container">
         <div class="header_container" th:object="${profileInfo}">
             <div class="profile_image_container">
                 <div class="profile_image_sub_container">
-                    <img th:src="@{/images/default_profile.jpeg}"
+                    <img th:src="@{|/api/profiles/${profileInfo.id}/image|}"
                          alt=""
-                         srcset=""
                          class="user_image"/>
                 </div>
             </div>
@@ -110,11 +109,10 @@
             alert(error);
         })
     }
-
     if ([[${auth}]] == null) {
         document.querySelector('.follow_button').innerText = "로그인";
         document.querySelector('.follow_button').setAttribute("onClick", "login()");
-    } else if ([[${auth}]] === true) {
+    } else if (([[${auth?.username}]] == [[${profileInfo?.username}]])) {
         document.querySelector('.follow_button').innerText = "프로필 편집";
         document.querySelector('.follow_button').setAttribute("onClick", "editProfile()");
     } else {
@@ -124,13 +122,8 @@
 
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
     const username = [[${profileInfo.username}]];
-    console.log("username = " + username);
-    /*]]>*/
-    getThumbnails(username);
-
-    function getThumbnails(username) {
+    const getThumbnails = (username) => {
         axios({
             method: "GET",
             url: '/api/posts/thumbnails',
@@ -141,10 +134,10 @@
             renderThumbnail(res.data.response);
             console.log(res);
         }).catch(error => {
-            console.log(error);
+            console.log("error" + error);
         })
     }
-
+    getThumbnails(username);
     const renderThumbnail = (thumbnails) => {
         let thumbnailHTML = "";
         for (let i = 0; i <= thumbnails.length / 3; i++) {

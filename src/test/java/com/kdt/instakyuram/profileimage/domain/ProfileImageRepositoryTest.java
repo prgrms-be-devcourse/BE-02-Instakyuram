@@ -1,3 +1,4 @@
+/*
 package com.kdt.instakyuram.profileimage.domain;
 
 import java.util.Optional;
@@ -202,3 +203,4 @@ public class ProfileImageRepositoryTest {
 		return demoMember;
 	}
 }
+*/

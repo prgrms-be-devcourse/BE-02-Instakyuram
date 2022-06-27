@@ -19,18 +19,21 @@ spring:
     baseline-on-migrate: false
     locations: classpath:db/migration, classpath:db/seed
   # sql 파일 x
-
-jwt:
-  issuer: prgrms
-  client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
-  accessToken:
-    header: atoken
-    expiry-seconds: 60
-  refreshToken:
-    header: rtoken
-    expiry-seconds: 120
 cors:
   allowed:
     api: /api/**
     url: "http://localhost:3000"
     method: GET, POST, PATCH, DELETE
+security:
+  patterns:
+    ignoring: ["/css/**", "/js/**", "/webjars/**", "/images/**"]
+    permit-all: ["/api/members/signup", "/api/members/signin", "/members/signin"]
+  jwt:
+    issuer: prgrms
+    client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
+    accessToken:
+      header: atoken
+      expiry-seconds: 60
+    refreshToken:
+      header: rtoken
+      expiry-seconds: 120

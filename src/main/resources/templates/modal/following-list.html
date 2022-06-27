@@ -65,7 +65,7 @@
         })
     }
 
-    function follow(my, e) {
+    function follow(my) {
         console.log('follow')
         let memberId = my.parentNode.parentNode.children[0].innerHTML;
         fetch('/api/friendships/follow/' + memberId, {

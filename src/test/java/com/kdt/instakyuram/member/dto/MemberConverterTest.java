@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import org.assertj.core.api.Assertions;
@@ -41,13 +41,14 @@ class MemberConverterTest {
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> expectedResponses = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName(),
+				true)
 		);
 		List<MemberResponse.MemberListViewResponse> expectedContents = expectedResponses.getResponses();
 
 		//when
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> responses = memberConverter.toPageResponse(
-			pagingMembers);
+			pagingMembers, Set.of());
 		AtomicInteger index = new AtomicInteger();
 
 		//then
@@ -102,9 +103,10 @@ class MemberConverterTest {
 		String phoneNumber = "01012345678";
 		String emailPostfix = "@programmers.co.kr";
 
-		IntStream.rangeClosed(1, 3).forEach(
+		LongStream.rangeClosed(1, 3).forEach(
 			number -> {
 				Member member = Member.builder()
+					.id(number)
 					.email((name + number) + emailPostfix)
 					.password(password)
 					.username(name + number)

@@ -1,5 +1,7 @@
 package com.kdt.instakyuram.member.dto;
 
+import java.util.Set;
+
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -9,11 +11,18 @@ import com.kdt.instakyuram.member.domain.Member;
 @Component
 public class MemberConverter {
 
-	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> toPageResponse(Page<Member> members) {
+	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> toPageResponse(Page<Member> members,
+		Set<Long> authFollowings) {
 		return new PageDto.Response<>(
 			members,
-			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(),
-				member.getName()));
+			member -> MemberResponse.MemberListViewResponse
+				.builder()
+				.id(member.getId())
+				.username(member.getUsername())
+				.name(member.getName())
+				.possibleFollow(!authFollowings.contains(member.getId()))
+				.build()
+		);
 	}
 
 	public MemberResponse toMemberResponse(Member member) {

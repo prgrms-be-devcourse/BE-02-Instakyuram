@@ -2,9 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+            crossorigin="anonymous"></script>
     <title>사용자가 팔로잉 할 대상 찾는 사용자 목록</title>
 </head>
 <body>
+<main>
+    <h1> 사용자가 팔로우 할 대상을 찾는 페이지</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th hidden>id</th>
+            <th>username</th>
+            <th>name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="member : ${dto?.responses}">
+            <td hidden th:text="${member.id()}"></td>
+            <td th:text="${member.username()}" onclick="renderProFile(this)"></td>
+            <td th:text="${member.name()}"></td>
+            <td>
+                <button type="button" class="btn btn-primary" th:if="${member.possibleFollow()}" onclick="follow(this)">팔로우</button>
+                <button type="button" class="btn btn-secondary" th:if="${!member.possibleFollow()}" onclick="unFollow(this)">팔로잉</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
+    <ul class="pagination h-100 justify-content-center align-items-center">
+
+        <li class="page-item " th:if="${dto?.hasPrevious}" id="previous">
+            <a class="page-link"
+               th:href="@{/members(page= ${dto.start -1},size=${10})}"
+               tabindex="-1">Previous</a>
+        </li>
+
+        <li th:class=" 'page-item ' + ${dto?.page == page ? 'active':''} "
+            th:each="page: ${dto?.pageNumbers}">
+            <a class="page-link"
+               th:href="@{/members(page = ${page},size=${10})}">
+                [[${page}]]
+            </a>
+        </li>
+
+        <li class="page-item" th:if="${dto?.hasNext}" id="next">
+            <a class="page-link" th:href="@{/members(page= ${dto.end + 1}
+                ,size=${10})}">
+                Next
+            </a>
+        </li>
+
+    </ul>
+</main>
+<script>
+    function renderProFile(e) {
+        console.log('render profile')
+    }
+
+    function unFollow(my) {
+        console.log('unfollow');
+        let memberId = my.parentNode.parentNode.children[0].innerHTML;
+        fetch('/api/friendships/unfollow/' + memberId, {
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify()
+        }).then((response) => {
+            if (!response.ok) {
+                alert(response.json());
+                return;
+            }
+            my.setAttribute("class", "btn btn-primary");
+            my.setAttribute("onclick", "follow(this)");
+            my.innerText="팔로우";
+        })
+    }
+
+    function follow(my) {
+        console.log('follow')
+        let memberId = my.parentNode.parentNode.children[0].innerHTML;
+        fetch('/api/friendships/follow/' + memberId, {
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify()
+        }).then((response) => {
+            if (!response.ok) {
+                alert(response.json());
+                return;
+            }
+            my.setAttribute("class", "btn btn-danger");
+            my.setAttribute("onclick", "unFollow(this)");
+            my.innerText="팔로잉";
+        })
+    }
+</script>
 </body>
 </html>

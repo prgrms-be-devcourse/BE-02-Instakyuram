@@ -39,7 +39,7 @@ security:
     client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
     accessToken:
       header: atoken
-      expiry-seconds: 60
+      expiry-seconds: 6000000
     refreshToken:
       header: rtoken
-      expiry-seconds: 120
+      expiry-seconds: 6000000

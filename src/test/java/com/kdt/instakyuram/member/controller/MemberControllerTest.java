@@ -77,24 +77,27 @@ class MemberControllerTest {
 			.andExpect(status().is3xxRedirection());
 	}
 
-	@WithMockUser
 	@DisplayName("사용자 전체 목록 조회 테스트")
 	@Test
 	void testGetMembers() throws Exception {
 		//given
+		Long authId = 1L;
+		setMockingAuthentication(authId);
+
 		int requestPage = 2;
 		int requestSize = 5;
 
 		PageDto.Request request = new PageDto.Request(requestPage, requestSize);
-		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
+		Pageable pageRequest = request.getPageable(Sort.by("id"));
 		List<Member> members = getMembers();
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName(),
+				true)
 		);
 
-		given(memberService.findAll(any())).willReturn(pageResponse);
+		given(memberService.findAll(authId, pageRequest)).willReturn(pageResponse);
 
 		//when
 		ResultActions perform = mockMvc.perform(
@@ -102,9 +105,9 @@ class MemberControllerTest {
 		);
 
 		//then
-		perform.andExpect(status().isOk());
+		perform.andExpect(status().isOk())
+			.andExpect(view().name("member/member-list"));
 
-		verify(memberService, times(1)).findAll(any());
 	}
 
 	@WithMockUser

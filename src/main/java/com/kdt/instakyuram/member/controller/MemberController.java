@@ -89,11 +89,20 @@ public class MemberController {
 	}
 
 	@GetMapping("/signin")
-	public String singinPage(@AuthenticationPrincipal JwtAuthentication principal) {
-		if (principal == null) {
+	public String singinPage(@AuthenticationPrincipal JwtAuthentication auth) {
+		if (auth == null) {
 			return "signin";
-		} else {
-			return "redirect:/";
 		}
+
+		return "redirect:/";
+	}
+
+	@GetMapping("/signup")
+	public String renderSignUpPage(@AuthenticationPrincipal JwtAuthentication auth) {
+		if (auth == null) {
+			return "signup";
+		}
+
+		return "redirect:/";
 	}
 }

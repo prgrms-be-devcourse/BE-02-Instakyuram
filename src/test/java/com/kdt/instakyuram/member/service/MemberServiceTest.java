@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -432,6 +433,146 @@ class MemberServiceTest {
 		assertThat(myFollowing).isEqualTo(expectedMyFollower);
 
 		verify(followService, times(1)).countMyFollowing(myId);
+	}
+
+	@Test
+	@DisplayName("username 에 해당하는 회원의 팔로워한 목록 조회")
+	void testGetFollowers() {
+		//given
+		String username = "programmers";
+		Long authId = 99L;
+		Member member = Member.builder()
+			.id(7L)
+			.username(username)
+			.build();
+
+		List<Member> followers = getDemoMembers();
+		List<Long> followingIds = followers.stream().map(Member::getId).toList();
+		Set<Long> authFollowings = Set.of(1L, 2L);
+		List<MemberResponse.FollowerResponse> expectedFollowerResponseResponses = followers.stream().map(follower -> {
+				boolean isMe = member.getId().equals(authId);
+
+				if (authFollowings.contains(member.getId())) {
+					return memberConverter.toFollower(member, true, isMe);
+				}
+
+				return memberConverter.toFollower(member, false, isMe);
+			})
+			.toList();
+
+		given(memberRepository.findByUsername(username)).willReturn(Optional.of(member));
+		given(followService.findByMyFollower(member.getId(), 0L)).willReturn(followingIds);
+		given(followService.findAuthFollowings(authId, followingIds)).willReturn(authFollowings);
+		given(memberRepository.findByIdInOrderById(followingIds)).willReturn(followers);
+
+		//when
+		List<MemberResponse.FollowerResponse> resultFollowers = memberService.getFollowers(authId, username, 0L);
+
+		//then
+		assertThat(resultFollowers.size()).isEqualTo(expectedFollowerResponseResponses.size());
+		MatcherAssert.assertThat(resultFollowers, Matchers.samePropertyValuesAs(expectedFollowerResponseResponses));
+
+		verify(memberRepository, times(1)).findByUsername(username);
+		verify(followService, times(1)).findByMyFollower(member.getId(), 0L);
+		verify(followService, times(1)).findAuthFollowings(authId, followingIds);
+		verify(memberRepository, times(1)).findByIdInOrderById(followingIds);
+	}
+
+	@Test
+	@DisplayName("username 에 해당하는 회원의 팔로워한 목록이 하나도 존재하지 않을 때 빈 리스트를 반환한다.")
+	void testGetEmptyFollowers() {
+		//given
+		String username = "programmers";
+		Long authId = 99L;
+		Member member = Member.builder()
+			.id(7L)
+			.username(username)
+			.build();
+
+		List<Member> followers = List.of();
+		List<Long> followingIds = followers.stream().map(Member::getId).toList();
+
+		given(memberRepository.findByUsername(username)).willReturn(Optional.of(member));
+		given(followService.findByMyFollower(member.getId(), 0L)).willReturn(followingIds);
+
+		//when
+		List<MemberResponse.FollowerResponse> resultFollowers = memberService.getFollowers(authId, username, 0L);
+
+		//then
+		assertThat(resultFollowers.size()).isEqualTo(0);
+
+		verify(memberRepository, times(1)).findByUsername(username);
+		verify(followService, times(1)).findByMyFollower(member.getId(), 0L);
+	}
+
+	@Test
+	@DisplayName("username 에 해당하는 회원의 팔로잉한 목록 조회")
+	void testGetFollowings() {
+		//given
+		String username = "programmers";
+		Long authId = 99L;
+		Member member = Member.builder()
+			.id(7L)
+			.username(username)
+			.build();
+
+		List<Member> followings = getDemoMembers();
+		List<Long> followingIds = followings.stream().map(Member::getId).toList();
+		Set<Long> authFollowings = Set.of(1L, 2L);
+		List<MemberResponse.FollowerResponse> expectedFollowingResponseResponses = followings.stream().map(follower -> {
+				boolean isMe = member.getId().equals(authId);
+
+				if (authFollowings.contains(member.getId())) {
+					return memberConverter.toFollower(member, true, isMe);
+				}
+
+				return memberConverter.toFollower(member, false, isMe);
+			})
+			.toList();
+
+		given(memberRepository.findByUsername(username)).willReturn(Optional.of(member));
+		given(followService.findByMyFollowings(member.getId(), 0L)).willReturn(followingIds);
+		given(followService.findAuthFollowings(authId, followingIds)).willReturn(authFollowings);
+		given(memberRepository.findByIdInOrderById(followingIds)).willReturn(followings);
+
+		//when
+		List<MemberResponse.FollowingResponse> resultFollowings = memberService.getFollowings(authId, username, 0L);
+
+		//then
+		assertThat(resultFollowings.size()).isEqualTo(expectedFollowingResponseResponses.size());
+		MatcherAssert.assertThat(resultFollowings, Matchers.samePropertyValuesAs(expectedFollowingResponseResponses));
+
+		verify(memberRepository, times(1)).findByUsername(username);
+		verify(followService, times(1)).findByMyFollowings(member.getId(), 0L);
+		verify(followService, times(1)).findAuthFollowings(authId, followingIds);
+		verify(memberRepository, times(1)).findByIdInOrderById(followingIds);
+	}
+
+	@Test
+	@DisplayName("username 에 해당하는 회원의 팔로잉한 목록이 없을 때 빈 리스트를 반환한다.")
+	void testGetEmptyFollowings() {
+		//given
+		String username = "programmers";
+		Long authId = 99L;
+		Member member = Member.builder()
+			.id(7L)
+			.username(username)
+			.build();
+
+		List<Member> followings = List.of();
+		List<Long> followingIds = followings.stream().map(Member::getId).toList();
+
+		given(memberRepository.findByUsername(username)).willReturn(Optional.of(member));
+		given(followService.findByMyFollowings(member.getId(), 0L)).willReturn(followingIds);
+
+		//when
+		List<MemberResponse.FollowingResponse> resultFollowings = memberService.getFollowings(authId, username, 0L);
+
+		//then
+		assertThat(resultFollowings.size()).isEqualTo(0);
+
+		verify(memberRepository, times(1)).findByUsername(username);
+		verify(followService, times(1)).findByMyFollowings(member.getId(), 0L);
 	}
 
 	private List<Member> getDemoMembers() {

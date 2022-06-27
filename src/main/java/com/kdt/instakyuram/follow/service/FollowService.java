@@ -2,6 +2,8 @@ package com.kdt.instakyuram.follow.service;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,5 +57,26 @@ public class FollowService {
 				.orElseThrow(() -> new EntityNotFoundException(ErrorCode.FOLLOW_NOT_FOUND,
 					MessageFormat.format("Member ID = {0}, Target ID = {1}", id, targetId)))
 		);
+	}
+
+	public List<Long> findByMyFollower(Long targetId, Long alreadyLookUpIndex) {
+		return followRepository.findTop30ByTargetIdAndMemberIdGreaterThanOrderByMemberId(targetId, alreadyLookUpIndex)
+			.stream()
+			.map(Follow::getMemberId)
+			.toList();
+	}
+
+	public List<Long> findByMyFollowings(Long memberId, Long alreadyLookUpIndex) {
+		return followRepository.findTop30ByMemberIdAndTargetIdGreaterThanOrderByTargetId(memberId, alreadyLookUpIndex)
+			.stream()
+			.map(Follow::getTargetId)
+			.toList();
+
+	}
+
+	public Set<Long> findAuthFollowings(Long authId, List<Long> promisingFollowings) {
+		return followRepository.findByMemberIdAndTargetIdIn(authId, promisingFollowings).stream()
+			.map(Follow::getTargetId)
+			.collect(Collectors.toSet());
 	}
 }

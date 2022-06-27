@@ -35,4 +35,13 @@ public record MemberResponse(
 		String profileImageName
 	) {
 	}
+
+	@Builder
+	public record FollowerResponse(Long id, String username, String name, boolean isAlsoAuthFollowing, boolean isMe) {
+	}
+
+	@Builder
+	public record FollowingResponse(Long id, String username, String name, boolean isAlsoAuthFollowing, boolean isMe) {
+	}
+
 }

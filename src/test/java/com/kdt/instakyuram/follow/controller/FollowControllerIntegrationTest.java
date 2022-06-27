@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.follow;
+package com.kdt.instakyuram.follow.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

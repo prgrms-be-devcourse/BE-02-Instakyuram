@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+            crossorigin="anonymous"></script>
+    <title>follower-list</title>
+</head>
+<body>
+
+<main>
+    <table class="table table-borderless">
+        <thead>
+        <tr>
+            <th hidden>id</th>
+            <th scope="col">username</th>
+            <th scope="col">name</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody id="contents">
+        <tr th:each="follower : ${followers}">
+            <td hidden th:text="${follower.id()}"></td>
+            <td th:text="${follower.username()}" onclick="moveProfile(this)"></td>
+            <td th:text="${follower.name()}"></td>
+            <td th:if="${!follower.isMe()}">
+                <button class="btn btn-danger" th:if="${follower.isAlsoAuthFollowing()}" onclick="unFollow(this)">
+                    unfollow
+                </button>
+                <button class="btn btn-primary" th:if="${!follower.isAlsoAuthFollowing()}" onclick="follow(this)">
+                    follow
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+</main>
+</body>
+<script>
+
+    function moveProfile(my) {
+        location.href = '/members/' + my.innerText;
+    }
+
+    function unFollow(my) {
+        console.log('unfollow');
+        let memberId = my.parentNode.parentNode.children[0].innerHTML;
+        fetch('/api/friendships/unfollow/' + memberId, {
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify()
+        }).then((response) => {
+            if (!response.ok) {
+                alert(response.json());
+                return;
+            }
+            my.setAttribute("class", "btn btn-primary");
+            my.setAttribute("onclick", "follow(this)");
+            my.innerText="follow";
+        })
+    }
+
+    function follow(my, e) {
+        console.log('follow')
+        let memberId = my.parentNode.parentNode.children[0].innerHTML;
+        fetch('/api/friendships/follow/' + memberId, {
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify()
+        }).then((response) => {
+            if (!response.ok) {
+                alert(response.json());
+                return;
+            }
+            my.setAttribute("class", "btn btn-danger");
+            my.setAttribute("onclick", "unFollow(this)");
+            my.innerText="unfollow";
+        })
+    }
+
+    let isFetching = false
+    const TABLE_ELE = document.getElementById("contents");
+    let child = document.getElementById("contents").children;
+    let historyLastId = child[child.length - 1].children[0].innerText;
+    let lastId = child[child.length - 1].children[0].innerText
+    const username = window.location.pathname.split("/")[2];
+    var lastIndexSet = new Set();
+
+    const drawList = (DATA) => {
+
+        if (historyLastId > lastId) {
+            return;
+        }
+
+        if (lastIndexSet.has(lastId)) {
+            return;
+        }
+
+        lastIndexSet.add(lastId);
+
+        DATA.response.forEach((item, index) => {
+            const {id, username, name} = item;
+            const TR_ELE = document.createElement('tr');
+            listHtml = `<td hidden>${id}</td>
+                    <td onclick="moveProfile(this)">${username}</td>
+                    <td>${name}</td>`;
+
+            if (index === DATA.response.length - 1) {
+                lastId = item.id; // 마지막건 ID 저장
+                historyLastId = Math.max(historyLastId, lastId)
+            }
+            TR_ELE.innerHTML = listHtml;
+            let td = document.createElement('td');
+            let button = document.createElement('button');
+
+            if (item.isAlsoAuthFollowing) {
+                button.setAttribute("class", "btn btn-danger")
+                button.setAttribute("onclick", "unFollow(this)");
+                button.innerText = 'unfollow';
+            } else {
+                button.setAttribute("class", "btn btn-primary")
+                button.setAttribute("onclick", "follow(this)");
+                button.innerText = 'follow';
+            }
+
+            td.appendChild(button);
+            TR_ELE.appendChild(td);
+            TABLE_ELE.appendChild(TR_ELE);
+        });
+
+        isFetching = false;
+    };
+
+    const getList = () => {
+
+        fetch("/api/members/" + username + "/followers?lastIdx=" + lastId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }, body: JSON.stringify()
+        }).then((response) => response.json())
+            .then((data) => {
+                drawList(data);
+            });
+
+    };
+
+    window.onscroll = (e) => {
+        const SCROLLED_HEIGHT = window.scrollY;
+        const WINDOW_HEIGHT = window.innerHeight;
+        const DOC_TOTAL_HEIGHT = document.body.offsetHeight;
+        const IS_END = (WINDOW_HEIGHT + SCROLLED_HEIGHT > DOC_TOTAL_HEIGHT);
+        if (IS_END && !isFetching) {
+            isFetching = true; // lock
+            // note : delay 주니 (동시성 해결)
+            setTimeout(getList, 2000);
+        }
+    }
+</script>
+</html>

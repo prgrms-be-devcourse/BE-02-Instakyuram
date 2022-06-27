@@ -1,0 +1,1 @@
+ALTER TABLE follow ADD CONSTRAINT following_unique UNIQUE (member_id, target_id)

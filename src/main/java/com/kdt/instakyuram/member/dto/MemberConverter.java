@@ -26,4 +26,24 @@ public class MemberConverter {
 			.introduction(member.getIntroduction())
 			.build();
 	}
+
+	public MemberResponse.FollowerResponse toFollower(Member member, boolean isAlsoAuthFollowing, boolean isMe) {
+		return MemberResponse.FollowerResponse.builder()
+			.id(member.getId())
+			.username(member.getUsername())
+			.name(member.getName())
+			.isAlsoAuthFollowing(isAlsoAuthFollowing)
+			.isMe(isMe)
+			.build();
+	}
+
+	public MemberResponse.FollowingResponse toFollowings(Member member, boolean isAlsoAuthFollowing, boolean isMe) {
+		return MemberResponse.FollowingResponse.builder()
+			.id(member.getId())
+			.username(member.getUsername())
+			.name(member.getName())
+			.isAlsoAuthFollowing(isAlsoAuthFollowing)
+			.isMe(isMe)
+			.build();
+	}
 }

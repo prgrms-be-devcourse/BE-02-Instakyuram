@@ -7,6 +7,7 @@ public enum ErrorCode {
 	INTERNAL_SEVER_ERROR("C001", "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
 	NOT_FOUND_EXCEPTION("C0002", "Not found exception", HttpStatus.NOT_FOUND),
 	BIND_ERROR("C0003", "Binding Exception", HttpStatus.BAD_REQUEST),
+	RUNTIME_EXCEPTION("C004", "Runtime error", HttpStatus.BAD_REQUEST),
 	//VALIDATION
 	METHOD_ARGUMENT_NOT_VALID("V0001", "Validation error", HttpStatus.BAD_REQUEST),
 	CONSTRAINT_VIOLATION("V0002", "Validation error", HttpStatus.BAD_REQUEST),

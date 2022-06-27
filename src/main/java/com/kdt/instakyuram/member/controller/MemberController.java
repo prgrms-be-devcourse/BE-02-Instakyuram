@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.kdt.instakyuram.common.PageDto;
+import com.kdt.instakyuram.exception.NotAuthenticationException;
 import com.kdt.instakyuram.member.dto.MemberResponse;
 import com.kdt.instakyuram.member.service.MemberService;
 import com.kdt.instakyuram.member.service.ProfileService;
@@ -61,23 +62,45 @@ public class MemberController {
 		return "personal-page";
 	}
 
-	@GetMapping("/me")
-	public String personalPage(Model model, @AuthenticationPrincipal JwtAuthentication auth) {
-		MemberResponse foundMember = memberService.findByUsername(auth.username());
+	@GetMapping("/{username}/followers")
+	public ModelAndView renderLookUpFollowers(@PathVariable String username,
+		@AuthenticationPrincipal JwtAuthentication auth) {
+		if (auth == null) {
+			throw new NotAuthenticationException("로그인이 필요합니다.");
+		}
 
-		model.addAttribute("auth", auth);
-		model.addAttribute("thumbnails", postGiver.findPostThumbnailsByMemberId(foundMember.id()));
-		model.addAttribute("profileInfo", profileService.findProfileInfoByUsername(foundMember.username()));
+		return new ModelAndView("modal/follower-list").addObject(
+			"followers", memberService.getFollowers(auth.id(), username, 0L)
+		);
+	}
 
-		return "personal-page";
+	@GetMapping("/{username}/followings")
+	public ModelAndView renderLookUpFollowings(@PathVariable String username,
+		@AuthenticationPrincipal JwtAuthentication auth) {
+		if (auth == null) {
+			throw new NotAuthenticationException("로그인이 필요합니다.");
+		}
+
+		return new ModelAndView("modal/following-list").addObject(
+			"followings", memberService.getFollowings(auth.id(), username, 0L)
+		);
 	}
 
 	@GetMapping("/signin")
-	public String singinPage(@AuthenticationPrincipal JwtAuthentication principal) {
-		if (principal == null) {
+	public String singinPage(@AuthenticationPrincipal JwtAuthentication auth) {
+		if (auth == null) {
 			return "signin";
-		} else {
-			return "redirect:/";
 		}
+
+		return "redirect:/";
+	}
+
+	@GetMapping("/signup")
+	public String renderSignUpPage(@AuthenticationPrincipal JwtAuthentication auth) {
+		if (auth == null) {
+			return "signup";
+		}
+
+		return "redirect:/";
 	}
 }

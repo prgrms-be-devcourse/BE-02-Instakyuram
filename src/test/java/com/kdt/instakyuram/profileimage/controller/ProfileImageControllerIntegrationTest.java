@@ -33,7 +33,7 @@ import com.kdt.instakyuram.profileimage.domain.ProfileImageRepository;
 @WithMockUser("MEMBER")
 @AutoConfigureMockMvc
 @SpringBootTest
-class ProfileImageIntegrationTest {
+class ProfileImageControllerIntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;

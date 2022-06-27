@@ -27,7 +27,8 @@ public class PostConverter {
 			member.getName(),
 			member.getEmail(),
 			member.getPhoneNumber(),
-			member.getIntroduction()
+			member.getIntroduction(),
+			member.getProfileImageName()
 		);
 	}
 

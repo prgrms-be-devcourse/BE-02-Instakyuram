@@ -47,6 +47,9 @@ public class Member extends BaseEntity {
 
 	private String introduction;
 
+	@Column
+	private String profileImageName;
+
 	protected Member() {
 	}
 
@@ -98,6 +101,14 @@ public class Member extends BaseEntity {
 
 	public String getIntroduction() {
 		return introduction;
+	}
+
+	public String getProfileImageName() {
+		return profileImageName;
+	}
+
+	public String updateProfileImage(String profileImageName) {
+		return this.profileImageName = profileImageName;
 	}
 
 	@Override

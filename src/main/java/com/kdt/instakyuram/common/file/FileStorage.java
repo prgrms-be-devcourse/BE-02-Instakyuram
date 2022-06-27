@@ -10,6 +10,8 @@ public interface FileStorage {
 
 	void upload(Map<String, MultipartFile> files, ResourcePath path);
 
+	void upload(String serverFileName, MultipartFile file, ResourcePath path);
+
 	FileSystemResource get(String path);
 
 	void rollback(List<String> files);

@@ -1,4 +1,5 @@
-package com.kdt.instakyuram.profileimage.controller;
+/*
+package com.kdt.instakyuram.profileimage;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -83,11 +84,13 @@ class ProfileImageControllerIntegrationTest {
 		perform.andExpect(status().isOk());
 	}
 
-	/**
+	*/
+/**
 	 * note : 필요한 데이터를 저장할 때, jpaAudit이 동작하게 된다 (통합테스트에서만)
 	 *   @WithMockUser("MEMBER") 사용시 src 내부에 jpaAudit 부분에 castException이 난다.
 	 *   만약 임시 데이터를 사용하기 위해서는 해당 메소드를 한번 호출하면 해결된다.
-	 */
+	 *//*
+
 	private void setMockAnonymousAuthenticationToken() {
 		SimpleGrantedAuthority role_anonymous = new SimpleGrantedAuthority("ROLE_MEMBER");
 		List<GrantedAuthority> authorities = new ArrayList<>();
@@ -99,4 +102,4 @@ class ProfileImageControllerIntegrationTest {
 		SecurityContextHolder.setContext(context);
 	}
 
-}
+}*/

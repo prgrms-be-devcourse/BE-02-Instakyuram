@@ -51,6 +51,24 @@ public class LocalFileService implements FileStorage {
 	}
 
 	@Override
+	public void upload(String serverFileName, MultipartFile file, ResourcePath path) {
+		String fullPathForRollback = "";
+		Resource directory = resourceLoader.getResource(DEFAULT_PATH + path.getPrefix());
+
+		try {
+			String fullPrefix = directory.getURI().getPath();
+			String fullPath = fullPrefix +"/"+ serverFileName;
+
+			fullPathForRollback = fullPath;
+
+			file.transferTo(new File(fullPath));
+		} catch (IOException e) {
+			rollback(List.of(fullPathForRollback));
+			throw new FileWriteException("파일을 저장하면서 오류가 발생했습니다.");
+		}
+	}
+
+	@Override
 	public FileSystemResource get(String fullPath) {
 		Resource resource = resourceLoader.getResource(DEFAULT_PATH + fullPath);
 

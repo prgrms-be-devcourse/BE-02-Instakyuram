@@ -27,11 +27,11 @@
             <td th:text="${following.username()}" onclick="moveProfile(this)"></td>
             <td th:text="${following.name()}"></td>
             <td th:if="${!following.isMe()}">
-                <button class="btn btn-danger" th:if="${following.isAlsoAuthFollowing()}" onclick="unFollow(this)">
-                    unfollow
+                <button class="btn btn-secondary" th:if="${following.isAlsoAuthFollowing()}" onclick="unFollow(this)">
+                    팔로잉
                 </button>
                 <button class="btn btn-primary" th:if="${!following.isAlsoAuthFollowing()}" onclick="follow(this)">
-                    follow
+                    팔로우
                 </button>
             </td>
         </tr>
@@ -61,7 +61,7 @@
             }
             my.setAttribute("class", "btn btn-primary");
             my.setAttribute("onclick", "follow(this)");
-            my.innerText="follow";
+            my.innerText="팔로우";
         })
     }
 
@@ -77,9 +77,9 @@
                 alert(response.json());
                 return;
             }
-            my.setAttribute("class", "btn btn-danger");
+            my.setAttribute("class", "btn btn-secondary");
             my.setAttribute("onclick", "unFollow(this)");
-            my.innerText="unfollow";
+            my.innerText="팔로잉";
         })
     }
 
@@ -119,13 +119,13 @@
             let button = document.createElement('button');
 
             if (item.isAlsoAuthFollowing) {
-                button.setAttribute("class", "btn btn-danger")
+                button.setAttribute("class", "btn btn-secondary")
                 button.setAttribute("onclick", "unFollow(this)");
-                button.innerText = 'unfollow';
+                button.innerText = '팔로잉';
             } else {
                 button.setAttribute("class", "btn btn-primary")
                 button.setAttribute("onclick", "follow(this)");
-                button.innerText = 'follow';
+                button.innerText = '팔로우';
             }
 
             td.appendChild(button);

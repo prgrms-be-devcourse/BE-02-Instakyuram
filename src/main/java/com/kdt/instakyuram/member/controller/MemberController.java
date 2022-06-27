@@ -54,11 +54,20 @@ public class MemberController {
 		@AuthenticationPrincipal JwtAuthentication auth) {
 		MemberResponse foundMember = memberService.findByUsername(username);
 
-		if (auth != null) {
-			model.addAttribute("auth", auth.id().equals(foundMember.id()));
-		}
+		model.addAttribute("auth", auth);
 		model.addAttribute("thumbnails", postGiver.findPostThumbnailsByMemberId(foundMember.id()));
 		model.addAttribute("profileInfo", profileService.findProfileInfoByUsername(username));
+
+		return "personal-page";
+	}
+
+	@GetMapping("/me")
+	public String personalPage(Model model, @AuthenticationPrincipal JwtAuthentication auth) {
+		MemberResponse foundMember = memberService.findByUsername(auth.username());
+
+		model.addAttribute("auth", auth);
+		model.addAttribute("thumbnails", postGiver.findPostThumbnailsByMemberId(foundMember.id()));
+		model.addAttribute("profileInfo", profileService.findProfileInfoByUsername(foundMember.username()));
 
 		return "personal-page";
 	}

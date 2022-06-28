@@ -34,12 +34,11 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.instakyuram.common.PageDto;
-import com.kdt.instakyuram.user.member.controller.MemberController;
 import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.user.member.service.MemberService;
 import com.kdt.instakyuram.user.member.service.ProfileService;
-import com.kdt.instakyuram.post.service.PostGiver;
+import com.kdt.instakyuram.article.post.service.PostGiver;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
 

@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.user.follow.service.FollowService;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
-import com.kdt.instakyuram.post.service.PostService;
+import com.kdt.instakyuram.article.post.service.PostService;
 
 @Service
 @Transactional(readOnly = true)

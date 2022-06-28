@@ -41,13 +41,17 @@ public class MemberController {
 		return new RedirectView("/members?page=1&size=10");
 	}
 
-	//todo: @AuthenticationPrincipal JwtAuthentication member로 요청 id 뽑아내기 -> 테스트 코드 변경
 	@GetMapping
-	public ModelAndView getMembers(@ModelAttribute @Valid PageDto.Request pagingDto) {
+	public ModelAndView getMembers(@ModelAttribute @Valid PageDto.Request pagingDto,
+		@AuthenticationPrincipal JwtAuthentication auth) {
+		if (auth == null) {
+			throw new NotAuthenticationException("로그인을 하셔야 합니다..");
+		}
+
 		Pageable requestPage = pagingDto.getPageable(Sort.by("id").descending());
 
 		return new ModelAndView("member/member-list")
-			.addObject(memberService.findAll(requestPage));
+			.addObject("dto", memberService.findAll(auth.id(), requestPage));
 	}
 
 	@GetMapping("/{username}")

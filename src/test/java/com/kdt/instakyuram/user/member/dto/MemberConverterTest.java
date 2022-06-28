@@ -3,6 +3,7 @@ package com.kdt.instakyuram.user.member.dto;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
@@ -22,8 +23,6 @@ import org.springframework.data.domain.Sort;
 
 import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.user.member.domain.Member;
-import com.kdt.instakyuram.user.member.dto.MemberConverter;
-import com.kdt.instakyuram.user.member.dto.MemberResponse;
 
 @ExtendWith(MockitoExtension.class)
 class MemberConverterTest {
@@ -38,18 +37,19 @@ class MemberConverterTest {
 		int requestSize = 5;
 
 		PageDto.Request request = new PageDto.Request(requestPage, requestSize);
-		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
+		Pageable pageRequest = request.getPageable(Sort.by("id"));
 		List<Member> members = getMembers();
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> expectedResponses = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName(),
+				true)
 		);
 		List<MemberResponse.MemberListViewResponse> expectedContents = expectedResponses.getResponses();
 
 		//when
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> responses = memberConverter.toPageResponse(
-			pagingMembers);
+			pagingMembers, new HashSet<>());
 		AtomicInteger index = new AtomicInteger();
 
 		//then

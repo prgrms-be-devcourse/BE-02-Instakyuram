@@ -21,7 +21,8 @@ public record MemberResponse(
 	public record SigninResponse(Long id, String username, String accessToken, String refreshToken, String[] roles) {
 	}
 
-	public record MemberListViewResponse(Long id, String username, String name) {
+	@Builder
+	public record MemberListViewResponse(Long id, String username, String name, boolean possibleFollow) {
 	}
 
 	public record ProfileInfoResponse(

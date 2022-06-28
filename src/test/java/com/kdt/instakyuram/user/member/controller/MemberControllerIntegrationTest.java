@@ -54,23 +54,24 @@ public class MemberControllerIntegrationTest {
 	private ObjectMapper mapper;
 
 	@Test
-	@WithMockUser("MEMBER")
 	@Transactional
 	@DisplayName("사용자가 목록을 조회한다.")
 	void testGetMembers() throws Exception {
 		//given
+		Long authId=1L;
+		setMockingAuthentication(authId);
 		int requestPage = 2;
 		int requestSize = 5;
 		String htmlTittleContent = "사용자가 팔로잉 할 대상 찾는 사용자 목록";
 
 		PageDto.Request request = new PageDto.Request(requestPage, requestSize);
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
-		setMockAnonymousAuthenticationToken();
 		List<Member> members = getMembersForOffSetPaging();
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName(),
+				true)
 		);
 
 		//when
@@ -85,13 +86,13 @@ public class MemberControllerIntegrationTest {
 	}
 
 	@Test
-	@WithMockUser("MEMBER")
 	@DisplayName("사용자 uri 를 조작할 때, 멤버가 없는 없는 페이지 번호를 요청한다면 오류페이지로 전환한다.")
 	void testFailGetMembers() throws Exception {
 		// given
+		Long authId=1L;
+		setMockingAuthentication(authId);
 		int requestPage = 100;
 		int requestSize = 5;
-		String errorPageTitle = "오류 페이지";
 
 		PageDto.Request request = new PageDto.Request(requestPage, requestSize);
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
@@ -99,7 +100,8 @@ public class MemberControllerIntegrationTest {
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName(),
+				true)
 		);
 
 		//when

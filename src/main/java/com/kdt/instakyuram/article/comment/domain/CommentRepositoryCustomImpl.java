@@ -20,7 +20,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
 	// TODO Criteria 로 변환 필요
 	@Override
 	public List<CommentFindAllResponse> findAllByPostIdAndMemberId(Long postId, Long memberId) {
-		String sql = "SELECT new com.kdt.instakyuram.comment.dto.CommentFindAllResponse(c.id, c.post.id, c.content, c.member.id, m.username, count(cl.id), case when cl.member.id = :memberId then true else false end)"
+		String sql = "SELECT new com.kdt.instakyuram.article.comment.dto.CommentFindAllResponse(c.id, c.post.id, c.content, c.member.id, m.username, count(cl.id), case when cl.member.id = :memberId then true else false end)"
 			+ " FROM Comment c"
 			+ " INNER JOIN Member m ON c.member.id = m.id"
 			+ " LEFT OUTER JOIN CommentLike cl ON c.id = cl.comment.id"

@@ -26,9 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.comment.service.CommentGiver;
-import com.kdt.instakyuram.member.domain.Member;
-import com.kdt.instakyuram.member.dto.MemberResponse;
-import com.kdt.instakyuram.member.service.MemberGiver;
+import com.kdt.instakyuram.user.member.domain.Member;
+import com.kdt.instakyuram.user.member.dto.MemberResponse;
+import com.kdt.instakyuram.user.member.service.MemberGiver;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostImage;
 import com.kdt.instakyuram.post.domain.PostRepository;

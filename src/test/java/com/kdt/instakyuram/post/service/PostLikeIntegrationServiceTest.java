@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kdt.instakyuram.exception.BusinessException;
-import com.kdt.instakyuram.member.domain.Member;
+import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.post.domain.Post;
 import com.kdt.instakyuram.post.domain.PostLike;
 import com.kdt.instakyuram.post.domain.PostLikeRepository;

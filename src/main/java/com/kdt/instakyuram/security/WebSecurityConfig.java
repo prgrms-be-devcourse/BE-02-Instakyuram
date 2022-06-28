@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.kdt.instakyuram.security.jwt.Jwt;
 import com.kdt.instakyuram.security.jwt.JwtAuthenticationFilter;
-import com.kdt.instakyuram.token.service.TokenService;
+import com.kdt.instakyuram.auth.service.TokenService;
 
 @EnableWebSecurity
 @Configuration

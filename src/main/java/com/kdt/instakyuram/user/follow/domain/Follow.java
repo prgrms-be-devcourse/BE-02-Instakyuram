@@ -17,7 +17,6 @@ import com.kdt.instakyuram.common.BaseEntity;
 import com.kdt.instakyuram.exception.DomainException;
 
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(

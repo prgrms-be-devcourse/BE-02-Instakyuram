@@ -11,7 +11,7 @@ import com.kdt.instakyuram.comment.dto.CommentConverter;
 import com.kdt.instakyuram.comment.dto.CommentResponse;
 import com.kdt.instakyuram.exception.BusinessException;
 import com.kdt.instakyuram.exception.ErrorCode;
-import com.kdt.instakyuram.member.dto.MemberResponse;
+import com.kdt.instakyuram.user.member.dto.MemberResponse;
 
 @Service
 public class CommentLikeService {

@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.kdt.instakyuram.common.BaseEntity;
-import com.kdt.instakyuram.member.domain.Member;
+import com.kdt.instakyuram.user.member.domain.Member;
 
 import lombok.Builder;
 

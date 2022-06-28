@@ -16,7 +16,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.common.file.exception.InvalidFileException;
-import com.kdt.instakyuram.post.domain.PostImage;
+import com.kdt.instakyuram.article.postimage.domain.PostImage;
 
 public class ImageManager {
 

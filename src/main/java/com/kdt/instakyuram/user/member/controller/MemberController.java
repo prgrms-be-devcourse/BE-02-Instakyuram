@@ -19,7 +19,7 @@ import com.kdt.instakyuram.exception.NotAuthenticationException;
 import com.kdt.instakyuram.user.member.service.MemberService;
 import com.kdt.instakyuram.user.member.service.ProfileService;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
-import com.kdt.instakyuram.post.service.PostGiver;
+import com.kdt.instakyuram.article.post.service.PostGiver;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 
 @RequestMapping("/members")

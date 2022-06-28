@@ -3,7 +3,7 @@ package com.kdt.instakyuram.post.dto;
 import java.util.List;
 
 import com.kdt.instakyuram.comment.dto.CommentResponse;
-import com.kdt.instakyuram.member.dto.MemberResponse;
+import com.kdt.instakyuram.user.member.dto.MemberResponse;
 
 import lombok.Builder;
 

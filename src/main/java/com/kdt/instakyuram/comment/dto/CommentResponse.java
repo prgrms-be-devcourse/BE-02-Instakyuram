@@ -1,6 +1,6 @@
 package com.kdt.instakyuram.comment.dto;
 
-import com.kdt.instakyuram.member.dto.MemberResponse;
+import com.kdt.instakyuram.user.member.dto.MemberResponse;
 
 import lombok.Builder;
 

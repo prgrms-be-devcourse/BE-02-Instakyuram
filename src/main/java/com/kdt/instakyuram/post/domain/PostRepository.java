@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.kdt.instakyuram.member.domain.Member;
+import com.kdt.instakyuram.user.member.domain.Member;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 

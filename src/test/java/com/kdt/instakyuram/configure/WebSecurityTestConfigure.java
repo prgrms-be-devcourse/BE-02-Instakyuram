@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Import;
 
 import com.kdt.instakyuram.security.SecurityConfigProperties;
 import com.kdt.instakyuram.security.WebSecurityConfig;
-import com.kdt.instakyuram.token.service.TokenService;
+import com.kdt.instakyuram.auth.service.TokenService;
 
 @Import({WebSecurityConfig.class, TokenService.class})
 @EnableConfigurationProperties(SecurityConfigProperties.class)

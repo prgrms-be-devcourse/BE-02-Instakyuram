@@ -21,8 +21,8 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.kdt.instakyuram.exception.EntityNotFoundException;
-import com.kdt.instakyuram.token.dto.TokenResponse;
-import com.kdt.instakyuram.token.service.TokenService;
+import com.kdt.instakyuram.auth.dto.TokenResponse;
+import com.kdt.instakyuram.auth.service.TokenService;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final String accessTokenHeader;

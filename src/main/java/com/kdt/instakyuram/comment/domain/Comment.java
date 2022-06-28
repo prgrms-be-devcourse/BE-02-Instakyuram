@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.kdt.instakyuram.common.BaseEntity;
-import com.kdt.instakyuram.member.domain.Member;
+import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.post.domain.Post;
 
 @Entity

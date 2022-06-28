@@ -27,7 +27,7 @@
             <td th:text="${follower.username()}" onclick="moveProfile(this)"></td>
             <td th:text="${follower.name()}"></td>
             <td th:if="${!follower.isMe()}">
-                <button class="btn btn-danger" th:if="${follower.isAlsoAuthFollowing()}" onclick="unFollow(this)">
+                <button class="btn btn-secondary" th:if="${follower.isAlsoAuthFollowing()}" onclick="unFollow(this)">
                     unfollow
                 </button>
                 <button class="btn btn-primary" th:if="${!follower.isAlsoAuthFollowing()}" onclick="follow(this)">
@@ -61,7 +61,7 @@
             }
             my.setAttribute("class", "btn btn-primary");
             my.setAttribute("onclick", "follow(this)");
-            my.innerText="follow";
+            my.innerText="팔로우";
         })
     }
 
@@ -77,9 +77,9 @@
                 alert(response.json());
                 return;
             }
-            my.setAttribute("class", "btn btn-danger");
+            my.setAttribute("class", "btn btn-secondary");
             my.setAttribute("onclick", "unFollow(this)");
-            my.innerText="unfollow";
+            my.innerText="팔로잉";
         })
     }
 
@@ -119,13 +119,13 @@
             let button = document.createElement('button');
 
             if (item.isAlsoAuthFollowing) {
-                button.setAttribute("class", "btn btn-danger")
+                button.setAttribute("class", "btn btn-secondary")
                 button.setAttribute("onclick", "unFollow(this)");
-                button.innerText = 'unfollow';
+                button.innerText = '팔로잉';
             } else {
                 button.setAttribute("class", "btn btn-primary")
                 button.setAttribute("onclick", "follow(this)");
-                button.innerText = 'follow';
+                button.innerText = '팔로우';
             }
 
             td.appendChild(button);

@@ -92,14 +92,17 @@ public class MemberService implements MemberGiver {
 	}
 
 	// todo : 요청한 사용자의 정보는 빼야함! -> 테스트 코드 변경
-	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> findAll(Pageable requestPage) {
+	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> findAll(Long authId, Pageable requestPage) {
 		Page<Member> pagingMembers = memberRepository.findAll(requestPage);
 
 		if (pagingMembers.getContent().isEmpty()) {
 			throw new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
 		}
 
-		return memberConverter.toPageResponse(pagingMembers);
+		List<Long> memberIds = pagingMembers.getContent().stream().map(Member::getId).toList();
+		Set<Long> authFollowings = followService.findAuthFollowings(authId, memberIds);
+
+		return memberConverter.toPageResponse(pagingMembers, authFollowings);
 	}
 
 	public List<MemberResponse> findAllFollowing(Long id) {

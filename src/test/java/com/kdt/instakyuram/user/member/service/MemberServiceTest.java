@@ -71,6 +71,7 @@ class MemberServiceTest {
 	@DisplayName("사용자 목록 조회")
 	void testFindAll() {
 		//given
+		Long authId = 1L;
 		int requestPage = 2;
 		int requestSize = 5;
 
@@ -79,22 +80,23 @@ class MemberServiceTest {
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(),
+				member.getName(), true)
 		);
 		List<Integer> expectedPageNumbers = IntStream.rangeClosed(1, pageResponse.getTotalPage())
 			.boxed()
 			.toList();
 
 		given(memberRepository.findAll(pageRequest)).willReturn(pagingMembers);
-		given(memberConverter.toPageResponse(pagingMembers)).willReturn(pageResponse);
+		given(memberConverter.toPageResponse(pagingMembers, Set.of())).willReturn(pageResponse);
 
 		//when
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageMemberResponses = memberService.findAll(
-			pageRequest);
+			authId, pageRequest);
 
 		//then
 		verify(memberRepository, times(1)).findAll(pageRequest);
-		verify(memberConverter, times(1)).toPageResponse(pagingMembers);
+		verify(memberConverter, times(1)).toPageResponse(pagingMembers, Set.of());
 
 		assertThat(pageMemberResponses.getPage()).isEqualTo(requestPage);
 		assertThat(pageMemberResponses.hasPrevious()).isFalse();
@@ -106,6 +108,7 @@ class MemberServiceTest {
 	@DisplayName("사용자 목록 조회에 데이터가 없는 경우 실패한다")
 	void testFailFindAll() {
 		//given
+		Long authId = 1L;
 		int requestPage = 2;
 		int requestSize = 5;
 
@@ -113,7 +116,8 @@ class MemberServiceTest {
 		PageImpl<Member> pagingMembers = new PageImpl<>(List.of(), pageRequest, 0);
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
 			pagingMembers,
-			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName())
+			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName(),
+				true)
 		);
 
 		given(memberRepository.findAll(pageRequest)).willReturn(pagingMembers);
@@ -121,7 +125,7 @@ class MemberServiceTest {
 		//when
 		//then
 		assertThatThrownBy(() -> {
-			memberService.findAll(pageRequest);
+			memberService.findAll(authId,pageRequest);
 		}).isInstanceOf(EntityNotFoundException.class);
 	}
 

@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.follow.domain;
+package com.kdt.instakyuram.user.follow.domain;
 
 import java.util.Objects;
 
@@ -14,8 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.kdt.instakyuram.common.BaseEntity;
-import com.kdt.instakyuram.exception.ErrorCode;
-import com.kdt.instakyuram.follow.exception.FollowException;
+import com.kdt.instakyuram.exception.DomainException;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -41,7 +40,7 @@ public class Follow extends BaseEntity {
 	@Builder
 	public Follow(Long id, Long memberId, Long targetId) {
 		if (Objects.isNull(memberId) || Objects.isNull(targetId)) {
-			throw new IllegalArgumentException("팔로우 하는 대상과 팔로우 받는 대상은 반드시 필요합니다.");
+			throw new DomainException("팔로우 하는 대상과 팔로우 받는 대상은 반드시 필요합니다.");
 		}
 		checkFollow(memberId, targetId);
 
@@ -64,7 +63,7 @@ public class Follow extends BaseEntity {
 
 	public void checkFollow(Long memberId, Long targetId) {
 		if (memberId.equals(targetId)) {
-			throw new FollowException(ErrorCode.DOMAIN_EXCEPTION, "자신을 팔로우 할 수는 없습니다.");
+			throw new DomainException("자신을 팔로우 할 수는 없습니다.");
 		}
 	}
 

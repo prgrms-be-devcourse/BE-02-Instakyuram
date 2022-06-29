@@ -20,29 +20,18 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.auth.dto.TokenResponse;
 import com.kdt.instakyuram.auth.service.TokenService;
+import com.kdt.instakyuram.exception.EntityNotFoundException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-	private final String accessTokenHeader;
-	private final String refreshTokenHeader;
 	private final Jwt jwt;
 	private final Logger log = LoggerFactory.getLogger(getClass());
 	private final TokenService tokenService;
 
-	public JwtAuthenticationFilter(String jwtHeader, String jwtRefreshHeader, Jwt jwt,
-		TokenService tokenService) {
-		this.accessTokenHeader = jwtHeader;
-		this.refreshTokenHeader = jwtRefreshHeader;
+	public JwtAuthenticationFilter(Jwt jwt, TokenService tokenService) {
 		this.jwt = jwt;
 		this.tokenService = tokenService;
-	}
-
-	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) {
-		return request.getRequestURI().endsWith("/api/members/signup") || request.getRequestURI()
-			.endsWith("/api/members/signin") || SecurityContextHolder.getContext().getAuthentication() != null;
 	}
 
 	@Override
@@ -59,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private String getAccessToken(HttpServletRequest request) {
 		if (request.getCookies() != null) {
 			return Arrays.stream(request.getCookies())
-				.filter(cookie -> cookie.getName().equals(this.accessTokenHeader))
+				.filter(cookie -> cookie.getName().equals(this.jwt.accessTokenProperties().header()))
 				.findFirst()
 				.map(Cookie::getValue)
 				.orElseThrow(() -> new JwtAccessTokenNotFoundException("AccessToken is not found"));
@@ -106,7 +95,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				JwtAuthenticationToken authentication = createAuthenticationToken(reIssuedClaims, request,
 					reIssuedAccessToken);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-				response.addCookie(new Cookie(accessTokenHeader, reIssuedAccessToken));
+				response.addCookie(new Cookie(this.jwt.accessTokenProperties().header(), reIssuedAccessToken));
 			} else {
 				log.warn("refreshToken expired");
 			}
@@ -118,7 +107,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private String getRefreshToken(HttpServletRequest request) {
 		if (request.getCookies() != null) {
 			return Arrays.stream(request.getCookies())
-				.filter(cookie -> cookie.getName().equals(this.refreshTokenHeader))
+				.filter(cookie -> cookie.getName().equals(this.jwt.refreshTokenProperties().header()))
 				.findFirst()
 				.map(Cookie::getValue)
 				.orElseThrow(() -> new JwtRefreshTokenNotFoundException("RefreshToken is not found."));

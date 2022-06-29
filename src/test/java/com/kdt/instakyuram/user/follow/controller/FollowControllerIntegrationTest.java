@@ -26,11 +26,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kdt.instakyuram.security.jwt.JwtAuthentication;
+import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
 import com.kdt.instakyuram.user.follow.domain.Follow;
 import com.kdt.instakyuram.user.follow.domain.FollowRepository;
 import com.kdt.instakyuram.user.member.domain.Member;
-import com.kdt.instakyuram.security.jwt.JwtAuthentication;
-import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
 
 @AutoConfigureMockMvc
 @SpringBootTest

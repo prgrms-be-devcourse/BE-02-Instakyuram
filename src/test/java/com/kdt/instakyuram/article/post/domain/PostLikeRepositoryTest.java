@@ -13,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import com.kdt.instakyuram.article.post.domain.Post;
-import com.kdt.instakyuram.article.post.domain.PostLike;
-import com.kdt.instakyuram.article.post.domain.PostLikeRepository;
 import com.kdt.instakyuram.user.member.domain.Member;
 
 @DataJpaTest

@@ -79,15 +79,17 @@ public class MemberRestController {
 	}
 
 	@PostMapping("/signout")
-	public ApiResponse<String> signout(@AuthenticationPrincipal JwtAuthentication principal, HttpServletRequest request,
+	public ApiResponse<String> signout(@AuthenticationPrincipal JwtAuthentication auth, HttpServletRequest request,
 		HttpServletResponse response) {
-		tokenService.save(principal.token(), principal.id());
+		if (auth == null) {
+			throw new NotAuthenticationException("로그인이 필요합니다.");
+		}
 		Arrays.stream(request.getCookies())
 			.filter(cookie -> cookie.getName().equals(jwt.refreshTokenProperties().header()))
 			.findFirst()
 			.ifPresent(cookie -> tokenService.deleteByToken(cookie.getValue()));
-		Cookie accessTokenCookie = new Cookie(jwt.accessTokenProperties().header(), null);
-		Cookie refreshTokenCookie = new Cookie(jwt.refreshTokenProperties().header(), null);
+		Cookie accessTokenCookie = new Cookie(this.jwt.accessTokenProperties().header(), null);
+		Cookie refreshTokenCookie = new Cookie(this.jwt.refreshTokenProperties().header(), null);
 		accessTokenCookie.setMaxAge(0);
 		accessTokenCookie.setPath("/");
 		refreshTokenCookie.setMaxAge(0);
@@ -117,7 +119,7 @@ public class MemberRestController {
 			throw new NotAuthenticationException("로그인이 필요합니다.");
 		}
 
-		return new ApiResponse<>(memberService.getFollowings(auth.id(), username, lastIdx));
+		return new ApiResponse<>(this.memberService.getFollowings(auth.id(), username, lastIdx));
 	}
 
 }

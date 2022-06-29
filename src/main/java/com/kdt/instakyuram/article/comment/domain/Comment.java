@@ -53,6 +53,11 @@ public class Comment extends BaseEntity {
 		this.member = member;
 	}
 
+	//== 비지니스 로직 ==//
+	public void modify(String content) {
+		this.content = content;
+	}
+
 	public Long getId() {
 		return id;
 	}

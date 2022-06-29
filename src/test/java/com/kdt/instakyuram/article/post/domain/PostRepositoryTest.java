@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import com.kdt.instakyuram.article.post.domain.Post;
-import com.kdt.instakyuram.article.post.domain.PostRepository;
 import com.kdt.instakyuram.user.member.domain.Member;
 
 @DataJpaTest
@@ -42,7 +40,7 @@ class PostRepositoryTest {
 			.toList();
 
 		//when
-		List<Post> foundPosts = postRepository.findByMemberIn(followings);
+		List<Post> foundPosts = postRepository.findAllByMemberIn(followings);
 		//then
 		assertThat(foundPosts).hasSameElementsAs(posts);
 	}

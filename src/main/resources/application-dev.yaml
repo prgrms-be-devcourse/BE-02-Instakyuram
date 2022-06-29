@@ -32,14 +32,14 @@ cors:
     method: GET, POST, PATCH, DELETE
 security:
   patterns:
-    ignoring: ["/css/**", "/js/**", "/webjars/**", "/images/**"]
-    permit-all: ["/api/members/signup", "/api/members/signin", "/members/signin"]
+    ignoring: [ "/css/**", "/js/**", "/webjars/**", "/images/**","/swagger-resources/**" ]
+    permit-all: [ "/api/members/signup", "/api/members/signin", "/members/signin", "/api/docs/**", "/swagger-ui/***","/v2/**" ] # "/swagger-ui/***","/v2/**" swagger 자원
   jwt:
     issuer: kyuram
     client-secret: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ
     accessToken:
       header: atoken
-      expiry-seconds: 60
+      expiry-seconds: 6000000
     refreshToken:
       header: rtoken
-      expiry-seconds: 120
+      expiry-seconds: 6000000

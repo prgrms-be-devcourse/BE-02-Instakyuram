@@ -39,6 +39,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
+    //SWAGGER
+    implementation 'io.springfox:springfox-swagger2:3.0.0'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'org.apache.commons:commons-lang3:3.12.0'

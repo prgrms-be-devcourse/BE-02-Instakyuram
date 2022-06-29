@@ -5,3 +5,6 @@ spring:
     active: dev
   thymeleaf:
     suffix: .html
+  mvc: # swagger boot error
+    path match:
+      matching-strategy: ant_path_matcher

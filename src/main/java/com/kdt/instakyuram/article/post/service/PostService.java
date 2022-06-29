@@ -55,14 +55,12 @@ public class PostService implements PostGiver {
 	@Transactional(rollbackFor = {FileWriteException.class})
 	public PostResponse.CreateResponse create(Long memberId, String content, List<MultipartFile> images) {
 		Member member = postConverter.toMember(memberGiver.findById(memberId));
-
 		Post savedPost = postRepository.save(
 			Post.builder()
 				.content(content)
 				.member(member)
 				.build()
 		);
-
 		postImageService.save(savedPost.getId(), images);
 
 		return new PostResponse.CreateResponse(savedPost.getId(), memberId, content);
@@ -72,7 +70,7 @@ public class PostService implements PostGiver {
 		List<Member> members = memberGiver.findAllFollowingIncludeMe(memberId).stream()
 			.map(postConverter::toMember)
 			.toList();
-		List<Post> posts = postRepository.findByMemberIn(members);
+		List<Post> posts = postRepository.findAllByMemberIn(members);
 
 		Map<Long, List<PostImageResponse>> postImages = postImageService.findByPostIn(posts)
 			.stream()
@@ -112,6 +110,19 @@ public class PostService implements PostGiver {
 			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
 				MessageFormat.format("Post ID = {0}, Member ID = {1}, Content = {2}", id, memberId, content)));
 
+	}
+
+	// 비관적 락 적용
+	@Transactional
+	public PostResponse.UpdateResponse lockedUpdate(Long id, Long memberId, String content) {
+		return postRepository.findByIdAndMemberId_Locked_Pessimistic(id, memberId)
+			.map(post -> {
+				post.updateContent(content);
+
+				return postConverter.toUpdateResponse(post);
+			})
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
+				MessageFormat.format("Post ID = {0}, Member ID = {1}, Content = {2}", id, memberId, content)));
 	}
 
 	@Transactional

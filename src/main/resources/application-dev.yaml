@@ -43,3 +43,9 @@ security:
     refreshToken:
       header: rtoken
       expiry-seconds: 6000000
+swagger:
+  title: KkyuTeam-Instagram
+  version: v1.0.0
+  description: api docs swagger
+  api-path: /api/**
+  base-package: com.kdt.instakyuram

@@ -1,7 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: local
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     username: ${MYSQL_USERNAME:root}

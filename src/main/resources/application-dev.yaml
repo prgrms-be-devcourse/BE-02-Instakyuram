@@ -1,7 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: dev
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     username: ENC(AzlDbF5wkOwjc6PApuV6Pg==)

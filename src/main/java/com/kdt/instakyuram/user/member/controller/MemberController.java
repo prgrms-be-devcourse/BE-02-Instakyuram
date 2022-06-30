@@ -35,14 +35,13 @@ public class MemberController {
 		this.profileService = profileService;
 	}
 
-	//todo: @AuthenticationPrincipal JwtAuthentication member로 요청 id 뽑아내기 -> 테스트 코드 변경
 	@GetMapping("/all")
 	public RedirectView firstRequestMembers() {
 		return new RedirectView("/members?page=1&size=10");
 	}
 
 	@GetMapping
-	public ModelAndView getMembers(@ModelAttribute @Valid PageDto.Request pagingDto,
+	public ModelAndView getMembers(@Valid PageDto.Request pagingDto,
 		@AuthenticationPrincipal JwtAuthentication auth) {
 		if (auth == null) {
 			throw new NotAuthenticationException("로그인을 하셔야 합니다..");

@@ -83,4 +83,10 @@ public class PostRestController {
 		return new ApiResponse<>(postService.findPostThumbnailsByUsername(username));
 	}
 
+	@PatchMapping("/lock/{id}")
+	public ApiResponse<PostResponse.UpdateResponse> lockedUpdate(@PathVariable Long id,
+		@AuthenticationPrincipal JwtAuthentication jwtAuthentication,
+		@RequestBody PostRequest.UpdateRequest request) {
+		return new ApiResponse<>(postService.lockedUpdate(id, jwtAuthentication.id(), request.content()));
+	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +36,19 @@ public class CommentRestController {
 	) {
 		CommentResponse commentResponse = commentService.create(
 			request.postId(), authentication.id(), request.content()
+		);
+
+		return new ApiResponse<>(commentResponse);
+	}
+
+	@PatchMapping("/{id}")
+	public ApiResponse<CommentResponse> modify(
+		@AuthenticationPrincipal JwtAuthentication authentication,
+		@PathVariable Long id,
+		@RequestBody CommentRequest.ModifyRequest request
+	) {
+		CommentResponse commentResponse = commentService.modify(
+			id, authentication.id(), request.content()
 		);
 
 		return new ApiResponse<>(commentResponse);

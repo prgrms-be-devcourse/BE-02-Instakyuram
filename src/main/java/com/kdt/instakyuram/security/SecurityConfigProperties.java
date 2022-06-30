@@ -1,5 +1,7 @@
 package com.kdt.instakyuram.security;
 
+import java.util.Map;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
@@ -12,7 +14,7 @@ public record SecurityConfigProperties(PatternsConfigures patterns, JwtConfigure
 		this.jwt = jwt;
 	}
 
-	public record PatternsConfigures(String[] ignoring, String[] permitAll) {
+	public record PatternsConfigures(String[] ignoring, Map<String, String[]> permitAll) {
 	}
 
 	public record JwtConfigure(

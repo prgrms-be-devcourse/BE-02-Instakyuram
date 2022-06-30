@@ -24,8 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kdt.instakyuram.article.post.service.PostLikeService;
-import com.kdt.instakyuram.article.post.service.PostService;
 import com.kdt.instakyuram.article.postimage.service.PostImageService;
 import com.kdt.instakyuram.article.comment.dto.CommentResponse;
 import com.kdt.instakyuram.article.comment.service.CommentGiver;
@@ -90,7 +88,7 @@ class PostServiceTest {
 		given(postConverter.toMember(MEMBER_RESPONSES.get(0))).willReturn(MEMBERS.get(0));
 		given(postConverter.toMember(MEMBER_RESPONSES.get(1))).willReturn(MEMBERS.get(1));
 		given(postConverter.toMember(MEMBER_RESPONSES.get(2))).willReturn(MEMBERS.get(2));
-		given(postRepository.findByMemberIn(MEMBERS)).willReturn(POSTS);
+		given(postRepository.findAllByMemberIn(MEMBERS)).willReturn(POSTS);
 		given(postImageService.findByPostIn(POSTS)).willReturn(POST_IMAGE_RESPONSES);
 		given(commentGiver.findByPostIn(POSTS)).willReturn(COMMENT_RESPONSES);
 		given(postLikeService.findByPostIn(POSTS)).willReturn(POST_LIKE_RESPONSES);

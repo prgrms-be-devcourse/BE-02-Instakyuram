@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: "local_h2"
+    group:
+      "local_h2": "local_h2, common"
+      "local_mysql": "local_mysql, common"
+      "dev": "dev, common"
+      "prod": "prod, common"

@@ -9,13 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kdt.instakyuram.article.comment.domain.Comment;
 import com.kdt.instakyuram.article.comment.domain.CommentRepository;
 import com.kdt.instakyuram.article.comment.dto.CommentConverter;
-import com.kdt.instakyuram.article.comment.dto.CommentResponse;
 import com.kdt.instakyuram.article.comment.dto.CommentFindAllResponse;
+import com.kdt.instakyuram.article.comment.dto.CommentResponse;
+import com.kdt.instakyuram.article.post.domain.Post;
 import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.user.member.service.MemberGiver;
-import com.kdt.instakyuram.article.post.domain.Post;
 
 @Transactional(readOnly = true)
 @Service
@@ -50,6 +50,23 @@ public class CommentService implements CommentGiver {
 			savedComment.getContent(),
 			memberResponse
 		);
+	}
+
+	// TODO [COMMENT] 비관적 락 테스트
+	@Transactional
+	public CommentResponse modify(Long id, Long memberId, String content) {
+		return commentRepository.findByIdAndMemberId_Locked_Pessimistic(id, memberId)
+			.map(comment -> {
+				try {
+					Thread.sleep(1000 * 60 * 2); // 2분
+				} catch (InterruptedException ignored) {
+				}
+				comment.modify(content);
+
+				return commentConverter.toResponse(comment);
+			})
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUND,
+				MessageFormat.format("id = {0} memberId= {1}", id, memberId)));
 	}
 
 	@Transactional

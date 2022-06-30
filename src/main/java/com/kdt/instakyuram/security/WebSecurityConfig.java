@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -16,9 +17,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.kdt.instakyuram.auth.service.TokenService;
 import com.kdt.instakyuram.security.jwt.Jwt;
 import com.kdt.instakyuram.security.jwt.JwtAuthenticationFilter;
-import com.kdt.instakyuram.auth.service.TokenService;
 
 @EnableWebSecurity
 @Configuration
@@ -46,12 +47,7 @@ public class WebSecurityConfig {
 	}
 
 	public JwtAuthenticationFilter jwtAuthenticationFilter(Jwt jwt, TokenService tokenService) {
-		return new JwtAuthenticationFilter(
-			this.securityConfigProperties.jwt().accessToken().header(),
-			this.securityConfigProperties.jwt().refreshToken().header(),
-			jwt,
-			tokenService
-		);
+		return new JwtAuthenticationFilter(jwt, tokenService);
 	}
 
 	@Bean
@@ -80,7 +76,15 @@ public class WebSecurityConfig {
 		Exception {
 		http
 			.authorizeRequests()
-			.antMatchers(this.securityConfigProperties.patterns().permitAll()).permitAll()
+			.antMatchers(this.securityConfigProperties.patterns().permitAll().get("ALL")).permitAll()
+			.antMatchers(HttpMethod.GET, this.securityConfigProperties.patterns().permitAll().get("GET")).permitAll()
+			.antMatchers(HttpMethod.POST, this.securityConfigProperties.patterns().permitAll().get("POST")).permitAll()
+			.antMatchers(HttpMethod.PATCH, this.securityConfigProperties.patterns().permitAll().get("PATCH")).permitAll()
+			.antMatchers(HttpMethod.DELETE, this.securityConfigProperties.patterns().permitAll().get("DELETE")).permitAll()
+			.antMatchers(HttpMethod.PUT, this.securityConfigProperties.patterns().permitAll().get("PUT")).permitAll()
+			.antMatchers(HttpMethod.HEAD, this.securityConfigProperties.patterns().permitAll().get("HEAD")).permitAll()
+			.antMatchers(HttpMethod.TRACE, this.securityConfigProperties.patterns().permitAll().get("TRACE")).permitAll()
+			.antMatchers(HttpMethod.OPTIONS, this.securityConfigProperties.patterns().permitAll().get("OPTIONS")).permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.formLogin().disable()

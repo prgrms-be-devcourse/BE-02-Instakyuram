@@ -23,15 +23,11 @@ security:
   patterns:
     ignoring: ["/css/**", "/js/**", "/webjars/**", "/images/**"]
     permit-all:
-      ALL : ["/api/members/signup", "/api/members/signin", "/members/signin"]
-      GET : ["/api/members/**", "/members/**", "/api/posts/**"]
-      POST : []
+      GET : ["/members/signin", "/members/**", "/api/posts/**"]
+      POST : ["/api/members/signin", "/api/members/signup"]
       PATCH : []
       PUT : []
       DELETE : []
-      OPTIONS: []
-      TRACE: []
-      HEAD: []
   jwt:
     issuer: kyuram
     client-secret:

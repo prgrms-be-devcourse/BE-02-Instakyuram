@@ -76,15 +76,11 @@ public class WebSecurityConfig {
 		Exception {
 		http
 			.authorizeRequests()
-			.antMatchers(this.securityConfigProperties.patterns().permitAll().get("ALL")).permitAll()
 			.antMatchers(HttpMethod.GET, this.securityConfigProperties.patterns().permitAll().get("GET")).permitAll()
 			.antMatchers(HttpMethod.POST, this.securityConfigProperties.patterns().permitAll().get("POST")).permitAll()
 			.antMatchers(HttpMethod.PATCH, this.securityConfigProperties.patterns().permitAll().get("PATCH")).permitAll()
 			.antMatchers(HttpMethod.DELETE, this.securityConfigProperties.patterns().permitAll().get("DELETE")).permitAll()
 			.antMatchers(HttpMethod.PUT, this.securityConfigProperties.patterns().permitAll().get("PUT")).permitAll()
-			.antMatchers(HttpMethod.HEAD, this.securityConfigProperties.patterns().permitAll().get("HEAD")).permitAll()
-			.antMatchers(HttpMethod.TRACE, this.securityConfigProperties.patterns().permitAll().get("TRACE")).permitAll()
-			.antMatchers(HttpMethod.OPTIONS, this.securityConfigProperties.patterns().permitAll().get("OPTIONS")).permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.formLogin().disable()

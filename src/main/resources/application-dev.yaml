@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: ENC(AzlDbF5wkOwjc6PApuV6Pg==)
+    password: ENC(kcjv5IqrezLATOvvUYWAZVKvqFe1yPTM)
+    url: ENC(P3fJYSZqwQ3YjSRY5ewwfDGyWfZ9Cm+OOtLJN3oi02XHKlWvTOf/j6G1+gDXtHhY)
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    org.hibernate.type.descriptor.sql: INFO
+
+cors:
+  allowed:
+    url: "http://localhost:3000"
+security:
+  jwt:
+    client-secret: ENC(GwEnP+x6pZNS/q8oxLDhqV1cvzG3lvmH)
+encryptor:
+  key: ${ENCRYPTOR_KEY}

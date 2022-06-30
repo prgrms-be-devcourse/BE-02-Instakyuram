@@ -58,6 +58,9 @@ dependencies {
     compileOnly "org.flywaydb:flyway-mysql"
     implementation 'org.flywaydb:flyway-core:8.5.12'
     testImplementation 'org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0'
+
+    //JASYPT
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
 }
 
 tasks.named('test') {
@@ -69,21 +72,5 @@ flyway {
     user = 'root'
     password = 'password'
     encoding = 'UTF-8'
-}
-
-task copyPrivate(type: Copy) {
-    copy {
-        from './instakyuram-config'
-        include "application.yml", "application-dev.yml","application-prod.yml","application-local_h2.yml", "application-local_mysql.yml","application-common.yml"
-        into 'src/main/resources/'
-    }
-}
-
-task copyTestPrivate(type: Copy) {
-    copy {
-        from './instakyuram-config'
-        include "application-test.yml"
-        into 'src/test/resources/'
-    }
 }
 

@@ -13,6 +13,11 @@ import com.kdt.instakyuram.common.ApiResponse;
 import com.kdt.instakyuram.user.member.service.ProfileService;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+
+@Api(tags= "사용자 이미지 api")
 @RestController
 @RequestMapping("/api/profiles")
 public class ProfileRestController {
@@ -23,8 +28,12 @@ public class ProfileRestController {
 		this.profileService = profileService;
 	}
 
+
 	@GetMapping("/{memberId}/image")
-	public FileSystemResource get(@PathVariable("memberId") Long id) {
+	public FileSystemResource get(
+		@Parameter(
+			name = "이미지를 소유한 사용자 식별 값", description = "사용자 id 값(숫자)을 입력합니다.", in = ParameterIn.PATH, required = true
+		)@PathVariable("memberId") Long id) {
 		return this.profileService.findProfileImage(id);
 	}
 

@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+docker rm redis-commander
+docker rmi rediscommander/redis-commander:latest
+
+docker rm redis
+docker rmi redis:alpine
+
+docker volume rm redis_container_data

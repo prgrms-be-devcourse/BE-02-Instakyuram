@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+docker rm sonarqube-postgres
+docker rmi postgres:latest
+
+docker rm sonarqube
+docker rmi sonarqube:lts
+
+docker volume rm sonarqube_container_sonarqube_conf
+docker volume rm sonarqube_container_sonarqube_data
+docker volume rm sonarqube_container_sonarqube_extensions
+docker volume rm sonarqube_container_sonarqube_logs
+docker volume rm sonarqube_container_postgresql
+docker volume rm sonarqube_container_postgresql_data

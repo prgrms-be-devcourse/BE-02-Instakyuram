@@ -1,0 +1,3 @@
+[submodule "instakyuram-config"]
+	path = instakyuram-config
+	url = https://github.com/instakyuram/instakyuram-config.git

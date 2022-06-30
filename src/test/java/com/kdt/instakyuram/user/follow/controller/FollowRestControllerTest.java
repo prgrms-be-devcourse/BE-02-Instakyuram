@@ -25,10 +25,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kdt.instakyuram.user.follow.controller.FollowRestController;
-import com.kdt.instakyuram.user.follow.service.FollowService;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
+import com.kdt.instakyuram.user.follow.service.FollowService;
 
 @WebMvcTest(FollowRestController.class)
 class FollowRestControllerTest {

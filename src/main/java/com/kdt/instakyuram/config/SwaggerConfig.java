@@ -3,6 +3,7 @@ package com.kdt.instakyuram.config;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -14,6 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2
 @Configuration
+@Profile({"dev", "local", "mem"})
 @EnableConfigurationProperties({SwaggerConfigProperties.class})
 public class SwaggerConfig {
 

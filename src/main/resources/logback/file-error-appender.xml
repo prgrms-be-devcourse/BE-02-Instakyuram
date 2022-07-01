@@ -1,0 +1,29 @@
+<included>
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ROOT_PATH}/${SUB_PATH_ERROR}/error-${LOG_DATE}.log</file>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_BACKUP_PATH}/${SUB_PATH_ERROR}/error-%d{yyyy-MM-dd}.zip</fileNamePattern>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${TOTAL_SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ASYNC_ERROR_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="ERROR_FILE"/>
+        <queueSize>1024</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+        <neverBlock>false</neverBlock>
+    </appender>
+</included>

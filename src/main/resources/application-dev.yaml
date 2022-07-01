@@ -10,6 +10,12 @@ spring:
 logging:
   level:
     org.hibernate.type.descriptor.sql: INFO
+swagger:
+  title: KkyuTeam-Instagram
+  version: v1.0.0
+  description: api docs swagger
+  api-path: /api/**
+  base-package: com.kdt.instakyuram
 
 cors:
   allowed:

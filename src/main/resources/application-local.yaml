@@ -14,6 +14,12 @@ logging:
   level:
     com.kdt: DEBUG
     org.hibernate.type.descriptor.sql: DEBUG
+swagger:
+  title: KkyuTeam-Instagram
+  version: v1.0.0
+  description: api docs swagger
+  api-path: /api/**
+  base-package: com.kdt.instakyuram
 
 cors:
   allowed:

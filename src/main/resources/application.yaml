@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: instakyuram
+  thymeleaf:
+    suffix: .html
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration, classpath:db/seed
+  servlet:
+    multipart:
+      maxFileSize: 5MB
+      maxRequestSize: 30MB
+
+cors:
+  allowed:
+    api: /api/**
+    method: GET, POST, PATCH, DELETE
+security:
+  patterns:
+    ignoring: ["/css/**", "/js/**", "/webjars/**", "/images/**"]
+    permit-all:
+      GET : ["/members/signin", "/members/**", "/api/posts/**"]
+      POST : ["/api/members/signin", "/api/members/signup"]
+      PATCH : []
+      PUT : []
+      DELETE : []
+  jwt:
+    issuer: kyuram
+    client-secret:
+    accessToken:
+      header: atoken
+      expiry-seconds: 60
+    refreshToken:
+      header: rtoken
+      expiry-seconds: 120

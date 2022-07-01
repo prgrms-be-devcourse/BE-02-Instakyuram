@@ -67,3 +67,27 @@
 ## ERD
 
 ![image](https://user-images.githubusercontent.com/50834204/174832512-4f3741d7-8728-4135-85a0-22714ac2917a.png)
+
+### .env 파일 설정 값
+프로젝트 루트 경로에 위치하도록 합니다.
+
+.env
+```
+MYSQL_USERNAME=   #로컬 환경의 MySQL 유저네임을 입력합니다.
+MYSQL_PASSWORD=   #로컬 환경의 MySQL 패스워드를 입력합니다.
+SHOW_SQL=         #true 혹은 false로 입력합니다.
+ENCRYPTOR_KEY=    #암호화 키를 입력합니다.
+```
+
+### Husky
+git hook을 프로젝트 내에서 공유할 수 있도록 합니다.
+
+- node가 없다면
+```
+brew install node
+```
+
+- 설치 
+```
+npm install
+```

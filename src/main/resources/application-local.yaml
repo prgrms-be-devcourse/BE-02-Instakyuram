@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:password}
+    url: jdbc:mysql://localhost:3306/${MYSQL_SCHEMA:kyuram}
+  jpa:
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: ${SHOW_SQL:false}
+
+logging:
+  level:
+    com.kdt: DEBUG
+    org.hibernate.type.descriptor.sql: DEBUG
+
+cors:
+  allowed:
+    url: "http://localhost:3000"
+security:
+  jwt:
+    client-secret: ${JWT_SECRET:DEFAULT_JWT_SECRET}

@@ -1,0 +1,50 @@
+version: '3.8'
+
+networks:
+  default:
+    name: kdt
+    
+services:
+  sonarqube:
+    image: sonarqube:lts
+    container_name: sonarqube
+    ports:
+      - 9001:9000
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    environment:
+      - sonar.jdbc.url=jdbc:postgresql://sonarqube-postgres:5432/sonar
+      - sonar.jdbc.username=sonar
+      - sonar.jdbc.password=sonar
+      - sonar.search.javaAdditionalOpts=-Dbootstrap.system_call_filter=false
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    platform: linux/x86_64
+    restart: always
+
+  sonarqube-postgres:
+    image: postgres
+    container_name: sonarqube-postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    platform: linux/x86_64
+    restart: always
+
+volumes:
+  sonarqube_conf:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:

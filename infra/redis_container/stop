@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+docker stop redis-commander
+docker stop redis
+
+
+

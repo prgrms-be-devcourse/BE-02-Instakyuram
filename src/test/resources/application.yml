@@ -1,5 +1,16 @@
 spring:
-  profiles:
-    active : "test"
-    group:
-      "test" : "test, common"
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+  flyway:
+    enabled: false
+    baseline-on-migrate: false
+cors:
+  allowed:
+    url: "http://localhost"
+security:
+  jwt:
+    client-secret: TEST_SECRET

@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  jpa:
+    hibernate:
+     ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: false
+    baseline-on-migrate: false
+
+logging:
+  level:
+    com.kdt: DEBUG
+    org.hibernate.type.descriptor.sql: DEBUG
+
+cors:
+  allowed:
+    url: "http://localhost:3000"
+security:
+  jwt:
+    client-secret: INSTAKYURAM

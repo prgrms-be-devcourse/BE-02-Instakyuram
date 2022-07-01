@@ -30,7 +30,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="prod">
+    <springProfile name="real">
         <include resource="logback/file-db-appender.xml" />
         <include resource="logback/file-error-appender.xml" />
 

@@ -28,6 +28,6 @@ class testing {
 	}
 
 	public int getValue() {
-		return value * 3;
+		return value * 2;
 	}
 }

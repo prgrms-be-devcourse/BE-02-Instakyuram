@@ -9,7 +9,7 @@ public class PrTest {
 	@DisplayName("테스트 실패 하기")
 	void failTest() {
 		//given
-		int input = 100;
+		int input = 200;
 		pr test = new pr(input);
 		//when
 		int gettingVal = test.getVal();

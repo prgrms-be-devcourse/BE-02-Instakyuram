@@ -1,6 +1,7 @@
 package com.kdt.instakyuram.article.post.service;
 
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -13,18 +14,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.article.comment.dto.CommentResponse;
 import com.kdt.instakyuram.article.comment.service.CommentGiver;
+import com.kdt.instakyuram.article.post.domain.Post;
+import com.kdt.instakyuram.article.post.domain.PostPagingCursor;
+import com.kdt.instakyuram.article.post.domain.PostRepository;
+import com.kdt.instakyuram.article.post.dto.PostConverter;
+import com.kdt.instakyuram.article.post.dto.PostLikeResponse;
+import com.kdt.instakyuram.article.post.dto.PostResponse;
+import com.kdt.instakyuram.article.postimage.dto.PostImageResponse;
+import com.kdt.instakyuram.article.postimage.service.PostImageService;
+import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.common.file.exception.FileWriteException;
 import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.exception.ErrorCode;
-import com.kdt.instakyuram.article.postimage.service.PostImageService;
 import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.service.MemberGiver;
-import com.kdt.instakyuram.article.post.domain.Post;
-import com.kdt.instakyuram.article.post.domain.PostRepository;
-import com.kdt.instakyuram.article.post.dto.PostConverter;
-import com.kdt.instakyuram.article.postimage.dto.PostImageResponse;
-import com.kdt.instakyuram.article.post.dto.PostLikeResponse;
-import com.kdt.instakyuram.article.post.dto.PostResponse;
 import com.kdt.instakyuram.util.ImageManager;
 
 import lombok.extern.slf4j.Slf4j;
@@ -191,17 +194,28 @@ public class PostService implements PostGiver {
 	}
 
 	@Override
-	public List<PostImageResponse.ThumbnailResponse> findPostThumbnailsByUsername(String username) {
-		List<Post> posts = postRepository.findAllByUsername(username);
-
+	public PageDto.CursorResponse<PostImageResponse.ThumbnailResponse, PostPagingCursor> findPostThumbnailsByUsername(
+		String username, PageDto.PostCursorPageRequest pageRequest) {
+		List<Post> posts = postRepository.findAllByUsernameCursorPaging(username, pageRequest);
 		if (posts.isEmpty()) {
-			return Collections.emptyList();
+			posts = Collections.emptyList();
 		}
+		LocalDateTime nextUpdatedAtCursor = posts.isEmpty() ? null : posts.get(posts.size() - 1).getUpdatedAt();
+		Long nextPostIdCursor = posts.isEmpty() ? null : posts.get(posts.size() - 1).getId();
 
-		return posts.stream()
-			.map(Post::getId)
-			.map(postImageService::findThumbnailByPostId)
-			.toList();
+		return new PageDto.CursorResponse<>(
+			posts.stream()
+				.map(Post::getId)
+				.map(postImageService::findThumbnailByPostId)
+				.toList(),
+			hasNext(nextUpdatedAtCursor, nextPostIdCursor),
+			new PostPagingCursor(nextUpdatedAtCursor, nextPostIdCursor));
+	}
+
+	private Boolean hasNext(LocalDateTime cursorUpdatedAt, Long cursorId) {
+		if (cursorUpdatedAt == null || cursorId == null)
+			return false;
+		return this.postRepository.existsByUpdatedAtLessThanEqualAndIdLessThan(cursorUpdatedAt, cursorId);
 	}
 
 	public List<PostResponse> findAllByMemberId(Long memberId) {

@@ -9,10 +9,23 @@ public class PrTest {
 	@DisplayName("성공")
 	void success() {
 		//given
-
+		int input = 100;
+		module module = new module(input);
 		//when
 
 		//then
-		Assertions.assertThat(10).isEqualTo(10);
+		Assertions.assertThat(module.getVal()).isEqualTo(module);
+	}
+}
+
+class module {
+	private final int val;
+
+	public module(int val) {
+		this.val = val;
+	}
+
+	public int getVal() {
+		return val * 30;
 	}
 }

@@ -70,12 +70,6 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-test {
-    testLogging {
-        events "PASSED", "SKIPPED", "FAILED"
-    }
-}
-
 flyway {
     url = 'jdbc:mysql://localhost:3306/kyuram'
     user = 'root'

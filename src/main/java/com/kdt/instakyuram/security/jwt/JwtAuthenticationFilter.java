@@ -38,12 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		log.info(String.format(
-			"[%s] %s %s",
-			request.getMethod(),
-			request.getRequestURI().toLowerCase(),
-			request.getQueryString() == null ? "" : request.getQueryString())
-		);
+		logRequest(request);
 
 		try {
 			authenticate(getAccessToken(request), request, response);
@@ -51,6 +46,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			this.log.warn(e.getMessage());
 		}
 		filterChain.doFilter(request, response);
+	}
+
+	private void logRequest(HttpServletRequest request) {
+		log.info(String.format(
+			"[%s] %s %s",
+			request.getMethod(),
+			request.getRequestURI().toLowerCase(),
+			request.getQueryString() == null ? "" : request.getQueryString())
+		);
 	}
 
 	private String getAccessToken(HttpServletRequest request) {

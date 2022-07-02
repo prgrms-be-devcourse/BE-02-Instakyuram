@@ -71,9 +71,5 @@ tasks.named('test') {
 }
 
 flyway {
-    url = 'jdbc:mysql://localhost:3306/kyuram'
-    user = 'root'
-    password = 'password'
-    encoding = 'UTF-8'
+    configFiles = ['./src/main/resources/db/local-config/flyway.conf']
 }
-

@@ -9,10 +9,10 @@
         <include resource="logback/file-warn-appender.xml" />
 
         <root level="INFO">
-            <appender-ref ref="CONSOLE" />
-            <appender-ref ref="DB_FILE" />
-            <appender-ref ref="ERROR_FILE" />
-            <appender-ref ref="WARN_FILE" />
+            <appender-ref ref="ASYNC_CONSOLE" />
+            <appender-ref ref="ASYNC_DB_FILE" />
+            <appender-ref ref="ASYNC_ERROR_FILE" />
+            <appender-ref ref="ASYNC_WARN_FILE" />
         </root>
     </springProfile>
 
@@ -23,10 +23,10 @@
         <include resource="logback/file-warn-appender.xml" />
 
         <root level="INFO">
-            <appender-ref ref="CONSOLE" />
-            <appender-ref ref="DB_FILE" />
-            <appender-ref ref="ERROR_FILE" />
-            <appender-ref ref="WARN_FILE" />
+            <appender-ref ref="ASYNC_CONSOLE" />
+            <appender-ref ref="ASYNC_DB_FILE" />
+            <appender-ref ref="ASYNC_ERROR_FILE" />
+            <appender-ref ref="ASYNC_WARN_FILE" />
         </root>
     </springProfile>
 

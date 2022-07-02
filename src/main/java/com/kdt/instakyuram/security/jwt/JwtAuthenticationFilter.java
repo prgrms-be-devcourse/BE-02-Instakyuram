@@ -37,6 +37,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
+
+		log.info(String.format(
+			"[%s] %s %s",
+			request.getMethod(),
+			request.getRequestURI().toLowerCase(),
+			request.getQueryString() == null ? "" : request.getQueryString())
+		);
+
 		try {
 			authenticate(getAccessToken(request), request, response);
 		} catch (JwtTokenNotFoundException e) {

@@ -41,9 +41,6 @@ public class PageDto {
 			this.size = size;
 		}
 
-		public PostCursorPageRequest() {
-		}
-
 		public PostPagingCursor getCursor() {
 			return cursor;
 		}

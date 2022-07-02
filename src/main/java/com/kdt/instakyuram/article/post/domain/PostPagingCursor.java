@@ -2,7 +2,7 @@ package com.kdt.instakyuram.article.post.domain;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,10 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 public class PostPagingCursor {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@NotNull
 	private LocalDateTime updatedAt;
+
+	@NotNull
 	private Long id;
 
-	public PostPagingCursor() {
+	protected PostPagingCursor() {
 	}
 
 	public PostPagingCursor(LocalDateTime updatedAt, Long id) {
@@ -39,13 +42,6 @@ public class PostPagingCursor {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	@AssertTrue
-	public boolean isValidCursor() {
-		log.error("{} {}", updatedAt, id);
-
-		return updatedAt != null && id != null;
 	}
 }
 

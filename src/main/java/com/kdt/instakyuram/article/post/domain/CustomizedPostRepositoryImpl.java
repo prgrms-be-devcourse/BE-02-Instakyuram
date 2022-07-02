@@ -35,13 +35,13 @@ public class CustomizedPostRepositoryImpl implements CustomizedPostRepository {
 			.orElse(null);
 		Predicate cursorPredicate = Optional.ofNullable(cursor)
 			.map((c) -> builder.or(
-					builder.lessThan(p.get("updatedAt"), c.getUpdatedAt()),
-					builder.and(
-						builder.equal(p.get("updatedAt"), c.getUpdatedAt()),
-						builder.lessThan(p.get("id"), c.getId())
-					)
-				)
-			).orElse(null);
+				builder.lessThan(p.get("updatedAt"), c.getUpdatedAt()),
+				builder.and(
+					builder.equal(p.get("updatedAt"), c.getUpdatedAt()),
+					builder.lessThan(p.get("id"), c.getId())
+				))
+			)
+			.orElse(null);
 
 		query.select(p)
 			.where(Stream.of(usernamePredicate, cursorPredicate)

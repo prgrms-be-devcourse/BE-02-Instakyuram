@@ -26,7 +26,7 @@ security:
   patterns:
     ignoring: ["/css/**", "/js/**", "/webjars/**", "/images/**", "/swagger-resources/**"]
     permit-all:
-      GET : ["/members/signin", "/members/**", "/api/posts/**", "/swagger-ui/***","/v2/**"]
+      GET : ["/members/signin", "/members/**", "/api/posts/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html/**"]
       POST : ["/api/members/signin", "/api/members/signup"]
       PATCH : []
       PUT : []

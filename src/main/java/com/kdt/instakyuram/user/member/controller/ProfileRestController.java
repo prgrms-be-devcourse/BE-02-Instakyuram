@@ -10,9 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.common.ApiResponse;
-import com.kdt.instakyuram.user.member.service.ProfileService;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
+import com.kdt.instakyuram.user.member.service.ProfileService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "사용자 이미지 api")
 @RestController
 @RequestMapping("/api/profiles")
 public class ProfileRestController {
@@ -23,8 +27,10 @@ public class ProfileRestController {
 		this.profileService = profileService;
 	}
 
+	@Operation(summary = "사용자 이미지 로딩", description = "자신 또는 상대방의 이미지 파일을 웹 브라우저에 전달합니다.")
 	@GetMapping("/{memberId}/image")
-	public FileSystemResource get(@PathVariable("memberId") Long id) {
+	public FileSystemResource get(
+		@PathVariable("memberId") Long id) {
 		return this.profileService.findProfileImage(id);
 	}
 

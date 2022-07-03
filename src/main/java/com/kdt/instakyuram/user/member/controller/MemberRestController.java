@@ -31,12 +31,10 @@ import com.kdt.instakyuram.user.member.dto.MemberRequest;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.user.member.service.MemberService;
 
-import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Api(tags = "회원 api")
+@Tag(name = "회원 api")
 @RestController
 @RequestMapping("/api/members")
 public class MemberRestController {
@@ -90,6 +88,7 @@ public class MemberRestController {
 		if (auth == null) {
 			throw new NotAuthenticationException("로그인이 필요합니다.");
 		}
+
 		Arrays.stream(request.getCookies())
 			.filter(cookie -> cookie.getName().equals(jwt.refreshTokenProperties().header()))
 			.findFirst()
@@ -106,21 +105,11 @@ public class MemberRestController {
 		return new ApiResponse<>("signed out");
 	}
 
-	@Operation(
-		summary = "해당 사용자의 팔로우 목록 조회",
-		description = "자기 자신 또는 타인의 팔로우 목록을 조회합니다.",
-		responses = {
-			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "팔로우한 사용자 목록 조회 성공"),
-		}
-	)
+	@Operation(summary = "해당 사용자의 팔로우 목록 조회", description = "자기 자신 또는 타인의 팔로우 목록을 조회합니다.")
 	@GetMapping("/{username}/followers")
 	public ApiResponse<List<MemberResponse.FollowerResponse>> getAdditionalFollowers(
-		@Parameter(
-			name = "사용자 username", description = "해당 사용자의 username 을 입력합니다.", in = ParameterIn.PATH, required = true
-		) @PathVariable String username,
-		@Parameter(
-			name = "사용자 id[cursor]", description = "사용자에게 보여준 목록 중 마지막 memberId[커서]", in = ParameterIn.PATH, required = true
-		) @Valid @RequestParam @NotNull Long lastIdx,
+		@PathVariable String username,
+		@Valid @RequestParam @NotNull Long lastIdx,
 		@AuthenticationPrincipal JwtAuthentication auth) {
 		if (auth == null) {
 			throw new NotAuthenticationException("로그인이 필요합니다.");
@@ -129,21 +118,11 @@ public class MemberRestController {
 		return new ApiResponse<>(memberService.getFollowers(auth.id(), username, lastIdx));
 	}
 
-	@Operation(
-		summary = "팔로우한 목록 조회",
-		description = "자기 자신 또는 타인의 팔로잉 목록을 조회합니다.",
-		responses = {
-			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "팔로잉한 사용자 목록 조회 성공"),
-		}
-	)
+	@Operation(summary = "팔로우한 목록 조회", description = "자기 자신 또는 타인의 팔로잉 목록을 조회합니다.")
 	@GetMapping("/{username}/followings")
 	public ApiResponse<List<MemberResponse.FollowingResponse>> getAdditionalFollowings(
-		@Parameter(
-			name = "사용자 username", description = "해당 사용자의 username 을 입력합니다.", in = ParameterIn.PATH, required = true
-		) @PathVariable String username,
-		@Parameter(
-			name = "사용자 id[cursor]", description = "사용자에게 보여준 목록 중 마지막 memberId[커서]", in = ParameterIn.PATH, required = true
-		) @Valid @RequestParam @NotNull Long lastIdx,
+		@PathVariable String username,
+		@Valid @RequestParam @NotNull Long lastIdx,
 		@AuthenticationPrincipal JwtAuthentication auth) {
 		if (auth == null) {
 			throw new NotAuthenticationException("로그인이 필요합니다.");
@@ -151,5 +130,4 @@ public class MemberRestController {
 
 		return new ApiResponse<>(this.memberService.getFollowings(auth.id(), username, lastIdx));
 	}
-
 }

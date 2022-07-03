@@ -1,16 +1,18 @@
 package com.kdt.instakyuram.article.post.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.kdt.instakyuram.article.postimage.dto.PostImageResponse;
 import com.kdt.instakyuram.article.comment.dto.CommentResponse;
+import com.kdt.instakyuram.article.post.domain.Post;
+import com.kdt.instakyuram.article.post.domain.PostLike;
+import com.kdt.instakyuram.article.postimage.domain.PostImage;
+import com.kdt.instakyuram.article.postimage.dto.PostImageResponse;
+import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
-import com.kdt.instakyuram.article.post.domain.Post;
-import com.kdt.instakyuram.article.postimage.domain.PostImage;
-import com.kdt.instakyuram.article.post.domain.PostLike;
 
 @Component
 public class PostConverter {
@@ -31,6 +33,11 @@ public class PostConverter {
 			member.getIntroduction(),
 			member.getProfileImageName()
 		);
+	}
+
+	public PageDto.PostFindAllPageResponse toFindAllPagingResponse(List<PostResponse.FindAllResponse> members,
+		Long lastId, boolean hasNext, LocalDateTime begin, LocalDateTime end) {
+		return new PageDto.PostFindAllPageResponse(members, hasNext, lastId, begin, end);
 	}
 
 	public PostImageResponse.ThumbnailResponse toThumbnailResponse(Long postId, PostImage postImage) {

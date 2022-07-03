@@ -6,6 +6,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
   flyway:
     enabled: true
     baseline-on-migrate: true
@@ -21,9 +24,9 @@ cors:
     method: GET, POST, PATCH, DELETE
 security:
   patterns:
-    ignoring: ["/css/**", "/js/**", "/webjars/**", "/images/**"]
+    ignoring: ["/css/**", "/js/**", "/webjars/**", "/images/**", "/swagger-resources/**"]
     permit-all:
-      GET : ["/members/signin", "/members/**", "/api/posts/**"]
+      GET : ["/members/signin", "/members/**", "/api/posts/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html/**"]
       POST : ["/api/members/signin", "/api/members/signup"]
       PATCH : []
       PUT : []

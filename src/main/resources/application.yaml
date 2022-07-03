@@ -24,9 +24,9 @@ cors:
     method: GET, POST, PATCH, DELETE
 security:
   patterns:
-    ignoring: ["/css/**", "/js/**", "/webjars/**", "/images/**", "/swagger-resources/**"]
+    ignoring: ["/css/**", "/js/**", "/webjars/**", "/images/**", "/swagger-resources/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html/**"]
     permit-all:
-      GET : ["/members/signin", "/members/**", "/api/posts/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html/**"]
+      GET : ["/members/signin", "/members/**", "/api/posts/**"]
       POST : ["/api/members/signin", "/api/members/signup"]
       PATCH : []
       PUT : []

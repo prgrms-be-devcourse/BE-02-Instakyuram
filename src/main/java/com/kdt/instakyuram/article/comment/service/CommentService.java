@@ -127,4 +127,8 @@ public class CommentService implements CommentGiver {
 	public List<CommentFindAllResponse> findAll(Long postId, Long memberId) {
 		return commentRepository.findAllByPostIdAndMemberId(postId, memberId);
 	}
+
+	public List<CommentFindAllResponse> findAll(Long postId, Long memberId, Long id, Integer limit) {
+		return commentRepository.findAllByPostIdAndMemberId(postId, memberId, id, limit);
+	}
 }

@@ -22,6 +22,7 @@ import com.kdt.instakyuram.article.post.dto.PostResponse;
 import com.kdt.instakyuram.article.post.service.PostService;
 import com.kdt.instakyuram.article.postimage.dto.PostImageResponse;
 import com.kdt.instakyuram.common.ApiResponse;
+import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,9 +54,10 @@ public class PostRestController {
 		description = "사용자 id를 통해 사용자가 follow 하는 사람들과 사용자 게시글을 모두 조회할 수 있습니다."
 	)
 	@GetMapping("/{memberId}")
-	public ApiResponse<List<PostResponse.FindAllResponse>> findAll(
-		@PathVariable Long memberId) {
-		return new ApiResponse<>(postService.findAllRelated(memberId));
+	public ApiResponse<PageDto.PostFindAllPageResponse> findAll(
+		@PathVariable Long memberId,
+		@Valid PageDto.PostFindAllPageRequest pageRequest) {
+		return new ApiResponse<>(postService.findAllRelated(memberId, pageRequest));
 	}
 
 	@Operation(summary = "post 수정", description = "post의 content를 수정합니다.")

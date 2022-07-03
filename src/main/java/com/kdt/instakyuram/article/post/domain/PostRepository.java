@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.kdt.instakyuram.user.member.domain.Member;
 
-public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
+public interface PostRepository extends JpaRepository<Post, Long>, CustomizedPostRepository {
 
 	List<Post> findAllByMemberIn(List<Member> members);
 

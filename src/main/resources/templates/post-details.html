@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<th:block th:replace="fragments/head :: headFragment('')"></th:block>
+<link rel="stylesheet" th:href="@{/css/post-details.css}"/>
+<body>
+<div th:replace="~{fragments/header :: headerFragment}"></div>
+<div class="container">
+    <section class="container__post">
+        <img class="post__image" src="/images/sample.png" alt="sample" />
+    </section>
+    <section class="container__comments">
+        <ul class="comments">
+            <li class="comments__item">
+                <div class="comments__item__container">
+                    <div class="comments__item__profile">
+                        <img class="profile_image" src="/images/icon/account.png" alt="profile">
+                    </div>
+                    <div class="comments__item__comment">
+                        <p class="comments__item__content">
+                            <b>_holyMoly${comment.id}</b> 후...
+                            <br /> 개발 sdfdsfsd!!!!!!!!! <br /> ㄴㅇㄹㅇㄴㄹ..<br />
+                            ㅇ런아ㅣ러ㅣㅏ!!!
+                        </p>
+                        <p class="comments__item__history">수정됨 ∙ 좋아요 1개 ∙ 2일</p>
+                    </div>
+                </div>
+                <span class="comments__item__like">
+                    <img class="like_image" src="/images/icon/favorite.png" alt="like" />
+                </span>
+            </li>
+        </ul>
+    </section>
+</div>
+
+<script th:inline="javascript">
+
+</script>
+</body>
+</html>

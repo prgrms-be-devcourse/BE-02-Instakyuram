@@ -57,10 +57,6 @@ public class CommentService implements CommentGiver {
 	public CommentResponse modify(Long id, Long memberId, String content) {
 		return commentRepository.findByIdAndMemberId_Locked_Pessimistic(id, memberId)
 			.map(comment -> {
-				try {
-					Thread.sleep(1000 * 60 * 2); // 2분
-				} catch (InterruptedException ignored) {
-				}
 				comment.modify(content);
 
 				return commentConverter.toResponse(comment);
@@ -130,5 +126,9 @@ public class CommentService implements CommentGiver {
 
 	public List<CommentFindAllResponse> findAll(Long postId, Long memberId) {
 		return commentRepository.findAllByPostIdAndMemberId(postId, memberId);
+	}
+
+	public List<CommentFindAllResponse> findAll(Long postId, Long memberId, Long id, Integer limit) {
+		return commentRepository.findAllByPostIdAndMemberId(postId, memberId, id, limit);
 	}
 }

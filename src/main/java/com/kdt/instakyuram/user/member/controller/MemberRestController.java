@@ -21,16 +21,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kdt.instakyuram.auth.service.TokenService;
 import com.kdt.instakyuram.common.ApiResponse;
 import com.kdt.instakyuram.exception.NotAuthenticationException;
-import com.kdt.instakyuram.user.member.service.MemberService;
-import com.kdt.instakyuram.user.member.dto.MemberRequest;
-import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.security.jwt.Jwt;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
-import com.kdt.instakyuram.auth.service.TokenService;
+import com.kdt.instakyuram.user.member.dto.MemberRequest;
+import com.kdt.instakyuram.user.member.dto.MemberResponse;
+import com.kdt.instakyuram.user.member.service.MemberService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "회원 api")
 @RestController
 @RequestMapping("/api/members")
 public class MemberRestController {
@@ -84,6 +88,7 @@ public class MemberRestController {
 		if (auth == null) {
 			throw new NotAuthenticationException("로그인이 필요합니다.");
 		}
+
 		Arrays.stream(request.getCookies())
 			.filter(cookie -> cookie.getName().equals(jwt.refreshTokenProperties().header()))
 			.findFirst()
@@ -100,8 +105,10 @@ public class MemberRestController {
 		return new ApiResponse<>("signed out");
 	}
 
+	@Operation(summary = "해당 사용자의 팔로우 목록 조회", description = "자기 자신 또는 타인의 팔로우 목록을 조회합니다.")
 	@GetMapping("/{username}/followers")
-	public ApiResponse<List<MemberResponse.FollowerResponse>> getAdditionalFollowers(@PathVariable String username,
+	public ApiResponse<List<MemberResponse.FollowerResponse>> getAdditionalFollowers(
+		@PathVariable String username,
 		@Valid @RequestParam @NotNull Long lastIdx,
 		@AuthenticationPrincipal JwtAuthentication auth) {
 		if (auth == null) {
@@ -111,8 +118,10 @@ public class MemberRestController {
 		return new ApiResponse<>(memberService.getFollowers(auth.id(), username, lastIdx));
 	}
 
+	@Operation(summary = "팔로우한 목록 조회", description = "자기 자신 또는 타인의 팔로잉 목록을 조회합니다.")
 	@GetMapping("/{username}/followings")
-	public ApiResponse<List<MemberResponse.FollowingResponse>> getAdditionalFollowings(@PathVariable String username,
+	public ApiResponse<List<MemberResponse.FollowingResponse>> getAdditionalFollowings(
+		@PathVariable String username,
 		@Valid @RequestParam @NotNull Long lastIdx,
 		@AuthenticationPrincipal JwtAuthentication auth) {
 		if (auth == null) {
@@ -121,5 +130,4 @@ public class MemberRestController {
 
 		return new ApiResponse<>(this.memberService.getFollowings(auth.id(), username, lastIdx));
 	}
-
 }

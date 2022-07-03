@@ -26,6 +26,10 @@ import com.kdt.instakyuram.common.ApiResponse;
 import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Post의 api")
 @RestController
 @RequestMapping("/api/posts")
 public class PostRestController {
@@ -36,49 +40,68 @@ public class PostRestController {
 		this.postService = postService;
 	}
 
+	@Operation(summary = "post를 등록", description = "작성자 id 와 content, images를 받아서 post를 등록할 수 있습니다.")
 	@PostMapping
-	public ApiResponse<PostResponse.CreateResponse> posting(@Valid PostRequest.CreateRequest request,
+	public ApiResponse<PostResponse.CreateResponse> posting(
+		@Valid PostRequest.CreateRequest request,
 		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
 		return new ApiResponse<>(postService.create(
 			jwtAuthentication.id(), request.content(), request.postImages()
 		));
 	}
 
+	@Operation(
+		summary = "follow 하는 멤버와 나의 게시글 조회",
+		description = "사용자 id를 통해 사용자가 follow 하는 사람들과 사용자 게시글을 모두 조회할 수 있습니다."
+	)
 	@GetMapping("/{memberId}")
-	public ApiResponse<List<PostResponse.FindAllResponse>> findAll(@PathVariable Long memberId) {
+	public ApiResponse<List<PostResponse.FindAllResponse>> findAll(
+		@PathVariable Long memberId) {
 		return new ApiResponse<>(postService.findAllRelated(memberId));
 	}
 
+	@Operation(summary = "post 수정", description = "post의 content를 수정합니다.")
 	@PatchMapping("/{id}")
-	public ApiResponse<PostResponse.UpdateResponse> update(@PathVariable Long id,
+	public ApiResponse<PostResponse.UpdateResponse> update(
+		@PathVariable Long id,
 		@AuthenticationPrincipal JwtAuthentication jwtAuthentication,
 		@RequestBody PostRequest.UpdateRequest request) {
 		return new ApiResponse<>(postService.update(id, jwtAuthentication.id(), request.content()));
 	}
 
+	@Operation(summary = "post 삭제", description = "post를 삭제합니다.")
 	@DeleteMapping("/{id}")
-	public ApiResponse<Long> delete(@PathVariable Long id,
+	public ApiResponse<Long> delete(
+		@PathVariable Long id,
 		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
 		return new ApiResponse<>(postService.delete(id, jwtAuthentication.id()));
 	}
 
+	@Operation(summary = "post 좋아요", description = "post 좋아요를 누릅니다.")
 	@PostMapping("/{id}/like")
-	public ApiResponse<PostLikeResponse> like(@PathVariable Long id,
+	public ApiResponse<PostLikeResponse> like(
+		@PathVariable Long id,
 		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
 		return new ApiResponse<>(postService.like(id, jwtAuthentication.id()));
 	}
 
+	@Operation(summary = "post 좋아요 취소", description = "post 좋아요를 취소합니다.")
 	@DeleteMapping("/{id}/unlike")
-	public ApiResponse<PostLikeResponse> unlike(@PathVariable Long id,
+	public ApiResponse<PostLikeResponse> unlike(
+		@PathVariable Long id,
 		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
 		return new ApiResponse<>(postService.unlike(id, jwtAuthentication.id()));
 	}
 
+	@Operation(summary = "post 이미지 조회", description = "post 이미지를 조회합니다.")
 	@GetMapping("/{id}/image/{serverFileName}")
-	public FileSystemResource getImage(@PathVariable Long id, @PathVariable String serverFileName) {
+	public FileSystemResource getImage(
+		@PathVariable Long id,
+		@PathVariable String serverFileName) {
 		return postService.findImage(id, serverFileName);
 	}
 
+	@Operation(summary = "post 썸네일 이미지 정보 조회", description = "post 썸네일 이미지의 정보를 조회합니다.")
 	@GetMapping("/thumbnails")
 	public ApiResponse<PageDto.CursorResponse<PostImageResponse.ThumbnailResponse, PostPagingCursor>> getThumbnailsPaging(
 		@Valid PageDto.PostCursorPageRequest pageRequest, @RequestParam String username) {

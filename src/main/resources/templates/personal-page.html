@@ -197,7 +197,7 @@
 
     const onscroll = () => {
         throttle(() => {
-            if (getScrollTop() < getDocumentHeight() - window.innerHeight)
+            if (getScrollTop() < getDocumentHeight() - window.innerHeight || hasNext === false)
                 return;
             getThumbnails(username);
         }, 700);

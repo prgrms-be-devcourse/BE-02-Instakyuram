@@ -18,6 +18,7 @@ logging:
 cors:
   allowed:
     url: "http://localhost:3000"
+
 security:
   jwt:
     client-secret: ${JWT_SECRET:DEFAULT_JWT_SECRET}

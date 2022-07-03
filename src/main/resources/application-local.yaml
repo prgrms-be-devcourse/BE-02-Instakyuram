@@ -5,10 +5,10 @@ spring:
     password: ${MYSQL_PASSWORD:password}
     url: jdbc:mysql://localhost:3306/${MYSQL_SCHEMA:kyuram}
   jpa:
-    show-sql: ${SHOW_SQL:false}
+    show-sql: ${SHOW_SQL:true}
     properties:
       hibernate:
-        format_sql: ${SHOW_SQL:false}
+        format_sql: ${SHOW_SQL:true}
 
 logging:
   level:

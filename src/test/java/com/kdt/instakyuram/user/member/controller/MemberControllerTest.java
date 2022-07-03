@@ -1,6 +1,5 @@
 package com.kdt.instakyuram.user.member.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -33,14 +32,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kdt.instakyuram.article.post.service.PostGiver;
 import com.kdt.instakyuram.common.PageDto;
+import com.kdt.instakyuram.security.jwt.JwtAuthentication;
+import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
 import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.user.member.service.MemberService;
 import com.kdt.instakyuram.user.member.service.ProfileService;
-import com.kdt.instakyuram.article.post.service.PostGiver;
-import com.kdt.instakyuram.security.jwt.JwtAuthentication;
-import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
 
 @WebMvcTest(MemberController.class)
 class MemberControllerTest {
@@ -101,7 +100,7 @@ class MemberControllerTest {
 
 		//when
 		ResultActions perform = mockMvc.perform(
-			get("/members?page=" + request.page() + "&size=" + request.size())
+			get("/members?page=" + request.page() + "&size=" + request.size() + "&")
 		);
 
 		//then
@@ -255,6 +254,8 @@ class MemberControllerTest {
 			}
 		);
 
+
 		return members;
 	}
+
 }

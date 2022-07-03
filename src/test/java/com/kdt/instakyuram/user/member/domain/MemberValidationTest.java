@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.user.member.repository;
+package com.kdt.instakyuram.user.member.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,12 +15,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.kdt.instakyuram.configure.WebSecurityTestConfigure;
-import com.kdt.instakyuram.user.member.domain.Member;
-import com.kdt.instakyuram.user.member.domain.MemberRepository;
 
 @DataJpaTest
 @Import(WebSecurityTestConfigure.class)
-class MemberRepositoryTest {
+public class MemberValidationTest {
 
 	@Autowired
 	TestEntityManager entityManager;
@@ -226,5 +224,26 @@ class MemberRepositoryTest {
 		//when, then
 		assertThatThrownBy(() -> memberRepository.save(member)).isInstanceOf(ConstraintViolationException.class);
 	}
+
+	@Test
+	@DisplayName("test")
+	void testToo() {
+		//given
+		order asc = order.valueOf("asc");
+		//when
+
+		//then
+	}
 }
 
+enum order {
+	ASC("asc"), DESC("desc");
+
+	private final String lowerCase;
+
+	order(String lowerCase) {
+		this.lowerCase = lowerCase;
+	}
+
+
+}

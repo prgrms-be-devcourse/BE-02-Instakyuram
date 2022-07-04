@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kdt.instakyuram.article.comment.dto.CommentFindAllResponse;
 import com.kdt.instakyuram.article.comment.dto.CommentRequest;
 import com.kdt.instakyuram.article.comment.dto.CommentResponse;
+import com.kdt.instakyuram.article.comment.dto.CommentSearch;
 import com.kdt.instakyuram.article.comment.service.CommentService;
 import com.kdt.instakyuram.common.ApiResponse;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
@@ -89,9 +90,15 @@ public class CommentRestController {
 	@GetMapping("/post/{postId}")
 	public ApiResponse<List<CommentFindAllResponse>> findAll(
 		@AuthenticationPrincipal JwtAuthentication authentication,
-		@PathVariable Long postId
+		@PathVariable Long postId,
+		CommentSearch search
 	) {
-		List<CommentFindAllResponse> comments = commentService.findAll(postId, authentication.id());
+		List<CommentFindAllResponse> comments = commentService.findAll(
+			postId,
+			authentication.id(),
+			search.getId(),
+			search.getLimit()
+		);
 
 		return new ApiResponse<>(comments);
 	}

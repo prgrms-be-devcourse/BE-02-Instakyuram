@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,9 +26,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kdt.instakyuram.article.post.domain.PostPagingCriteria;
 import com.kdt.instakyuram.article.postimage.service.PostImageService;
 import com.kdt.instakyuram.article.comment.dto.CommentResponse;
 import com.kdt.instakyuram.article.comment.service.CommentGiver;
+import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.user.member.service.MemberGiver;
@@ -61,6 +65,9 @@ class PostServiceTest {
 	private final List<Post> POSTS = this.getDemoPosts();
 	private final List<PostResponse> POST_RESPONSES = this.getDemoPostResponses();
 	private final List<PostResponse.FindAllResponse> POST_FIND_ALL_RESPONSES = this.getDemoPostFindAllResponses();
+	private final PageDto.PostFindAllPageResponse POST_FIND_ALL_PAGING_RESPONSE = new PageDto.PostFindAllPageResponse(
+		POST_FIND_ALL_RESPONSES, false, 12L, null, null
+	);
 	private final List<CommentResponse> COMMENT_RESPONSES = this.getDemoCommentResponses();
 	private final List<PostLikeResponse> POST_LIKE_RESPONSES = this.getDemoPostLikeResponses();
 	private final List<PostImageResponse> POST_IMAGE_RESPONSES = this.getDemoPostImageResponses();
@@ -71,6 +78,14 @@ class PostServiceTest {
 		"demo image2".getBytes());
 	private final Member MEMBER = MEMBERS.get(0);
 	private final MemberResponse MEMBER_RESPONSE = MEMBER_RESPONSES.get(0);
+	private final PageDto.PostFindAllPageRequest PAGE_REQUEST = new PageDto.PostFindAllPageRequest();
+
+	@BeforeEach
+	void setUp() {
+		PAGE_REQUEST.setPostPagingCriteria(
+			new PostPagingCriteria());
+		PAGE_REQUEST.setSize(5);
+	}
 
 	@Test
 	@DisplayName("내가 팔로우 한 모든 사람들의 게시글과 내 게시글을 조회한다.")
@@ -88,7 +103,7 @@ class PostServiceTest {
 		given(postConverter.toMember(MEMBER_RESPONSES.get(0))).willReturn(MEMBERS.get(0));
 		given(postConverter.toMember(MEMBER_RESPONSES.get(1))).willReturn(MEMBERS.get(1));
 		given(postConverter.toMember(MEMBER_RESPONSES.get(2))).willReturn(MEMBERS.get(2));
-		given(postRepository.findAllByMemberIn(MEMBERS)).willReturn(POSTS);
+		given(postRepository.findAllCursorPaging(MEMBERS, PAGE_REQUEST)).willReturn(POSTS);
 		given(postImageService.findByPostIn(POSTS)).willReturn(POST_IMAGE_RESPONSES);
 		given(commentGiver.findByPostIn(POSTS)).willReturn(COMMENT_RESPONSES);
 		given(postLikeService.findByPostIn(POSTS)).willReturn(POST_LIKE_RESPONSES);
@@ -116,12 +131,14 @@ class PostServiceTest {
 			commentByPostId.get(post3.getId()),
 			2
 		)).willReturn(POST_FIND_ALL_RESPONSES.get(2));
+		given(postConverter.toFindAllPagingResponse(POST_FIND_ALL_RESPONSES, 12L, false, null, null))
+			.willReturn(POST_FIND_ALL_PAGING_RESPONSE);
 
 		//when
-		List<PostResponse.FindAllResponse> foundPosts = postService.findAllRelated(MEMBER.getId());
+		PageDto.PostFindAllPageResponse response = postService.findAllRelated(MEMBER.getId(), PAGE_REQUEST);
 
 		//then
-		assertThat(foundPosts).hasSameElementsAs(POST_FIND_ALL_RESPONSES);
+		assertThat(response).isEqualTo(POST_FIND_ALL_PAGING_RESPONSE);
 	}
 
 	@Test

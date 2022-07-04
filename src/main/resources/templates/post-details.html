@@ -6,33 +6,92 @@
 <div th:replace="~{fragments/header :: headerFragment}"></div>
 <div class="container">
     <section class="container__post">
-        <img class="post__image" src="/images/sample.png" alt="sample" />
+        <img class="post__image" src="/images/sample.png" alt="sample"/>
     </section>
     <section class="container__comments">
         <ul class="comments">
-            <li class="comments__item">
-                <div class="comments__item__container">
-                    <div class="comments__item__profile">
-                        <img class="profile_image" src="/images/icon/account.png" alt="profile">
-                    </div>
-                    <div class="comments__item__comment">
-                        <p class="comments__item__content">
-                            <b>_holyMoly${comment.id}</b> 후...
-                            <br /> 개발 sdfdsfsd!!!!!!!!! <br /> ㄴㅇㄹㅇㄴㄹ..<br />
-                            ㅇ런아ㅣ러ㅣㅏ!!!
-                        </p>
-                        <p class="comments__item__history">수정됨 ∙ 좋아요 1개 ∙ 2일</p>
-                    </div>
-                </div>
-                <span class="comments__item__like">
-                    <img class="like_image" src="/images/icon/favorite.png" alt="like" />
-                </span>
-            </li>
+
         </ul>
     </section>
 </div>
 
 <script th:inline="javascript">
+    let cursorId;
+
+    const id = 1;
+    const search = (id) => {
+        axios({
+            method: "GET",
+            url: '/api/comments/post/' + id,
+            params: {
+                "postId": 1,
+                "id": cursorId,
+                "limit": 5,
+            }
+        }).then((res) => {
+            renderComments(res.data.response);
+        }).catch(error => {
+            console.log("error" + error);
+        })
+    }
+
+    search(id);
+    const renderComments = (comments) => {
+        let commentsHTML = "";
+        comments.forEach(function (comment) {
+            commentsHTML += `<li class='comments__item'>`;
+            commentsHTML += `<div class='comments__item__container'>`;
+            commentsHTML += `<div class='comments__item__profile'>`;
+            commentsHTML += `<img class='profile_image' src='/images/icon/account.png' alt='profile'/> </div>`
+            commentsHTML += `<div class='comments__item__comment'>` +
+                `<p class='comment__item__content'>` +
+                `<b> ${comment.username} </b>` +
+                `<br/> ${comment.content} </p>` +
+                //`<p class='comments__item__history'> 2일 ∙ ${getUpdatedAt(comment.isUpdated)} ∙ 좋아요  ${comment.likes} 개 </p></br>
+                `<p class='comments__item__history'> ${comment.createdAt} ∙ ${comment.isUpdate === true ? '수정됨 ∙' : ''}  좋아요  ${comment.likes} 개 </p></br>
+                                    </div>`
+            commentsHTML += `<span class='comments__item__like'>` +
+                `<img class='like_image' src='/images/icon/favorite.png\' alt='like' />` +
+                `</span>
+                 </li>`
+            cursorId = comment.id;
+        });
+
+        document.querySelector(".comments").insertAdjacentHTML("beforeend", commentsHTML);
+    }
+
+    const getScrollTop = () => {
+        return (window.scrollY !== undefined) ? window.scrollY : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+    };
+
+    const getDocumentHeight = () => {
+        const body = document.body;
+        const html = document.documentElement;
+
+        return Math.max(
+            body.scrollHeight, body.offsetHeight,
+            html.clientHeight, html.scrollHeight, html.offsetHeight
+        );
+    };
+
+    let throttleCheck;
+    const throttle = (callback, milliseconds) => {
+        if (!throttleCheck) {
+            throttleCheck = setTimeout(() => {
+                callback();
+                throttleCheck = false;
+            }, milliseconds);
+        }
+    };
+
+    const onscroll = () => {
+        throttle(() => {
+            if (getScrollTop() < getDocumentHeight() - window.innerHeight)
+                return;
+            search(id);
+        }, 700);
+    };
+    window.addEventListener("scroll", onscroll);
 
 </script>
 </body>

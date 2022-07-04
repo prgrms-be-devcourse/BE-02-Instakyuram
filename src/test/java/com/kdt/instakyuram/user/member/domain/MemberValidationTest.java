@@ -224,26 +224,4 @@ public class MemberValidationTest {
 		//when, then
 		assertThatThrownBy(() -> memberRepository.save(member)).isInstanceOf(ConstraintViolationException.class);
 	}
-
-	@Test
-	@DisplayName("test")
-	void testToo() {
-		//given
-		order asc = order.valueOf("asc");
-		//when
-
-		//then
-	}
-}
-
-enum order {
-	ASC("asc"), DESC("desc");
-
-	private final String lowerCase;
-
-	order(String lowerCase) {
-		this.lowerCase = lowerCase;
-	}
-
-
 }

@@ -21,25 +21,22 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.instakyuram.common.PageDto;
+import com.kdt.instakyuram.security.jwt.JwtAuthentication;
+import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
 import com.kdt.instakyuram.user.follow.domain.Follow;
 import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
-import com.kdt.instakyuram.security.jwt.JwtAuthentication;
-import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -58,7 +55,7 @@ public class MemberControllerIntegrationTest {
 	@DisplayName("사용자가 목록을 조회한다.")
 	void testGetMembers() throws Exception {
 		//given
-		Long authId=1L;
+		Long authId = 1L;
 		setMockingAuthentication(authId);
 		int requestPage = 2;
 		int requestSize = 5;
@@ -75,12 +72,13 @@ public class MemberControllerIntegrationTest {
 		);
 
 		//when
-		//then
-		MvcResult result = mockMvc.perform(
+		ResultActions perform = mockMvc.perform(
 			get("/members?page=" + request.page() + "&size=" + request.size())
-		).andExpect(status().isOk()).andReturn();
+		);
 
-		String htmlContents = result.getResponse().getContentAsString();
+		//then
+		perform.andExpect(status().isOk()).andReturn();
+		String htmlContents = perform.andReturn().getResponse().getContentAsString();
 
 		Assertions.assertThat(htmlContents).contains(htmlTittleContent);
 	}
@@ -89,7 +87,7 @@ public class MemberControllerIntegrationTest {
 	@DisplayName("사용자 uri 를 조작할 때, 멤버가 없는 없는 페이지 번호를 요청한다면 오류페이지로 전환한다.")
 	void testFailGetMembers() throws Exception {
 		// given
-		Long authId=1L;
+		Long authId = 1L;
 		setMockingAuthentication(authId);
 		int requestPage = 100;
 		int requestSize = 5;
@@ -105,10 +103,12 @@ public class MemberControllerIntegrationTest {
 		);
 
 		//when
-		//then
-		MvcResult result = mockMvc.perform(
+		ResultActions perform = mockMvc.perform(
 			get("/members?page=" + request.page() + "&size=" + request.size())
-		).andExpect(status().isNotFound()).andReturn();
+		);
+
+		//then
+		perform.andExpect(status().isNotFound()).andReturn();
 	}
 
 	@Test
@@ -135,44 +135,9 @@ public class MemberControllerIntegrationTest {
 		).andDo(print());
 
 		//then
-		MvcResult result = perform.andExpect(status().isOk())
-			.andExpect(view().name("modal/follower-list"))
-			.andReturn();
-
-		MockHttpServletResponse response = result.getResponse();
+		perform.andExpect(view().name("modal/follower-list"));
+		MockHttpServletResponse response = perform.andReturn().getResponse();
 		Assertions.assertThat(response.getContentAsString()).contains("follower-list");
-	}
-
-	@Test
-	@Transactional
-	@DisplayName("팔로잉 목록을 조회한다.")
-	void testRenderLookUpFollowings() throws Exception {
-		//given
-		Long authId = 99L;
-		setMockingAuthentication(authId);
-		List<Member> members = getMembersForCursorPaging();
-		Member target = members.remove(0);
-
-		members.forEach(member -> {
-			entityManager.persist(
-				Follow.builder()
-					.targetId(member.getId())
-					.memberId(target.getId())
-					.build()
-			);
-		});
-
-		//when
-		ResultActions perform = mockMvc.perform(get("/members/" + target.getUsername() + "/followings")
-		).andDo(print());
-
-		//then
-		MvcResult result = perform.andExpect(status().isOk())
-			.andExpect(view().name("modal/following-list"))
-			.andReturn();
-
-		MockHttpServletResponse response = result.getResponse();
-		Assertions.assertThat(response.getContentAsString()).contains("following-list");
 	}
 
 	private List<Member> getMembersForOffSetPaging() {
@@ -227,27 +192,6 @@ public class MemberControllerIntegrationTest {
 		);
 
 		return members;
-	}
-
-	/**
-	 * @deprecated
-	 * note : 필요한 데이터를 저장할 때, jpaAudit이 동작하게 된다 (통합테스트에서만)
-	 *   @WithMockUser("MEMBER") 사용시 src 내부에 jpaAudit 부분에 castException이 난다.
-	 *   만약 임시 데이터를 사용하기 위해서는 해당 메소드를 한번 호출하면 해결된다.
-	 * bug : @AutenticationPrincipal이 붙은 Controller 에서는 null이 발생한다. 현재 로직에서는 해당 @AutenticationPrincipal
-	 *   이 안들어가기 때문에 JPA Audit부분에서 이슈가 났던것을 단순하게 해결할 수 있었다. 하지만.. @AutenticationPrincipal {@link com.kdt.instakyuram.security.jwt.JwtAuthentication}
-	 *   이 붙은 컨트롤러에서는 직접적인 Object Principal 값이 실제로 JwtAutentication 객체가 아니면 null을 반환한다.
-	 *   그 이유는 "anonymous" 라는 것이 JwtAuthentication 으로 변경될 수 없기 때문이다. 그러므로 FollowRestControllerTest에 있는 setMockAnonymousAuthenticationToken()을 호출하여 해결할 수 있다.
-	 */
-	private void setMockAnonymousAuthenticationToken() {
-		SimpleGrantedAuthority role_anonymous = new SimpleGrantedAuthority("ROLE_MEMBER");
-		List<GrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(role_anonymous);
-		Authentication authentication = new AnonymousAuthenticationToken("anonymous", "anonymous", authorities);
-
-		SecurityContext context = SecurityContextHolder.createEmptyContext();
-		context.setAuthentication(authentication);
-		SecurityContextHolder.setContext(context);
 	}
 
 	private void setMockingAuthentication(Long authId) {

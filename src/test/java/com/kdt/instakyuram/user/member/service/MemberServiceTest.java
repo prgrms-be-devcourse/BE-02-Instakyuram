@@ -29,19 +29,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.kdt.instakyuram.auth.service.TokenService;
 import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.exception.BusinessException;
 import com.kdt.instakyuram.exception.EntityNotFoundException;
+import com.kdt.instakyuram.security.Role;
+import com.kdt.instakyuram.security.jwt.Jwt;
 import com.kdt.instakyuram.user.follow.service.FollowService;
 import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.domain.MemberRepository;
 import com.kdt.instakyuram.user.member.dto.MemberConverter;
 import com.kdt.instakyuram.user.member.dto.MemberRequest;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
-import com.kdt.instakyuram.security.Role;
-import com.kdt.instakyuram.security.jwt.Jwt;
-import com.kdt.instakyuram.auth.service.TokenService;
-import com.kdt.instakyuram.user.member.service.MemberService;
+import com.kdt.instakyuram.user.member.dto.MemberOrderDto;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -75,7 +75,9 @@ class MemberServiceTest {
 		int requestPage = 2;
 		int requestSize = 5;
 
-		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
+		MemberOrderDto memberOrderDto = new MemberOrderDto(MemberOrderDto.SortCondition.USERNAME, null);
+		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(
+			Sort.by(memberOrderDto.sortCondition().getValue()));
 		List<Member> members = getMembers();
 		PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
@@ -87,15 +89,15 @@ class MemberServiceTest {
 			.boxed()
 			.toList();
 
-		given(memberRepository.findAll(pageRequest)).willReturn(pagingMembers);
+		given(memberRepository.findAllExcludeAuth(authId, memberOrderDto,pageRequest)).willReturn(pagingMembers);
 		given(memberConverter.toPageResponse(pagingMembers, Set.of())).willReturn(pageResponse);
 
 		//when
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageMemberResponses = memberService.findAll(
-			authId, pageRequest);
+			authId, memberOrderDto, pageRequest);
 
 		//then
-		verify(memberRepository, times(1)).findAll(pageRequest);
+		verify(memberRepository, times(1)).findAllExcludeAuth(authId, memberOrderDto,pageRequest);
 		verify(memberConverter, times(1)).toPageResponse(pagingMembers, Set.of());
 
 		assertThat(pageMemberResponses.getPage()).isEqualTo(requestPage);
@@ -111,7 +113,7 @@ class MemberServiceTest {
 		Long authId = 1L;
 		int requestPage = 2;
 		int requestSize = 5;
-
+		MemberOrderDto memberOrderDto = new MemberOrderDto(null, null);
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
 		PageImpl<Member> pagingMembers = new PageImpl<>(List.of(), pageRequest, 0);
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
@@ -120,12 +122,12 @@ class MemberServiceTest {
 				true)
 		);
 
-		given(memberRepository.findAll(pageRequest)).willReturn(pagingMembers);
+		given(memberRepository.findAllExcludeAuth(authId, memberOrderDto,pageRequest)).willReturn(pagingMembers);
 
 		//when
 		//then
 		assertThatThrownBy(() -> {
-			memberService.findAll(authId,pageRequest);
+			memberService.findAll(authId, memberOrderDto, pageRequest);
 		}).isInstanceOf(EntityNotFoundException.class);
 	}
 

@@ -100,7 +100,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				JwtAuthenticationToken authentication = createAuthenticationToken(reIssuedClaims, request,
 					reIssuedAccessToken);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-				response.addCookie(new Cookie(this.jwt.accessTokenProperties().header(), reIssuedAccessToken));
+				Cookie cookie = new Cookie(this.jwt.accessTokenProperties().header(), reIssuedAccessToken);
+				cookie.setHttpOnly(true);
+				cookie.setPath("/");
+				cookie.setMaxAge(this.jwt.accessTokenProperties().expirySeconds());
+				response.addCookie(cookie);
 			} else {
 				log.warn("refreshToken expired");
 			}

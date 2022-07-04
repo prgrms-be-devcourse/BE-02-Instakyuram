@@ -68,7 +68,9 @@ public class WebSecurityConfig {
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return web -> web.ignoring().antMatchers(this.securityConfigProperties.patterns().ignoring());
+		return web -> web.ignoring()
+			.antMatchers(this.securityConfigProperties.patterns().ignoring())
+			.requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 	}
 
 	@Bean

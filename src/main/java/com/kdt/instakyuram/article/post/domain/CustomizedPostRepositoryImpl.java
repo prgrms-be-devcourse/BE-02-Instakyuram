@@ -25,29 +25,29 @@ public class CustomizedPostRepositoryImpl implements CustomizedPostRepository {
 	public List<Post> findAllByUsernameCursorPaging(String username, PageDto.PostCursorPageRequest pageRequest) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Post> query = builder.createQuery(Post.class);
-		Root<Post> p = query.from(Post.class);
-		p.fetch("member", JoinType.LEFT);
+		Root<Post> post = query.from(Post.class);
+		post.fetch("member", JoinType.LEFT);
 
 		PostPagingCursor cursor = pageRequest.getCursor();
 
 		Predicate usernamePredicate = Optional.ofNullable(username)
-			.map(value -> builder.equal(p.get("member").get("username"), value))
+			.map(value -> builder.equal(post.get("member").get("username"), value))
 			.orElse(null);
 		Predicate cursorPredicate = Optional.ofNullable(cursor)
 			.map((c) -> builder.or(
-				builder.lessThan(p.get("updatedAt"), c.getUpdatedAt()),
+				builder.lessThan(post.get("updatedAt"), c.getUpdatedAt()),
 				builder.and(
-					builder.equal(p.get("updatedAt"), c.getUpdatedAt()),
-					builder.lessThan(p.get("id"), c.getId())
+					builder.equal(post.get("updatedAt"), c.getUpdatedAt()),
+					builder.lessThan(post.get("id"), c.getId())
 				))
 			)
 			.orElse(null);
 
-		query.select(p)
+		query.select(post)
 			.where(Stream.of(usernamePredicate, cursorPredicate)
 				.filter(Objects::nonNull)
 				.toArray(Predicate[]::new)
-			).orderBy(builder.desc(p.get("updatedAt")), builder.desc(p.get("id")));
+			).orderBy(builder.desc(post.get("updatedAt")), builder.desc(post.get("id")));
 
 		return entityManager.createQuery(query).setMaxResults(pageRequest.getSize()).getResultList();
 	}

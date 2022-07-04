@@ -14,7 +14,7 @@ public record SecurityConfigProperties(PatternsConfigures patterns, JwtConfigure
 		this.jwt = jwt;
 	}
 
-	public record PatternsConfigures(String[] ignoring, Map<String, String[]> permitAll) {
+	public record PatternsConfigures(Map<String, String[]> ignoring, Map<String, String[]> permitAll) {
 	}
 
 	public record JwtConfigure(

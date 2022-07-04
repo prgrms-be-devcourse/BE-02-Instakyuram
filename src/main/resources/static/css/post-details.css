@@ -5,6 +5,8 @@
 
 .container__post {
     width: 40%;
+    height: 85%;
+    margin-left: 10%;
 }
 
 .post__image {
@@ -24,7 +26,10 @@ li {
     flex-direction: row;
     justify-content: space-between;
 }
-
+.container__comments {
+    width: 40%;
+    margin-right: 5%;
+}
 .comments__item {
     padding: 1em;
 }

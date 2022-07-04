@@ -53,11 +53,19 @@ public class PostRestController {
 		summary = "follow 하는 멤버와 나의 게시글 조회",
 		description = "사용자 id를 통해 사용자가 follow 하는 사람들과 사용자 게시글을 모두 조회할 수 있습니다."
 	)
-	@GetMapping("/{memberId}")
+	@GetMapping
 	public ApiResponse<PageDto.PostFindAllPageResponse> findAll(
-		@PathVariable Long memberId,
+		@AuthenticationPrincipal JwtAuthentication jwtAuthentication,
 		@Valid PageDto.PostFindAllPageRequest pageRequest) {
-		return new ApiResponse<>(postService.findAllRelated(memberId, pageRequest));
+		return new ApiResponse<>(postService.findAllRelated(jwtAuthentication.id(), pageRequest));
+	}
+
+	@Operation(summary = "post 단건 상세 조회", description = "해당 id를 통해 post 상세 조회를 할 수 있습니다.")
+	@GetMapping("/{id}")
+	public ApiResponse<PostResponse.FindAllResponse> findOne(
+		@PathVariable Long id,
+		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
+		return new ApiResponse<>(postService.findById(jwtAuthentication.id(), id));
 	}
 
 	@Operation(summary = "post 수정", description = "post의 content를 수정합니다.")

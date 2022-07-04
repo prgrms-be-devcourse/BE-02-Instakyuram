@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Sort;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kdt.instakyuram.article.post.domain.PostPagingCriteria;
+import com.kdt.instakyuram.article.post.domain.PostPagingCursor;
 import com.kdt.instakyuram.article.post.dto.PostResponse;
 
 public class PageDto {
@@ -38,7 +40,8 @@ public class PageDto {
 		@Positive
 		private Integer size;
 
-		public PostFindAllPageRequest() {}
+		public PostFindAllPageRequest() {
+		}
 
 		public PostPagingCriteria getPostPagingCriteria() {
 			return postPagingCriteria;
@@ -96,6 +99,33 @@ public class PageDto {
 
 		public LocalDateTime getEnd() {
 			return end;
+		}
+	}
+
+	public static class PostCursorPageRequest {
+		@Valid
+		private PostPagingCursor cursor;
+		private Integer size;
+
+		public PostCursorPageRequest(PostPagingCursor cursor, Integer size) {
+			this.cursor = cursor;
+			this.size = size;
+		}
+
+		public PostPagingCursor getCursor() {
+			return cursor;
+		}
+
+		public Integer getSize() {
+			return size;
+		}
+
+		public void setCursor(PostPagingCursor cursor) {
+			this.cursor = cursor;
+		}
+
+		public void setSize(Integer size) {
+			this.size = size;
 		}
 	}
 
@@ -169,4 +199,6 @@ public class PageDto {
 		}
 	}
 
+	public record CursorResponse<T, C>(List<T> values, Boolean hasNext, C cursor) {
+	}
 }

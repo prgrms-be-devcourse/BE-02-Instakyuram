@@ -16,6 +16,7 @@ import com.kdt.instakyuram.article.comment.dto.CommentResponse;
 import com.kdt.instakyuram.article.comment.service.CommentGiver;
 import com.kdt.instakyuram.article.post.domain.Post;
 import com.kdt.instakyuram.article.post.domain.PostPagingCriteria;
+import com.kdt.instakyuram.article.post.domain.PostPagingCursor;
 import com.kdt.instakyuram.article.post.domain.PostRepository;
 import com.kdt.instakyuram.article.post.dto.PostConverter;
 import com.kdt.instakyuram.article.post.dto.PostLikeResponse;
@@ -97,7 +98,6 @@ public class PostService implements PostGiver {
 				var postImageResponses = postImages.get(post.getId());
 				var commentResponses = comments.get(post.getId());
 				var totalPostLike = postLikes.getOrDefault(post.getId(), 0L).intValue();
-
 				return postConverter.toDetailResponse(
 					member,
 					post,
@@ -172,7 +172,7 @@ public class PostService implements PostGiver {
 	public Long delete(Long id, Long memberId) {
 		List<PostImageResponse.DeleteResponse> deletedImages = postRepository.findByIdAndMemberId(id, memberId)
 			.map(post -> {
-				commentGiver.delete(id);
+				//TODO : commentGiver.delete(id);
 				postLikeService.delete(id);
 				List<PostImageResponse.DeleteResponse> images = postImageService.delete(id);
 				postRepository.delete(post);
@@ -203,17 +203,28 @@ public class PostService implements PostGiver {
 	}
 
 	@Override
-	public List<PostImageResponse.ThumbnailResponse> findPostThumbnailsByUsername(String username) {
-		List<Post> posts = postRepository.findAllByUsername(username);
-
+	public PageDto.CursorResponse<PostImageResponse.ThumbnailResponse, PostPagingCursor> findPostThumbnailsByUsername(
+		String username, PageDto.PostCursorPageRequest pageRequest) {
+		List<Post> posts = postRepository.findAllByUsernameCursorPaging(username, pageRequest);
 		if (posts.isEmpty()) {
-			return Collections.emptyList();
+			posts = Collections.emptyList();
 		}
+		LocalDateTime nextUpdatedAtCursor = posts.isEmpty() ? null : posts.get(posts.size() - 1).getUpdatedAt();
+		Long nextPostIdCursor = posts.isEmpty() ? null : posts.get(posts.size() - 1).getId();
 
-		return posts.stream()
-			.map(Post::getId)
-			.map(postImageService::findThumbnailByPostId)
-			.toList();
+		return new PageDto.CursorResponse<>(
+			posts.stream()
+				.map(Post::getId)
+				.map(postImageService::findThumbnailByPostId)
+				.toList(),
+			hasNext(nextUpdatedAtCursor, nextPostIdCursor),
+			new PostPagingCursor(nextUpdatedAtCursor, nextPostIdCursor));
+	}
+
+	private Boolean hasNext(LocalDateTime cursorUpdatedAt, Long cursorId) {
+		if (cursorUpdatedAt == null || cursorId == null)
+			return false;
+		return this.postRepository.existsByUpdatedAtLessThanEqualAndIdLessThan(cursorUpdatedAt, cursorId);
 	}
 
 	public List<PostResponse> findAllByMemberId(Long memberId) {

@@ -12,4 +12,5 @@ public interface CustomizedPostRepository {
 
 	boolean isFindAllCursorHasNext(List<Member> members, Long id, LocalDateTime begin, LocalDateTime end);
 
+	List<Post> findAllByUsernameCursorPaging(String username, PageDto.PostCursorPageRequest pageRequest);
 }

@@ -1,5 +1,6 @@
 package com.kdt.instakyuram.article.post.domain;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +28,5 @@ public interface PostRepository extends JpaRepository<Post, Long>, CustomizedPos
 	@Query("SELECT p FROM Post p WHERE p.id = :id AND p.member.id = :memberId")
 	Optional<Post> findByIdAndMemberId_Locked_Pessimistic(Long id, Long memberId);
 
+	Boolean existsByUpdatedAtLessThanEqualAndIdLessThan(LocalDateTime updatedAtCursor, Long postIdCursor);
 }

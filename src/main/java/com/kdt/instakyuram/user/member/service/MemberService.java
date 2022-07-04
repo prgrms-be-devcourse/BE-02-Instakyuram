@@ -11,19 +11,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kdt.instakyuram.auth.service.TokenService;
 import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.exception.BusinessException;
 import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.exception.ErrorCode;
+import com.kdt.instakyuram.security.Role;
+import com.kdt.instakyuram.security.jwt.Jwt;
 import com.kdt.instakyuram.user.follow.service.FollowService;
 import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.domain.MemberRepository;
 import com.kdt.instakyuram.user.member.dto.MemberConverter;
 import com.kdt.instakyuram.user.member.dto.MemberRequest;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
-import com.kdt.instakyuram.security.Role;
-import com.kdt.instakyuram.security.jwt.Jwt;
-import com.kdt.instakyuram.auth.service.TokenService;
+import com.kdt.instakyuram.user.member.dto.MemberOrderDto;
 
 // TODO : MemberGiver의 메서드가 필요합니다 !
 @Service
@@ -91,14 +92,13 @@ public class MemberService implements MemberGiver {
 		return new MemberResponse.SignupResponse(member.getId(), member.getUsername());
 	}
 
-	// todo : 요청한 사용자의 정보는 빼야함! -> 테스트 코드 변경
-	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> findAll(Long authId, Pageable requestPage) {
-		Page<Member> pagingMembers = memberRepository.findAll(requestPage);
+	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> findAll(Long authId,
+		MemberOrderDto searchDto, Pageable requestPage) {
+		Page<Member> pagingMembers = memberRepository.findAllExcludeAuth(authId, searchDto, requestPage);
 
 		if (pagingMembers.getContent().isEmpty()) {
 			throw new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
 		}
-
 		List<Long> memberIds = pagingMembers.getContent().stream().map(Member::getId).toList();
 		Set<Long> authFollowings = followService.findAuthFollowings(authId, memberIds);
 
@@ -153,7 +153,6 @@ public class MemberService implements MemberGiver {
 				MessageFormat.format("Member ID = {0}", id)))
 			.updateProfileImage(profileImageName);
 	}
-
 
 	/**
 	 * note: 인증된 사용자가 다른 사람의 팔로우를 볼때!
@@ -221,14 +220,5 @@ public class MemberService implements MemberGiver {
 				return memberConverter.toFollowings(member, false, isMe);
 			})
 			.toList();
-	}
-
-	public boolean isSame(String username, Long authId) {
-		Member authMember = memberRepository.findById(authId)
-			.orElseThrow(
-				() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND,
-					MessageFormat.format("해당 id가 {0}인 auth 를 찾을 수 없습니다.", authId)));
-
-		return authMember.getUsername().equals(username);
 	}
 }

@@ -1,6 +1,7 @@
 package com.kdt.instakyuram.article.post.service;
 
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -13,18 +14,22 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.article.comment.dto.CommentResponse;
 import com.kdt.instakyuram.article.comment.service.CommentGiver;
+import com.kdt.instakyuram.article.post.domain.Post;
+import com.kdt.instakyuram.article.post.domain.PostPagingCriteria;
+import com.kdt.instakyuram.article.post.domain.PostPagingCursor;
+import com.kdt.instakyuram.article.post.domain.PostRepository;
+import com.kdt.instakyuram.article.post.dto.PostConverter;
+import com.kdt.instakyuram.article.post.dto.PostLikeResponse;
+import com.kdt.instakyuram.article.post.dto.PostResponse;
+import com.kdt.instakyuram.article.postimage.dto.PostImageResponse;
+import com.kdt.instakyuram.article.postimage.service.PostImageService;
+import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.common.file.exception.FileWriteException;
 import com.kdt.instakyuram.exception.EntityNotFoundException;
 import com.kdt.instakyuram.exception.ErrorCode;
-import com.kdt.instakyuram.article.postimage.service.PostImageService;
 import com.kdt.instakyuram.user.member.domain.Member;
+import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.user.member.service.MemberGiver;
-import com.kdt.instakyuram.article.post.domain.Post;
-import com.kdt.instakyuram.article.post.domain.PostRepository;
-import com.kdt.instakyuram.article.post.dto.PostConverter;
-import com.kdt.instakyuram.article.postimage.dto.PostImageResponse;
-import com.kdt.instakyuram.article.post.dto.PostLikeResponse;
-import com.kdt.instakyuram.article.post.dto.PostResponse;
 import com.kdt.instakyuram.util.ImageManager;
 
 import lombok.extern.slf4j.Slf4j;
@@ -66,12 +71,17 @@ public class PostService implements PostGiver {
 		return new PostResponse.CreateResponse(savedPost.getId(), memberId, content);
 	}
 
-	public List<PostResponse.FindAllResponse> findAllRelated(Long memberId) {
+	public PageDto.PostFindAllPageResponse findAllRelated(Long memberId, PageDto.PostFindAllPageRequest pageRequest) {
+
 		List<Member> members = memberGiver.findAllFollowingIncludeMe(memberId).stream()
 			.map(postConverter::toMember)
 			.toList();
-		List<Post> posts = postRepository.findAllByMemberIn(members);
+		List<Post> posts = postRepository.findAllCursorPaging(members, pageRequest);
 
+		PostPagingCriteria criteria = pageRequest.getPostPagingCriteria();
+		Long id = posts.isEmpty() ? null : posts.get(posts.size() - 1).getId();
+		boolean hasNext = hasNext(members, id, criteria.getStartDate(), criteria.getEndDate());
+		// boolean hasNext = true;
 		Map<Long, List<PostImageResponse>> postImages = postImageService.findByPostIn(posts)
 			.stream()
 			.collect(Collectors.groupingBy(PostImageResponse::postId));
@@ -82,13 +92,12 @@ public class PostService implements PostGiver {
 			.stream()
 			.collect(Collectors.groupingBy(PostLikeResponse::postId, Collectors.counting()));
 
-		return posts.stream()
+		List<PostResponse.FindAllResponse> responses = posts.stream()
 			.map(post -> {
 				var member = postConverter.toMemberResponse(post.getMember());
 				var postImageResponses = postImages.get(post.getId());
 				var commentResponses = comments.get(post.getId());
 				var totalPostLike = postLikes.getOrDefault(post.getId(), 0L).intValue();
-
 				return postConverter.toDetailResponse(
 					member,
 					post,
@@ -97,6 +106,9 @@ public class PostService implements PostGiver {
 					totalPostLike
 				);
 			}).toList();
+
+		return postConverter.toFindAllPagingResponse(responses, id, hasNext, criteria.getStartDate(),
+			criteria.getEndDate());
 	}
 
 	@Transactional
@@ -191,17 +203,28 @@ public class PostService implements PostGiver {
 	}
 
 	@Override
-	public List<PostImageResponse.ThumbnailResponse> findPostThumbnailsByUsername(String username) {
-		List<Post> posts = postRepository.findAllByUsername(username);
-
+	public PageDto.CursorResponse<PostImageResponse.ThumbnailResponse, PostPagingCursor> findPostThumbnailsByUsername(
+		String username, PageDto.PostCursorPageRequest pageRequest) {
+		List<Post> posts = postRepository.findAllByUsernameCursorPaging(username, pageRequest);
 		if (posts.isEmpty()) {
-			return Collections.emptyList();
+			posts = Collections.emptyList();
 		}
+		LocalDateTime nextUpdatedAtCursor = posts.isEmpty() ? null : posts.get(posts.size() - 1).getUpdatedAt();
+		Long nextPostIdCursor = posts.isEmpty() ? null : posts.get(posts.size() - 1).getId();
 
-		return posts.stream()
-			.map(Post::getId)
-			.map(postImageService::findThumbnailByPostId)
-			.toList();
+		return new PageDto.CursorResponse<>(
+			posts.stream()
+				.map(Post::getId)
+				.map(postImageService::findThumbnailByPostId)
+				.toList(),
+			hasNext(nextUpdatedAtCursor, nextPostIdCursor),
+			new PostPagingCursor(nextUpdatedAtCursor, nextPostIdCursor));
+	}
+
+	private Boolean hasNext(LocalDateTime cursorUpdatedAt, Long cursorId) {
+		if (cursorUpdatedAt == null || cursorId == null)
+			return false;
+		return this.postRepository.existsByUpdatedAtLessThanEqualAndIdLessThan(cursorUpdatedAt, cursorId);
 	}
 
 	public List<PostResponse> findAllByMemberId(Long memberId) {
@@ -209,5 +232,26 @@ public class PostService implements PostGiver {
 			.stream()
 			.map(postConverter::toResponse)
 			.toList();
+	}
+
+	public PostResponse.FindAllResponse findById(Long memberId, Long id) {
+		Post post = postRepository.findById(id).orElseThrow(
+			() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
+				MessageFormat.format("Post ID = {0}, Member ID = {1}", id, memberId))
+		);
+
+		MemberResponse member = memberGiver.findById(post.getMember().getId());
+		List<PostImageResponse> images = postImageService.findByPostId(id);
+		List<CommentResponse> comments = commentGiver.findByPostId(id);
+		int likes = postLikeService.countByPostId(id);
+
+		return postConverter.toDetailResponse(member, post, images, comments, likes);
+	}
+
+	private boolean hasNext(List<Member> members, Long id, LocalDateTime begin, LocalDateTime end) {
+		if (id == null) {
+			return false;
+		}
+		return postRepository.isFindAllCursorHasNext(members, id, begin, end);
 	}
 }

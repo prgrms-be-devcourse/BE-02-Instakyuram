@@ -23,6 +23,11 @@ public class PostController {
 		return "/modal/post-upload";
 	}
 
+	@GetMapping("/posts/details")
+	public String postDetails() {
+		return "post-details";
+	}
+
 	@GetMapping("/")
 	public String indexPage(@AuthenticationPrincipal JwtAuthentication auth, Model model)
 	{

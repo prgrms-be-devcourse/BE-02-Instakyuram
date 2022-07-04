@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kdt.instakyuram.article.post.domain.PostPagingCursor;
 import com.kdt.instakyuram.article.post.dto.PostLikeResponse;
 import com.kdt.instakyuram.article.post.dto.PostRequest;
 import com.kdt.instakyuram.article.post.dto.PostResponse;
 import com.kdt.instakyuram.article.post.service.PostService;
 import com.kdt.instakyuram.article.postimage.dto.PostImageResponse;
 import com.kdt.instakyuram.common.ApiResponse;
+import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,10 +54,19 @@ public class PostRestController {
 		summary = "follow 하는 멤버와 나의 게시글 조회",
 		description = "사용자 id를 통해 사용자가 follow 하는 사람들과 사용자 게시글을 모두 조회할 수 있습니다."
 	)
-	@GetMapping("/{memberId}")
-	public ApiResponse<List<PostResponse.FindAllResponse>> findAll(
-		@PathVariable Long memberId) {
-		return new ApiResponse<>(postService.findAllRelated(memberId));
+	@GetMapping
+	public ApiResponse<PageDto.PostFindAllPageResponse> findAll(
+		@AuthenticationPrincipal JwtAuthentication jwtAuthentication,
+		@Valid PageDto.PostFindAllPageRequest pageRequest) {
+		return new ApiResponse<>(postService.findAllRelated(jwtAuthentication.id(), pageRequest));
+	}
+
+	@Operation(summary = "post 단건 상세 조회", description = "해당 id를 통해 post 상세 조회를 할 수 있습니다.")
+	@GetMapping("/{id}")
+	public ApiResponse<PostResponse.FindAllResponse> findOne(
+		@PathVariable Long id,
+		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
+		return new ApiResponse<>(postService.findById(jwtAuthentication.id(), id));
 	}
 
 	@Operation(summary = "post 수정", description = "post의 content를 수정합니다.")
@@ -101,9 +112,13 @@ public class PostRestController {
 
 	@Operation(summary = "post 썸네일 이미지 정보 조회", description = "post 썸네일 이미지의 정보를 조회합니다.")
 	@GetMapping("/thumbnails")
-	public ApiResponse<List<PostImageResponse.ThumbnailResponse>> getThumbnails(
-		@RequestParam String username) {
-		return new ApiResponse<>(postService.findPostThumbnailsByUsername(username));
+	public ApiResponse<PageDto.CursorResponse<PostImageResponse.ThumbnailResponse, PostPagingCursor>> getThumbnailsPaging(
+		@Valid PageDto.PostCursorPageRequest pageRequest, @RequestParam String username) {
+
+		PageDto.CursorResponse<PostImageResponse.ThumbnailResponse, PostPagingCursor> response = postService.findPostThumbnailsByUsername(
+			username, pageRequest);
+
+		return new ApiResponse<>(response);
 	}
 
 	@PatchMapping("/lock/{id}")

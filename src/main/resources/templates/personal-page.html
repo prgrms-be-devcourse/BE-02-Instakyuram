@@ -122,17 +122,24 @@
 
 
 <script th:inline="javascript">
+    let cursorUpdatedAt;
+    let cursorId;
+    let hasNext = true;
+
     const username = [[${profileInfo.username}]];
+
     const getThumbnails = (username) => {
         axios({
             method: "GET",
             url: '/api/posts/thumbnails',
             params: {
-                "username": username
+                "size": 6,
+                "username": username,
+                "cursor.id": cursorId,
+                "cursor.updatedAt": cursorUpdatedAt,
             }
         }).then((res) => {
             renderThumbnail(res.data.response);
-            console.log(res);
         }).catch(error => {
             console.log("error" + error);
         })
@@ -140,11 +147,17 @@
     getThumbnails(username);
     const renderThumbnail = (thumbnails) => {
         let thumbnailHTML = "";
-        for (let i = 0; i <= thumbnails.length / 3; i++) {
+        if (thumbnails.hasNext === true) {
+            cursorUpdatedAt = thumbnails.cursor.updatedAt;
+            cursorId = thumbnails.cursor.id;
+        } else {
+            hasNext = false;
+        }
+        for (let i = 0; i <= thumbnails.values.length / 3; i++) {
             thumbnailHTML += "<div class=\"article_row\">"
             for (let j = i * 3; j < i * 3 + 3; j++) {
-                if (j < thumbnails.length) {
-                    let thumbnail = thumbnails[j];
+                if (j < thumbnails.values.length) {
+                    let thumbnail = thumbnails.values[j];
                     thumbnailHTML += "<div class=\"article\"><img class=\"article_img\" src='http://localhost:8080/api/posts/" +
                         thumbnail.postId +
                         "/image/" +
@@ -156,8 +169,39 @@
             }
             thumbnailHTML += "</div>"
         }
-        document.querySelector(".article_container").innerHTML = thumbnailHTML;
-        console.log(thumbnailHTML);
+        document.querySelector(".article_container").insertAdjacentHTML("beforeend", thumbnailHTML);
     }
+
+    const getScrollTop = () => {
+        return (window.scrollY !== undefined) ? window.scrollY : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+    };
+
+    const getDocumentHeight = () => {
+        const body = document.body;
+        const html = document.documentElement;
+
+        return Math.max(
+            body.scrollHeight, body.offsetHeight,
+            html.clientHeight, html.scrollHeight, html.offsetHeight
+        );
+    };
+    let throttleCheck;
+    const throttle = (callback, milliseconds) => {
+        if (!throttleCheck) {
+            throttleCheck = setTimeout(() => {
+                callback();
+                throttleCheck = false;
+            }, milliseconds);
+        }
+    };
+
+    const onscroll = () => {
+        throttle(() => {
+            if (getScrollTop() < getDocumentHeight() - window.innerHeight || hasNext === false)
+                return;
+            getThumbnails(username);
+        }, 700);
+    };
+    window.addEventListener("scroll", onscroll);
 </script>
 </html>

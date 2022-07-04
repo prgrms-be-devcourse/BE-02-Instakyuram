@@ -1,0 +1,75 @@
+.container {
+    display: flex;
+    margin-top: 80px;
+}
+
+.container__post {
+    width: 40%;
+    height: 85%;
+    margin-left: 10%;
+}
+
+.post__image {
+    width: 100%;
+}
+
+p {
+    font-weight: normal;
+    font-size: 1em;
+    border: none;
+    padding: 0;
+    text-align: left;
+}
+
+li {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.container__comments {
+    width: 40%;
+    margin-right: 5%;
+}
+.comments__item {
+    padding: 1em;
+}
+
+.comments__item__container {
+    display: flex;
+    flex-direction: row;
+}
+
+.comments__item__profile {
+    width: 50px;
+    height: 40px;
+    display: block;
+    margin: 0;
+}
+
+.profile_image {
+    height: 100%;
+    width: 100%;
+}
+
+.comments__item__comment {
+    padding: 0 1em;
+    width: 100%;
+}
+
+.comments__item__content {
+    margin: 0;
+}
+
+.comments__item__history {
+    font-size: 0.8rem;
+    color: gray;
+}
+
+.comments__item__like {
+    margin-top: 9px;
+}
+
+.like_image {
+    width: 20px;
+    cursor: pointer;
+}

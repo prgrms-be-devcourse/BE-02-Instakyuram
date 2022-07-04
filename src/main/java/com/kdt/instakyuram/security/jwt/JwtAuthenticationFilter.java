@@ -26,8 +26,8 @@ import com.kdt.instakyuram.exception.EntityNotFoundException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final Jwt jwt;
-	private final Logger log = LoggerFactory.getLogger(getClass());
 	private final TokenService tokenService;
+	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	public JwtAuthenticationFilter(Jwt jwt, TokenService tokenService) {
 		this.jwt = jwt;
@@ -65,6 +65,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			this.log.info("set Authentication");
 
 		} catch (TokenExpiredException exception) {
+			Cookie cookie = new Cookie(jwt.accessTokenProperties().header(), "");
+			cookie.setPath("/");
+			cookie.setMaxAge(0);
+			cookie.setHttpOnly(true);
+			response.addCookie(cookie);
 			this.log.warn(exception.getMessage());
 			refreshAuthentication(accessToken, request, response);
 		} catch (JWTVerificationException exception) {

@@ -172,7 +172,7 @@ public class PostService implements PostGiver {
 	public Long delete(Long id, Long memberId) {
 		List<PostImageResponse.DeleteResponse> deletedImages = postRepository.findByIdAndMemberId(id, memberId)
 			.map(post -> {
-				//TODO : commentGiver.delete(id);
+				commentGiver.delete(id);
 				postLikeService.delete(id);
 				List<PostImageResponse.DeleteResponse> images = postImageService.delete(id);
 				postRepository.delete(post);

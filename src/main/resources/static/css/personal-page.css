@@ -8,6 +8,7 @@ main {
     min-height: 100vh;
 }
 
+
 body {
     height: 100%;
 }
@@ -150,4 +151,10 @@ body {
 .article_img {
     height: 100%;
     width: 100%;
+}
+
+.post_count,
+.follower_count,
+.follow_count {
+    font-weight: 600;
 }

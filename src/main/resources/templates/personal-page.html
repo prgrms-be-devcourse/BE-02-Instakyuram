@@ -22,9 +22,9 @@
                 </div>
                 <div class="profile_info_mid">
                     <span class="profile_PostsC">게시물 </span><span class="post_count" th:text="*{postCount}">0</span>
-                    <span class="profile_FollowersC">팔로워 </span><span class="follower_count" th:text="*{followerCount}">0</span>
-                    <span class="profile_FollowsC">팔로우 </span><span class="follow_count"
-                                                                    th:text="*{followCount}">0</span>
+                    <a th:href="@{|/members/${username}/followers|}"><span class="profile_FollowersC">팔로워 </span><span class="follower_count" th:text="*{followerCount}">0</span></a>
+                    <a th:href="@{|/members/${username}/followings|}"><span class="profile_FollowsC">팔로우 </span><span class="follow_count"
+                                                                                                               th:text="*{followCount}">0</span></a>
                 </div>
                 <div class="profile_info_bottom">
                     <h1 class="name" th:text="*{name}">박진형</h1>
@@ -119,7 +119,9 @@
         checkFollowing();
     }
 </script>
+<script th:inline="javascript">
 
+</script>
 
 <script th:inline="javascript">
     let cursorUpdatedAt;

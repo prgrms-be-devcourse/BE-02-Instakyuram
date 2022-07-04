@@ -47,7 +47,6 @@
                 `<p class='comment__item__content'>` +
                 `<b> ${comment.username} </b>` +
                 `<br/> ${comment.content} </p>` +
-                //`<p class='comments__item__history'> 2일 ∙ ${getUpdatedAt(comment.isUpdated)} ∙ 좋아요  ${comment.likes} 개 </p></br>
                 `<p class='comments__item__history'> ${comment.createdAt} ∙ ${comment.isUpdate === true ? '수정됨 ∙' : ''}  좋아요  ${comment.likes} 개 </p></br>
                                     </div>`
             commentsHTML += `<span class='comments__item__like'>` +

@@ -172,7 +172,7 @@ public class PostService implements PostGiver {
 	public Long delete(Long id, Long memberId) {
 		List<PostImageResponse.DeleteResponse> deletedImages = postRepository.findByIdAndMemberId(id, memberId)
 			.map(post -> {
-				//TODO : commentGiver.delete(id);
+				commentGiver.delete(id);
 				postLikeService.delete(id);
 				List<PostImageResponse.DeleteResponse> images = postImageService.delete(id);
 				postRepository.delete(post);
@@ -234,11 +234,12 @@ public class PostService implements PostGiver {
 			.toList();
 	}
 
-	public PostResponse.FindAllResponse findById(Long memberId, Long id) {
-		Post post = postRepository.findById(id).orElseThrow(
-			() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
-				MessageFormat.format("Post ID = {0}, Member ID = {1}", id, memberId))
-		);
+	public PostResponse.FindAllResponse findById(Long id) {
+		Post post = postRepository.findById(id)
+			.orElseThrow(
+				() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
+					MessageFormat.format("Post ID = {0}", id))
+			);
 
 		MemberResponse member = memberGiver.findById(post.getMember().getId());
 		List<PostImageResponse> images = postImageService.findByPostId(id);

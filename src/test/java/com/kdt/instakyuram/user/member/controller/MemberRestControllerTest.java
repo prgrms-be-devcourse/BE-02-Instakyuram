@@ -82,11 +82,11 @@ class MemberRestControllerTest {
 		//given
 		String accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiTUVNQkVSIl0sImlzcyI6InByZ3JtcyIsImV4cCI6MTY1NTk2ODQ1NCwiaWF0IjoxNjU1OTY4Mzk0LCJtZW1iZXJJZCI6IjEifQ.PBIdS5PThuUD67kCC6kA9ORWi_NB8Izw123XuC6v0pXxCBHOr-wSDcdyKSt734Jsm1Q1rvnKLGDxmTD7etosWA";
 		String refreshToken = "refreshToken";
-		MemberRequest.SigninRequest signinRequest = new MemberRequest.SigninRequest(
+		MemberRequest.SignInRequest signInRequest = new MemberRequest.SignInRequest(
 			"pjh123",
 			"123456789"
 		);
-		MemberResponse.SigninResponse signinResponse = new MemberResponse.SigninResponse(
+		MemberResponse.SignInResponse signInResponse = new MemberResponse.SignInResponse(
 			member.getId(),
 			member.getUsername(),
 			accessToken,
@@ -94,18 +94,18 @@ class MemberRestControllerTest {
 			new String[] {String.valueOf(Role.MEMBER)}
 		);
 		Jwt.Claims claim = Jwt.Claims.builder().memberId(1L)
-			.roles(signinResponse.roles())
+			.roles(signInResponse.roles())
 			.iat(new Date())
 			.exp(new Date()
 			).build();
 
-		String request = objectMapper.writeValueAsString(signinRequest);
-		String response = objectMapper.writeValueAsString(new ApiResponse<>(signinResponse));
+		String request = objectMapper.writeValueAsString(signInRequest);
+		String response = objectMapper.writeValueAsString(new ApiResponse<>(signInResponse));
 
 		given(jwt.refreshTokenProperties()).willReturn(this.securityConfiguresProperties.jwt().refreshToken());
 		given(jwt.accessTokenProperties()).willReturn(this.securityConfiguresProperties.jwt().accessToken());
 		given(jwt.verify(accessToken)).willReturn(claim);
-		given(memberService.signin(any(String.class), any(String.class))).willReturn(signinResponse);
+		given(memberService.signIn(any(String.class), any(String.class))).willReturn(signInResponse);
 
 		//when
 		ResultActions perform = mockMvc.perform(post("/api/members/signin")
@@ -114,7 +114,7 @@ class MemberRestControllerTest {
 		).andDo(print());
 
 		//then
-		verify(memberService, times(1)).signin(any(String.class), any(String.class));
+		verify(memberService, times(1)).signIn(any(String.class), any(String.class));
 		verify(jwt, times(1)).verify(any());
 
 		perform
@@ -126,14 +126,14 @@ class MemberRestControllerTest {
 	@DisplayName("sign up 성공 테스트")
 	void testSignupSuccess() throws Exception {
 		//given
-		MemberRequest.SignupRequest signupRequest = new MemberRequest.SignupRequest(
+		MemberRequest.SignUpRequest signupRequest = new MemberRequest.SignUpRequest(
 			member.getUsername(),
-			"123456789",
+			"@Programmers12",
 			member.getName(),
 			member.getEmail(),
 			member.getPhoneNumber()
 		);
-		MemberResponse.SignupResponse signupResponse = new MemberResponse.SignupResponse(
+		MemberResponse.SignUpResponse signupResponse = new MemberResponse.SignUpResponse(
 			member.getId(),
 			member.getUsername()
 		);
@@ -141,7 +141,7 @@ class MemberRestControllerTest {
 		String request = objectMapper.writeValueAsString(signupRequest);
 		String response = objectMapper.writeValueAsString(new ApiResponse<>(signupResponse));
 
-		given(memberService.signup(signupRequest)).willReturn(signupResponse);
+		given(memberService.signUp(signupRequest)).willReturn(signupResponse);
 
 		//when
 		ResultActions perform = mockMvc.perform(post("/api/members/signup")
@@ -150,7 +150,7 @@ class MemberRestControllerTest {
 		).andDo(print());
 
 		//then
-		verify(memberService, times(1)).signup(any(MemberRequest.SignupRequest.class));
+		verify(memberService, times(1)).signUp(any(MemberRequest.SignUpRequest.class));
 
 		perform
 			.andExpect(status().isOk())

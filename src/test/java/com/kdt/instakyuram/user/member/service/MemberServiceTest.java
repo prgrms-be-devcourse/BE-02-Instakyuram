@@ -253,9 +253,9 @@ class MemberServiceTest {
 
 	@Test
 	@DisplayName("Sign up 테스트")
-	void testSignup() {
+	void testSignUp() {
 		//given
-		MemberRequest.SignupRequest request = new MemberRequest.SignupRequest("pjh123", "123456789", "홍길동",
+		MemberRequest.SignUpRequest request = new MemberRequest.SignUpRequest("pjh123", "123456789", "홍길동",
 			"user123@gmail.com", "01012345678");
 		Member member = new Member(
 			1L,
@@ -266,24 +266,24 @@ class MemberServiceTest {
 			request.email(),
 			""
 		);
-		MemberResponse.SignupResponse response = new MemberResponse.SignupResponse(member.getId(), request.username());
+		MemberResponse.SignUpResponse response = new MemberResponse.SignUpResponse(member.getId(), request.username());
 
 		given(memberRepository.save(any(Member.class))).willReturn(member);
 		//when
-		MemberResponse.SignupResponse signupResponse = memberService.signup(request);
+		MemberResponse.SignUpResponse signUpResponse = memberService.signUp(request);
 
 		//then
 		verify(memberRepository, times(1)).save(any(Member.class));
 
-		assertThat(signupResponse.id()).isEqualTo(member.getId());
-		assertThat(signupResponse.username()).isEqualTo(request.username());
+		assertThat(signUpResponse.id()).isEqualTo(member.getId());
+		assertThat(signUpResponse.username()).isEqualTo(request.username());
 	}
 
 	@Test
 	@DisplayName("Sign in 비밀번호 불일치 테스트")
-	void testSigninWithNotMatchingPassword() {
+	void testSignInWithNotMatchingPassword() {
 		//given
-		MemberRequest.SignupRequest request = new MemberRequest.SignupRequest("pjh123", "123456789", "홍길동",
+		MemberRequest.SignUpRequest request = new MemberRequest.SignUpRequest("pjh123", "123456789", "홍길동",
 			"user123@gmail.com", "01012345678");
 		Member member = new Member(
 			1L,
@@ -295,18 +295,18 @@ class MemberServiceTest {
 			""
 		);
 		String notMatchingPassword = "876543210";
-		MemberRequest.SigninRequest signinRequest = new MemberRequest.SigninRequest(member.getUsername(),
+		MemberRequest.SignInRequest signInRequest = new MemberRequest.SignInRequest(member.getUsername(),
 			notMatchingPassword);
 
-		given(memberRepository.findByUsername(signinRequest.username())).willReturn(Optional.of(member));
-		given(passwordEncoder.matches(signinRequest.password(), member.getPassword())).willReturn(false);
+		given(memberRepository.findByUsername(signInRequest.username())).willReturn(Optional.of(member));
+		given(passwordEncoder.matches(signInRequest.password(), member.getPassword())).willReturn(false);
 
 		//when, then
-		assertThatThrownBy(() -> memberService.signin(signinRequest.username(), signinRequest.password())).isInstanceOf(
+		assertThatThrownBy(() -> memberService.signIn(signInRequest.username(), signInRequest.password())).isInstanceOf(
 			BusinessException.class);
 
-		verify(memberRepository, times(1)).findByUsername(signinRequest.username());
-		verify(passwordEncoder, times(1)).matches(signinRequest.password(), member.getPassword());
+		verify(memberRepository, times(1)).findByUsername(signInRequest.username());
+		verify(passwordEncoder, times(1)).matches(signInRequest.password(), member.getPassword());
 	}
 
 	@Test
@@ -324,11 +324,11 @@ class MemberServiceTest {
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
 		String[] roles = {String.valueOf(Role.MEMBER)};
-		MemberRequest.SigninRequest request = new MemberRequest.SigninRequest(
+		MemberRequest.SignInRequest request = new MemberRequest.SignInRequest(
 			member.getUsername(),
 			"123456789"
 		);
-		MemberResponse.SigninResponse response = new MemberResponse.SigninResponse(
+		MemberResponse.SignInResponse response = new MemberResponse.SignInResponse(
 			member.getId(),
 			member.getUsername(),
 			accessToken,
@@ -343,7 +343,7 @@ class MemberServiceTest {
 		given(tokenService.save(refreshToken, member.getId())).willReturn(refreshToken);
 
 		//when
-		MemberResponse.SigninResponse signinResponse = memberService.signin(request.username(), request.password());
+		MemberResponse.SignInResponse signInResponse = memberService.signIn(request.username(), request.password());
 
 		//then
 		verify(passwordEncoder, times(1)).matches(request.password(), member.getPassword());
@@ -352,10 +352,10 @@ class MemberServiceTest {
 		verify(jwt, times(1)).generateRefreshToken();
 		verify(tokenService, times(1)).save(refreshToken, member.getId());
 
-		assertThat(signinResponse.accessToken()).isEqualTo(accessToken);
-		assertThat(signinResponse.refreshToken()).isEqualTo(refreshToken);
-		assertThat(signinResponse.id()).isEqualTo(member.getId());
-		assertThat(signinResponse.username()).isEqualTo(member.getUsername());
+		assertThat(signInResponse.accessToken()).isEqualTo(accessToken);
+		assertThat(signInResponse.refreshToken()).isEqualTo(refreshToken);
+		assertThat(signInResponse.id()).isEqualTo(member.getId());
+		assertThat(signInResponse.username()).isEqualTo(member.getUsername());
 	}
 
 	@Test

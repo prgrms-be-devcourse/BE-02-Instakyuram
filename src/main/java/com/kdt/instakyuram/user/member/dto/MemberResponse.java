@@ -13,12 +13,12 @@ public record MemberResponse(
 	String profileImageName
 ) {
 
-	public record SignupResponse(
+	public record SignUpResponse(
 		Long id,
 		String username) {
 	}
 
-	public record SigninResponse(Long id, String username, String accessToken, String refreshToken, String[] roles) {
+	public record SignInResponse(Long id, String username, String accessToken, String refreshToken, String[] roles) {
 	}
 
 	@Builder

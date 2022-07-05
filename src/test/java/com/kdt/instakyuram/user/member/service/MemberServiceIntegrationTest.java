@@ -30,8 +30,6 @@ import com.kdt.instakyuram.user.member.domain.MemberRepository;
 import com.kdt.instakyuram.user.member.dto.MemberConverter;
 import com.kdt.instakyuram.user.member.dto.MemberRequest;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
-import com.kdt.instakyuram.user.member.service.MemberGiver;
-import com.kdt.instakyuram.user.member.service.MemberService;
 
 @SpringBootTest
 @Transactional
@@ -174,158 +172,158 @@ class MemberServiceIntegrationTest {
 	@DisplayName("sign in 성공 테스트")
 	void testSigninSuccess() {
 		//given
-		MemberRequest.SignupRequest signupRequest = new MemberRequest.SignupRequest("pjh123", password, "홍길동",
+		MemberRequest.SignUpRequest signUpRequest = new MemberRequest.SignUpRequest("pjh123", password, "홍길동",
 			"user123@gmail.com", "01012345678");
-		MemberResponse.SignupResponse signupResponse = memberGiver.signup(signupRequest);
+		MemberResponse.SignUpResponse signUpResponse = memberGiver.signUp(signUpRequest);
 
 		//when
-		MemberRequest.SigninRequest signinRequest = new MemberRequest.SigninRequest(signupRequest.username(),
-			signupRequest.password());
-		MemberResponse.SigninResponse signinResponse = memberGiver.signin(signinRequest.username(),
-			signinRequest.password());
+		MemberRequest.SignInRequest signInRequest = new MemberRequest.SignInRequest(signUpRequest.username(),
+			signUpRequest.password());
+		MemberResponse.SignInResponse signInResponse = memberGiver.signIn(signInRequest.username(),
+			signInRequest.password());
 
 		//then
-		assertThat(signinResponse.username()).isEqualTo(signinRequest.username());
-		assertThat(signinResponse.id()).isEqualTo(signupResponse.id());
-		assertThat(signinResponse.accessToken()).isNotNull();
-		assertThat(signinResponse.refreshToken()).isNotNull();
+		assertThat(signInResponse.username()).isEqualTo(signInRequest.username());
+		assertThat(signInResponse.id()).isEqualTo(signUpResponse.id());
+		assertThat(signInResponse.accessToken()).isNotNull();
+		assertThat(signInResponse.refreshToken()).isNotNull();
 	}
 
 	@Test
 	@DisplayName("Sign in 비밀번호 불일치 테스트")
-	void testSigninWithNotMatchingPassword() {
+	void testSignInWithNotMatchingPassword() {
 		//given
-		MemberRequest.SignupRequest signupRequest = new MemberRequest.SignupRequest("pjh123", password, "홍길동",
+		MemberRequest.SignUpRequest signUpRequest = new MemberRequest.SignUpRequest("pjh123", password, "홍길동",
 			"user123@gmail.com", "01012345678");
-		MemberResponse.SignupResponse signupResponse = memberGiver.signup(signupRequest);
+		MemberResponse.SignUpResponse signUpResponse = memberGiver.signUp(signUpRequest);
 		String notMatchingPassword = "876543210";
-		MemberRequest.SigninRequest signinRequest = new MemberRequest.SigninRequest(signupRequest.username(),
+		MemberRequest.SignInRequest signInRequest = new MemberRequest.SignInRequest(signUpRequest.username(),
 			notMatchingPassword);
 
 		//when, then
-		assertThatThrownBy(() -> memberGiver.signin(signinRequest.username(), signinRequest.password())).isInstanceOf(
+		assertThatThrownBy(() -> memberGiver.signIn(signInRequest.username(), signInRequest.password())).isInstanceOf(
 			BusinessException.class);
 	}
 
 	@Test
 	@DisplayName("없는 Username으로 Sign in 테스트")
-	void testSigninWithNotExistUsernmae() {
+	void testSignInWithNotExistUsername() {
 		//given
 		String notExistUsername = "NOTEXISTUSERNAME";
-		MemberRequest.SigninRequest signinRequest = new MemberRequest.SigninRequest(notExistUsername, password);
+		MemberRequest.SignInRequest signInRequest = new MemberRequest.SignInRequest(notExistUsername, password);
 
 		//when, then
-		assertThatThrownBy(() -> memberGiver.signin(signinRequest.username(), signinRequest.password())).isInstanceOf(
+		assertThatThrownBy(() -> memberGiver.signIn(signInRequest.username(), signInRequest.password())).isInstanceOf(
 			BusinessException.class);
 	}
 
 	@Test
 	@DisplayName("sign up 성공 테스트")
-	void testSignupSuccess() {
+	void testSignUpSuccess() {
 		//given
-		MemberRequest.SignupRequest signupRequest = new MemberRequest.SignupRequest("pjh123", password, "홍길동",
+		MemberRequest.SignUpRequest signUpRequest = new MemberRequest.SignUpRequest("pjh123", password, "홍길동",
 			"user123@gmail.com", "01012345678");
 
 		//when
-		MemberResponse.SignupResponse signupResponse = memberGiver.signup(signupRequest);
+		MemberResponse.SignUpResponse signUpResponse = memberGiver.signUp(signUpRequest);
 
 		//then
-		assertThat(signupResponse.id()).isNotNull();
-		assertThat(signupResponse.username()).isEqualTo(signupRequest.username());
+		assertThat(signUpResponse.id()).isNotNull();
+		assertThat(signUpResponse.username()).isEqualTo(signUpRequest.username());
 	}
 
 	@Test
 	@DisplayName("중복된 아이디로 가입시 실패 테스트")
-	void testSignupWithDuplicatedUsername() {
+	void testSignUpWithDuplicatedUsername() {
 		//given
-		MemberRequest.SignupRequest signupRequestA = new MemberRequest.SignupRequest("pjh123", password, "홍길동",
+		MemberRequest.SignUpRequest signUpRequestA = new MemberRequest.SignUpRequest("pjh123", password, "홍길동",
 			"user123@gmail.com", "01012345678");
-		MemberRequest.SignupRequest signupRequestB = new MemberRequest.SignupRequest(signupRequestA.username(),
+		MemberRequest.SignUpRequest signUpRequestB = new MemberRequest.SignUpRequest(signUpRequestA.username(),
 			password, "홍길동",
 			"user456@gmail.com", "01012345678");
-		memberGiver.signup(signupRequestA);
+		memberGiver.signUp(signUpRequestA);
 
 		//when, then
-		assertThatThrownBy(() -> memberGiver.signup(signupRequestB)).isInstanceOf(
+		assertThatThrownBy(() -> memberGiver.signUp(signUpRequestB)).isInstanceOf(
 			DataIntegrityViolationException.class);
 	}
 
 	@Test
 	@DisplayName("중복된 이메일로 가입시 실패 테스트")
-	void testSignupWithDuplicatedEmail() {
+	void testSignUpWithDuplicatedEmail() {
 		//given
-		MemberRequest.SignupRequest signupRequestA = new MemberRequest.SignupRequest("pjh123", password, "홍길동",
+		MemberRequest.SignUpRequest signUpRequestA = new MemberRequest.SignUpRequest("pjh123", password, "홍길동",
 			"user123@gmail.com", "01012345678");
-		MemberRequest.SignupRequest signupRequestB = new MemberRequest.SignupRequest("pjh123", password, "홍길동",
-			signupRequestA.email(), "01012345678");
-		memberGiver.signup(signupRequestA);
+		MemberRequest.SignUpRequest signUpRequestB = new MemberRequest.SignUpRequest("pjh123", password, "홍길동",
+			signUpRequestA.email(), "01012345678");
+		memberGiver.signUp(signUpRequestA);
 
 		//when, then
-		assertThatThrownBy(() -> memberGiver.signup(signupRequestB)).isInstanceOf(
+		assertThatThrownBy(() -> memberGiver.signUp(signUpRequestB)).isInstanceOf(
 			DataIntegrityViolationException.class);
 	}
 
 	@Test
 	@DisplayName("이메일정보 null로 가입시 실패 테스트")
-	void testSignupWithNullEmail() {
+	void testSignUpWithNullEmail() {
 		//given
-		MemberRequest.SignupRequest signupRequest = new MemberRequest.SignupRequest("pjh123", password, "홍길동",
+		MemberRequest.SignUpRequest signUpRequest = new MemberRequest.SignUpRequest("pjh123", password, "홍길동",
 			null, "01012345678");
 
 		//when, then
-		assertThatThrownBy(() -> memberGiver.signup(signupRequest)).isInstanceOf(ConstraintViolationException.class);
+		assertThatThrownBy(() -> memberGiver.signUp(signUpRequest)).isInstanceOf(ConstraintViolationException.class);
 	}
 
 	@Test
 	@DisplayName("Username null로 가입시 실패 테스트")
-	void testSignupWithNullUsername() {
+	void testSignUpWithNullUsername() {
 		//given
-		MemberRequest.SignupRequest signupRequest = new MemberRequest.SignupRequest(null, password, "홍길동",
+		MemberRequest.SignUpRequest signUpRequest = new MemberRequest.SignUpRequest(null, password, "홍길동",
 			"user123@gmail.com", "01012345678");
 
 		//when, then
-		assertThatThrownBy(() -> memberGiver.signup(signupRequest)).isInstanceOf(ConstraintViolationException.class);
+		assertThatThrownBy(() -> memberGiver.signUp(signUpRequest)).isInstanceOf(ConstraintViolationException.class);
 	}
 
 	@Test
 	@DisplayName("name null로 가입시 실패 테스트")
-	void testSignupWithNullName() {
+	void testSignUpWithNullName() {
 		//given
-		MemberRequest.SignupRequest signupRequest = new MemberRequest.SignupRequest("pjh123", password, null,
+		MemberRequest.SignUpRequest signUpRequest = new MemberRequest.SignUpRequest("pjh123", password, null,
 			"user123@gmail.com", "01012345678");
 
 		//when, then
-		assertThatThrownBy(() -> memberGiver.signup(signupRequest)).isInstanceOf(ConstraintViolationException.class);
+		assertThatThrownBy(() -> memberGiver.signUp(signUpRequest)).isInstanceOf(ConstraintViolationException.class);
 	}
 
 	@Test
 	@DisplayName("phoneNumber null로 가입시 실패 테스트")
-	void testSignupWithNullPhoneNumber() {
+	void testSignUpWithNullPhoneNumber() {
 		//given
-		MemberRequest.SignupRequest signupRequest = new MemberRequest.SignupRequest("pjh123", password, "홍길동",
+		MemberRequest.SignUpRequest signUpRequest = new MemberRequest.SignUpRequest("pjh123", password, "홍길동",
 			null, "01012345678");
 
 		//when, then
-		assertThatThrownBy(() -> memberGiver.signup(signupRequest)).isInstanceOf(ConstraintViolationException.class);
+		assertThatThrownBy(() -> memberGiver.signUp(signUpRequest)).isInstanceOf(ConstraintViolationException.class);
 	}
 
 	@Test
 	@DisplayName("id로 멤버 단건 조회 성공 테스트")
 	void testFindById() {
 		//given
-		MemberRequest.SignupRequest signupRequest = new MemberRequest.SignupRequest("pjh123", password, "홍길동",
+		MemberRequest.SignUpRequest signUpRequest = new MemberRequest.SignUpRequest("pjh123", password, "홍길동",
 			"user123@gmail.com", "01012345678");
-		MemberResponse.SignupResponse signupResponse = memberGiver.signup(signupRequest);
+		MemberResponse.SignUpResponse signUpResponse = memberGiver.signUp(signUpRequest);
 
 		//when
-		MemberResponse foundMember = memberGiver.findById(signupResponse.id());
+		MemberResponse foundMember = memberGiver.findById(signUpResponse.id());
 
 		//then
-		assertThat(foundMember.id()).isEqualTo(signupResponse.id());
-		assertThat(foundMember.username()).isEqualTo(signupResponse.username());
-		assertThat(foundMember.name()).isEqualTo(signupRequest.name());
-		assertThat(foundMember.email()).isEqualTo(signupRequest.email());
-		assertThat(foundMember.phoneNumber()).isEqualTo(signupRequest.phoneNumber());
+		assertThat(foundMember.id()).isEqualTo(signUpResponse.id());
+		assertThat(foundMember.username()).isEqualTo(signUpResponse.username());
+		assertThat(foundMember.name()).isEqualTo(signUpRequest.name());
+		assertThat(foundMember.email()).isEqualTo(signUpRequest.email());
+		assertThat(foundMember.phoneNumber()).isEqualTo(signUpRequest.phoneNumber());
 	}
 
 	@Test

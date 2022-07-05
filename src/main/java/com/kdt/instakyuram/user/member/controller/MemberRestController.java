@@ -55,23 +55,23 @@ public class MemberRestController {
 	}
 
 	@PostMapping("/signup")
-	ApiResponse<MemberResponse.SignupResponse> signup(@RequestBody MemberRequest.SignupRequest request) {
-		return new ApiResponse<>(memberService.signup(request));
+	ApiResponse<MemberResponse.SignUpResponse> signup(@RequestBody @Valid MemberRequest.SignUpRequest request) {
+		return new ApiResponse<>(memberService.signUp(request));
 	}
 
 	@PostMapping("/signin")
-	public ApiResponse<MemberResponse.SigninResponse> signIn(@RequestBody MemberRequest.SignupRequest signupRequest,
+	public ApiResponse<MemberResponse.SignInResponse> signIn(@RequestBody @Valid MemberRequest.SignInRequest signInRequest,
 		HttpServletRequest request, HttpServletResponse response) {
-		MemberResponse.SigninResponse signinResponse = this.memberService.signin(signupRequest.username(),
-			signupRequest.password());
+		MemberResponse.SignInResponse signInResponse = this.memberService.signIn(signInRequest.username(),
+			signInRequest.password());
 		ResponseCookie accessTokenCookie = ResponseCookie.from(jwt.accessTokenProperties().header(),
-			signinResponse.accessToken()).path("/").build();
+			signInResponse.accessToken()).path("/").build();
 		ResponseCookie refreshTokenCookie = ResponseCookie.from(jwt.refreshTokenProperties().header(),
-			signinResponse.refreshToken()).path("/").build();
+			signInResponse.refreshToken()).path("/").build();
 
-		Jwt.Claims claims = jwt.verify(signinResponse.accessToken());
-		JwtAuthentication authentication = new JwtAuthentication(signinResponse.accessToken(),
-			signinResponse.id(), signinResponse.username());
+		Jwt.Claims claims = jwt.verify(signInResponse.accessToken());
+		JwtAuthentication authentication = new JwtAuthentication(signInResponse.accessToken(),
+			signInResponse.id(), signInResponse.username());
 		JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(authentication, null,
 			jwt.getAuthorities(claims));
 		authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -79,11 +79,11 @@ public class MemberRestController {
 		response.setHeader("Set-Cookie", accessTokenCookie.toString());
 		response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
-		return new ApiResponse<>(signinResponse);
+		return new ApiResponse<>(signInResponse);
 	}
 
 	@PostMapping("/signout")
-	public ApiResponse<String> signout(@AuthenticationPrincipal JwtAuthentication auth, HttpServletRequest request,
+	public ApiResponse<String> signOut(@AuthenticationPrincipal JwtAuthentication auth, HttpServletRequest request,
 		HttpServletResponse response) {
 		if (auth == null) {
 			throw new NotAuthenticationException("로그인이 필요합니다.");
@@ -92,7 +92,7 @@ public class MemberRestController {
 		Arrays.stream(request.getCookies())
 			.filter(cookie -> cookie.getName().equals(jwt.refreshTokenProperties().header()))
 			.findFirst()
-			.ifPresent(cookie -> tokenService.deleteByToken(cookie.getValue()));
+			.ifPresent(cookie -> this.tokenService.deleteByToken(cookie.getValue()));
 		Cookie accessTokenCookie = new Cookie(this.jwt.accessTokenProperties().header(), null);
 		Cookie refreshTokenCookie = new Cookie(this.jwt.refreshTokenProperties().header(), null);
 		accessTokenCookie.setMaxAge(0);

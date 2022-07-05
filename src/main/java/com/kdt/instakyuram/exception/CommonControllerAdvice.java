@@ -29,7 +29,7 @@ public class CommonControllerAdvice {
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(NotFoundException.class)
 	public ModelAndView handleNotFoundException(NotFoundException e) {
-		log.warn("ERROR-456 : {}", e.getMessage(), e);
+		this.log.warn("{}", e.toString(), e);
 
 		return new ModelAndView("error")
 			.addObject("errorMessage", e.getMessage());
@@ -38,7 +38,7 @@ public class CommonControllerAdvice {
 	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler(NotAuthenticationException.class)
 	public ModelAndView handleNotAuthenticationException(NotAuthenticationException e) {
-		log.warn("ERROR-1 : {}", e.getMessage(), e);
+		this.log.warn("{}", e.toString(), e);
 
 		return new ModelAndView("error")
 			.addObject("errorMessage", e.getMessage());

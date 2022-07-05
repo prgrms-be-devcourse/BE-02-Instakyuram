@@ -66,10 +66,6 @@ public class PostImageService {
 		List<PostImage> postImages = postImageRepository.findByPostId(postId);
 		postImageRepository.deleteAll(postImages);
 
-		postImages.stream()
-			.map(postConverter::toDeletePostImageResponse)
-			.toList();
-
 		postImages.forEach(image ->
 			fileStorage.delete(image.getServerFileName(), ResourcePath.POST));
 	}

@@ -162,4 +162,14 @@ class MemberRepositoryTest {
 		return followings;
 	}
 
+	@Test
+	@DisplayName("자신을 제외한 전체 멤버 조회하기")
+	void testFindAllByIdNot(){
+		//given
+
+		//when
+
+		//then
+	}
+
 }

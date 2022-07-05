@@ -2,7 +2,7 @@ package com.kdt.instakyuram.common.file.exception;
 
 public class FileReadException extends FileStorageException {
 
-	public FileReadException() {
+	protected FileReadException() {
 	}
 
 	public FileReadException(String message) {

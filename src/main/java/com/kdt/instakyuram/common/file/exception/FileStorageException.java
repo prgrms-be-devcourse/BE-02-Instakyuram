@@ -1,7 +1,7 @@
 package com.kdt.instakyuram.common.file.exception;
 
 public class FileStorageException extends RuntimeException {
-	public FileStorageException() {
+	protected FileStorageException() {
 	}
 
 	public FileStorageException(String message) {

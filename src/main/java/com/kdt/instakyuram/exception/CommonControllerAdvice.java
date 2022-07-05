@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kdt.instakyuram.common.file.exception.InvalidFileException;
-import com.kdt.instakyuram.util.NotFoundException;
 
 @ControllerAdvice
 public class CommonControllerAdvice {
@@ -24,15 +23,6 @@ public class CommonControllerAdvice {
 		this.log.warn("{}", e.toString(), e);
 
 		return new ModelAndView("error");
-	}
-
-	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(NotFoundException.class)
-	public ModelAndView handleNotFoundException(NotFoundException e) {
-		this.log.warn("{}", e.toString(), e);
-
-		return new ModelAndView("error")
-			.addObject("errorMessage", e.getMessage());
 	}
 
 	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)

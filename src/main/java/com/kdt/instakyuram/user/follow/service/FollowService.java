@@ -22,7 +22,6 @@ public class FollowService {
 		this.followRepository = followRepository;
 	}
 
-	// todo : limit 제한 다시 생각하기
 	public List<Long> findByFollowingIds(Long id) {
 		return followRepository.findByMemberId(id).stream()
 			.map(Follow::getTargetId)

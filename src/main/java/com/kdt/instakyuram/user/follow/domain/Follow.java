@@ -41,6 +41,7 @@ public class Follow extends BaseEntity {
 		if (Objects.isNull(memberId) || Objects.isNull(targetId)) {
 			throw new DomainException("팔로우 하는 대상과 팔로우 받는 대상은 반드시 필요합니다.");
 		}
+
 		checkFollow(memberId, targetId);
 
 		this.id = id;

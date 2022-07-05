@@ -153,14 +153,6 @@ public class MemberService implements MemberGiver {
 			.updateProfileImage(profileImageName);
 	}
 
-	/**
-	 * note: 인증된 사용자가 다른 사람의 팔로우를 볼때!
-	 *
-	 * @param authId
-	 * @param username
-	 * @param lastIdx
-	 * @return
-	 */
 	public List<MemberResponse.FollowerResponse> getFollowers(Long authId, String username, Long lastIdx) {
 
 		List<Long> myFollowerIds = followService.findByMyFollower(

@@ -31,11 +31,6 @@ public class JpaAuditConfig {
 		};
 	}
 
-	/**
-	 * note : anonymous 객체 필터링을 역할
-	 * @param authentication
-	 * @return
-	 */
 	private boolean isAnonymous(Authentication authentication) {
 		return authentication instanceof AnonymousAuthenticationToken;
 	}

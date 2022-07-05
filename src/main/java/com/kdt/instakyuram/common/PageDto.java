@@ -147,7 +147,6 @@ public class PageDto {
 			this.page = result.getPageable().getPageNumber() + 1;
 			this.size = result.getPageable().getPageSize();
 
-			//temp end page
 			int tempEnd = (int)(Math.ceil(page / (double)size)) * size;
 
 			start = tempEnd - (size - 1);

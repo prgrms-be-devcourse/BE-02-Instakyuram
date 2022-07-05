@@ -227,10 +227,6 @@ public class FollowControllerIntegrationTest {
 		return members;
 	}
 
-	/**
-	 * note : 기존에 통합테스트에서 제공했던 것들이 @AuthenticationPrincipal 이 붙으면서 JwtAuthentication 토근으로 변환해야한다.
-	 * resolve : 통합 테스트에서는 Application Context 환경에 실행 환경과 동일하기 때문에
-	 */
 	private void setMockingAuthentication(Long authId) {
 		SimpleGrantedAuthority role_anonymous = new SimpleGrantedAuthority("ROLE_MEMBER");
 		List<GrantedAuthority> authorities = new ArrayList<>();

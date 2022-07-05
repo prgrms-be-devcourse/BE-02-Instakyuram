@@ -23,7 +23,7 @@
                 </div>
                 <div class="right_content_container">
                     <div class="content_comment_container">
-                        <ul class = "content_comment_sub_container">
+                        <ul class="content_comment_sub_container">
                             <div class="item_container">
                                 <div class="profile_image_container">
                                     <img th:src="@{/images/default_profile.jpg}" class="member_profile_img"/>
@@ -42,37 +42,156 @@
                             </div>
                         </ul>
                     </div>
+                    <div class="right_bottom_container">
+                        <div class="write_form_container">
+                            <div class="text_area_container">
+                                <textarea aria-label="댓글 달기..." placeholder="댓글 달기..." class="comment_textarea"
+                                          autocomplete="off" autocorrect="off"></textarea>
+                            </div>
+                            <div class="write_button_container">
+                                <button class="write_button" disabled>게시</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
     </div>
 </main>
-
 </body>
 <script th:inline="javascript">
+    const addNewCommentHtml = (newComment) => {
+        Date.prototype.format = function (f) {
+            if (!this.valueOf())
+                return " ";
+            let weekName = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+            let d = this;
+            return f.replace(/(yyyy|yy|MM|dd|E|hh|mm|ss|a\/p)/gi, function ($1) {
+                switch ($1) {
+                    case "yyyy":
+                        return d.getFullYear();
+                    case "yy":
+                        return (d.getFullYear() % 1000).zf(2);
+                    case "MM":
+                        return (d.getMonth() + 1).zf(2);
+                    case "dd":
+                        return d.getDate().zf(2);
+                    case "E":
+                        return weekName[d.getDay()];
+                    case "HH":
+                        return d.getHours().zf(2);
+                    case "hh":
+                        return ((h = d.getHours() % 12) ? h : 12).zf(2);
+                    case "mm":
+                        return d.getMinutes().zf(2);
+                    case "ss":
+                        return d.getSeconds().zf(2);
+                    case "a/p":
+                        return d.getHours() < 12 ? "오전" : "오후";
+                    default:
+                        return $1;
+                }
+            });
+        };
+        String.prototype.string = function (len) {
+            var s = '', i = 0;
+            while (i++ < len) {
+                s += this;
+            }
+            return s;
+        };
+        String.prototype.zf = function (len) {
+            return "0".string(len - this.length) + this;
+        };
+        Number.prototype.zf = function (len) {
+            return this.toString().zf(len);
+        };
+
+        let commentHTML = "";
+        let d = new Date().format("yyyy-MM-ddThh:mm:ss");
+
+        commentHTML += `<li class='comments__item'>`;
+        commentHTML += `<div class='comments__item__container'>`;
+        commentHTML += `<div class='profile_image_container'>`;
+        commentHTML += `<img class='profile_image' src='/api/profiles/${newComment.member.id}/image' alt='profile'/> </div>`
+        commentHTML += `<div class='comments__item__comment'>` +
+            `<p class='comment__item__content'>` +
+            `<b> ${newComment.member.username} </b>` +
+            `<br/> ${newComment.content} </p>` +
+            `<p class='comments__item__history'>  ${d} ∙  좋아요  0 개 </p></br>
+                                    </div>`
+        commentHTML += `<span class='comments__item__like'>` +
+            `<img class='like_image' src='/images/icon/favorite.png\' alt='like' />` +
+            `</span>
+                 </li>`
+        document.querySelector(".comments").insertAdjacentHTML("afterbegin", commentHTML);
+        document.querySelector(".write_button").disabled = true;
+        document.querySelector(".write_button").classList.remove("active");
+    }
+
+    const onCommentSubmit = () => {
+        const textArea = document.querySelector(".comment_textarea");
+        axios({
+            method: "POST",
+            url: '/api/comments/',
+            data: {
+                "postId": [[${id}]],
+                "content": textArea.value
+            }
+        }).then((res) => {
+            addNewCommentHtml(res.data.response);
+
+
+        }).catch(error => {
+            console.log("error" + error);
+        })
+        textArea.value = ""
+    }
+    document.querySelector(".write_button").addEventListener('click', onCommentSubmit);
+</script>
+
+<script th:inline="javascript">
+    const changeButtonActivation = (length) => {
+        const writeButton = document.querySelector(".write_button");
+        if (length >= 1) {
+            writeButton.classList.add("active");
+            writeButton.disabled = false;
+
+        } else {
+            writeButton.disabled = true;
+            writeButton.classList.remove("active");
+        }
+    }
+    document.querySelector(".comment_textarea").addEventListener("input", (event) => {
+        changeButtonActivation(event.target.value.length)
+    });
+</script>
+
+<script th:inline="javascript">
+
+
     const getPost = (id) => {
         axios({
             method: "GET",
             url: '/api/posts/' + id,
         }).then((res) => {
             renderPost(res.data.response)
-            console.log(res.data.response);
+
         }).catch(error => {
             console.log("error" + error);
         })
     }
 
+
     const renderPost = (post) => {
         let postImage = document.querySelector(".post_container .image_container .post_image");
         const postId = post.id
         const serverFileName = post.postImageResponse[0].serverFileName;
-        console.log(postId);
-        console.log(serverFileName);
-        postImage.setAttribute("src", "http://localhost:8080/api/posts/" +postId + "/image/" + serverFileName)
+        postImage.setAttribute("src", "http://localhost:8080/api/posts/" + postId + "/image/" + serverFileName)
         document.querySelector(".item_container .author_username").innerHTML = post.member.username;
-        document.querySelector(".content_comment_sub_container .item_container .profile_image_container .member_profile_img").setAttribute("src","http://localhost:8080/api/profiles/" +post.member.id + "/image")
-        document.querySelector(".header .profile_image_container .member_profile_img").setAttribute("src","http://localhost:8080/api/profiles/" +post.member.id + "/image")
+        document.querySelector(".content_comment_sub_container .item_container .profile_image_container .member_profile_img").setAttribute("src", "http://localhost:8080/api/profiles/" + post.member.id + "/image")
+        document.querySelector(".header .profile_image_container .member_profile_img").setAttribute("src", "http://localhost:8080/api/profiles/" + post.member.id + "/image")
         document.querySelector(".header .author_username").innerHTML = post.member.username;
         document.querySelector(".post_content").innerHTML = post.content;
 
@@ -82,7 +201,7 @@
 <script th:inline="javascript">
     let cursorId;
 
-    const id =  [[${id}]];
+    const id = [[${id}]];
     const search = (id) => {
         axios({
             method: "GET",
@@ -93,7 +212,6 @@
                 "limit": 5,
             }
         }).then((res) => {
-            console.log(res.data.response);
             renderComments(res.data.response);
 
         }).catch(error => {
@@ -122,7 +240,7 @@
             cursorId = comment.id;
         });
 
-        document.querySelector(".comments").insertAdjacentHTML("beforeend", commentsHTML);
+        document.querySelector(".comments").insertAdjacentHTML("결beforeend", commentsHTML);
     }
 
     const getScrollTop = () => {

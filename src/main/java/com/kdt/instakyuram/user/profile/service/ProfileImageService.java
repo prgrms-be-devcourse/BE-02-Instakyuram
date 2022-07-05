@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.user.member.service;
+package com.kdt.instakyuram.user.profile.service;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;

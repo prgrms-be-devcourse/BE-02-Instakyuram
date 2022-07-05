@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.user.member.service;
+package com.kdt.instakyuram.user.profile.service;
 
 import java.util.UUID;
 
@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kdt.instakyuram.user.follow.service.FollowService;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.article.post.service.PostService;
+import com.kdt.instakyuram.user.member.service.MemberService;
 
 @Service
 @Transactional(readOnly = true)

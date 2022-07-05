@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kdt.instakyuram.article.post.domain.PostPagingCursor;
 import com.kdt.instakyuram.article.post.dto.PostLikeResponse;
 import com.kdt.instakyuram.article.post.dto.PostRequest;
 import com.kdt.instakyuram.article.post.dto.PostResponse;
@@ -111,9 +112,13 @@ public class PostRestController {
 
 	@Operation(summary = "post 썸네일 이미지 정보 조회", description = "post 썸네일 이미지의 정보를 조회합니다.")
 	@GetMapping("/thumbnails")
-	public ApiResponse<List<PostImageResponse.ThumbnailResponse>> getThumbnails(
-		@RequestParam String username) {
-		return new ApiResponse<>(postService.findPostThumbnailsByUsername(username));
+	public ApiResponse<PageDto.CursorResponse<PostImageResponse.ThumbnailResponse, PostPagingCursor>> getThumbnailsPaging(
+		@Valid PageDto.PostCursorPageRequest pageRequest, @RequestParam String username) {
+
+		PageDto.CursorResponse<PostImageResponse.ThumbnailResponse, PostPagingCursor> response = postService.findPostThumbnailsByUsername(
+			username, pageRequest);
+
+		return new ApiResponse<>(response);
 	}
 
 	@PatchMapping("/lock/{id}")

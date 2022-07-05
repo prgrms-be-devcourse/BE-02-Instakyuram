@@ -37,12 +37,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
+
+		logRequest(request);
+
 		try {
 			authenticate(getAccessToken(request), request, response);
 		} catch (JwtTokenNotFoundException e) {
 			this.log.warn(e.getMessage());
 		}
 		filterChain.doFilter(request, response);
+	}
+
+	private void logRequest(HttpServletRequest request) {
+		log.info(String.format(
+			"[%s] %s %s",
+			request.getMethod(),
+			request.getRequestURI().toLowerCase(),
+			request.getQueryString() == null ? "" : request.getQueryString())
+		);
 	}
 
 	private String getAccessToken(HttpServletRequest request) {

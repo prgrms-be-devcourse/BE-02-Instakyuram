@@ -100,10 +100,6 @@ public class PostConverter {
 		return new PostResponse.UpdateResponse(post.getId(), post.getContent());
 	}
 
-	public PostImageResponse.DeleteResponse toDeletePostImageResponse(PostImage postImage) {
-		return new PostImageResponse.DeleteResponse(postImage.getServerFileName(), postImage.getPath());
-	}
-
 	public PostLikeResponse toPostLikeResponse(PostLike postLike) {
 		return PostLikeResponse.builder().postId(postLike.getId()).build();
 	}

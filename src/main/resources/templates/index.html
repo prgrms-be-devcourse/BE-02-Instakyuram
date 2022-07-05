@@ -1,10 +1,160 @@
 <!doctype html>
 <html lang="en">
 <th:block th:replace="fragments/head :: headFragment('instakyuram')"></th:block>
+<link rel="stylesheet" href="/css/main.css"/>
 <body>
 <div th:replace="fragments/header :: headerFragment(username = ${member.username})"></div>
-<main>
-    <h2 class="title" th:text="${member.username}"></h2>
-</main>
+<div class='container'>
+    <section>
+        <div class='follows__container'></div>
+        <div class='post__container'>
+        </div>
+    </section>
+</div>
+<script>
+    const post_container = document.querySelector('.post__container');
+
+    const size = 2;
+
+    let hasNext = true;
+    let lastId = 1000000;
+
+    const search = (lastId) => {
+        if (!hasNext) {
+            return;
+        }
+
+        axios({
+            method: "GET",
+            url: 'api/posts',
+            params: {
+                'size': size,
+                'postPagingCriteria.startDate': '2022-06-01 00:00:00',
+                'postPagingCriteria.endDate': '2022-08-01 00:00:00',
+                'postPagingCriteria.id': lastId,
+            }
+        }).then((res) => {
+            renderPosts(res.data.response);
+        }).catch((error) => {
+            console.error('error' + error);
+        })
+    }
+
+    search(lastId);
+
+    const renderPosts = (posts) => {
+        console.log(posts)
+        hasNext = posts.hasNext;
+        lastId = posts.lastId;
+
+        let postsHTML = '';
+        posts.responses.map(post => {
+            console.log(post.postImageResponse[0].serverFileName + ', ' + post.postImageResponse)
+            postsHTML += `
+                <div class="post_item">
+                    <div class='post__header'>
+                        <div class='post__writer'>
+                            <div class='post__profile_container'>
+                                <img
+                                        class='profile_image'
+                                        src="/images/icon/account.png"
+                                        alt=""
+                                />
+                            </div>
+                            <div class='post__writer_info'>
+                                <p class='post__writer_username'>${post.member.username}</p>
+                                <p class='post__writer_location'>Big Ben, London</p>
+                            </div>
+                        </div>
+                        <div class='post__header_button'>
+                            <img
+                                    class='more_horiz_button'
+                                    src="/images/icon/more_horiz.png"
+                                    alt=""
+                            />
+                        </div>
+                    </div>
+                    <div class='post__images'>
+                        <img
+                                class='post__image'
+                                src=${post.postImageResponse[0].serverFileName == null ? '/images/sample.png' : 'http://localhost:8080/api/posts/' + post.id + '/image/' + post.postImageResponse[0].serverFileName}
+                                alt=""
+                        />
+                    </div>
+                    <div class='post__buttons'>
+                        <div class='post__buttons__left'>
+                            <img
+                                    class='post_like_button'
+                                    src="/images/icon/favorite.png"
+                                    alt=""
+                            />
+                            <img
+                                    class='post_comment_button'
+                                    src="/images/icon/comment.png"
+                                    alt=""
+                            />
+                            <img
+                                    class='post_near_me_button'
+                                    src="/images/icon/near_me.png"
+                                    alt=""
+                            />
+                        </div>
+                        <div class='post__buttons__right'>
+                            <img
+                                    class='post_bookmark_button'
+                                    src="/images/icon/bookmark.png"
+                                    alt=""
+                            />
+                        </div>
+                    </div>
+                    <div class='post__likes'>
+                        <p>좋아요 ${post.totalPostLike}개</p>
+                    </div>
+                    <div class='post__comments'>
+                        <p>
+                            <span class='post__comment__writer'>${post.member.username}</span> ${post.content}
+                        </p>
+                    </div>
+                    <p class='post_created_date'>2일 전</p>
+                </div>
+            `
+        });
+
+        post_container.insertAdjacentHTML("beforeend", postsHTML);
+    }
+
+    const getScrollTop = () => {
+        return (window.scrollY !== undefined) ? window.scrollY : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+    };
+
+    const getDocumentHeight = () => {
+        const body = document.body;
+        const html = document.documentElement;
+
+        return Math.max(
+            body.scrollHeight, body.offsetHeight,
+            html.clientHeight, html.scrollHeight, html.offsetHeight
+        );
+    };
+
+    let throttleCheck;
+    const throttle = (callback, milliseconds) => {
+        if (!throttleCheck) {
+            throttleCheck = setTimeout(() => {
+                callback();
+                throttleCheck = false;
+            }, milliseconds);
+        }
+    };
+
+    const onscroll = () => {
+        throttle(() => {
+            if (getScrollTop() < getDocumentHeight() - window.innerHeight)
+                return;
+            search(lastId);
+        }, 700);
+    };
+    window.addEventListener("scroll", onscroll);
+</script>
 </body>
 </html>

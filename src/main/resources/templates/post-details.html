@@ -71,6 +71,8 @@
         console.log(serverFileName);
         postImage.setAttribute("src", "http://localhost:8080/api/posts/" +postId + "/image/" + serverFileName)
         document.querySelector(".item_container .author_username").innerHTML = post.member.username;
+        document.querySelector(".content_comment_sub_container .item_container .profile_image_container .member_profile_img").setAttribute("src","http://localhost:8080/api/profiles/" +post.member.id + "/image")
+        document.querySelector(".header .profile_image_container .member_profile_img").setAttribute("src","http://localhost:8080/api/profiles/" +post.member.id + "/image")
         document.querySelector(".header .author_username").innerHTML = post.member.username;
         document.querySelector(".post_content").innerHTML = post.content;
 

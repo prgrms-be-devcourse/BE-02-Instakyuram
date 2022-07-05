@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kdt.instakyuram.common.ApiResponse;
+import com.kdt.instakyuram.exception.NotAuthenticationException;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 import com.kdt.instakyuram.user.member.service.ProfileService;
 
@@ -35,8 +36,11 @@ public class ProfileRestController {
 	}
 
 	@PutMapping("/image")
-	public ApiResponse<String> update(@AuthenticationPrincipal JwtAuthentication principal,
+	public ApiResponse<String> update(@AuthenticationPrincipal JwtAuthentication auth,
 		MultipartFile profileImage) {
-		return new ApiResponse<>(this.profileService.updateProfileImage(principal.id(), profileImage));
+		if (auth == null)
+			throw new NotAuthenticationException("로그인이 필요합니다.");
+
+		return new ApiResponse<>(this.profileService.updateProfileImage(auth.id(), profileImage));
 	}
 }

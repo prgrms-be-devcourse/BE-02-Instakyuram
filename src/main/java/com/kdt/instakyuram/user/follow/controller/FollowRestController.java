@@ -1,8 +1,10 @@
 package com.kdt.instakyuram.user.follow.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +35,7 @@ public class FollowRestController {
 	}
 
 	@Operation(summary = "팔로우", description = "해당 사용자를 팔로우 합니다.")
-	@GetMapping("/follow/{memberId}")
+	@PostMapping("/follow/{memberId}")
 	public ApiResponse<String> follow(
 		@AuthenticationPrincipal JwtAuthentication auth,
 		@PathVariable Long memberId) {
@@ -42,7 +44,7 @@ public class FollowRestController {
 	}
 
 	@Operation(summary = "언 팔로우", description = "이미 팔로우가 되어있는 사용자를 언팔로우 합니다.")
-	@GetMapping("/unfollow/{memberId}")
+	@DeleteMapping("/unfollow/{memberId}")
 	public ApiResponse<String> unfollow(
 		@AuthenticationPrincipal JwtAuthentication auth,
 		@PathVariable Long memberId) {

@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,11 +27,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kdt.instakyuram.auth.service.TokenService;
+import com.kdt.instakyuram.security.WebSecurityConfig;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 import com.kdt.instakyuram.security.jwt.JwtAuthenticationToken;
 import com.kdt.instakyuram.user.follow.service.FollowService;
 
-@WebMvcTest(FollowRestController.class)
+@WebMvcTest({FollowRestController.class, WebSecurityConfig.class})
 class FollowRestControllerTest {
 
 	@Autowired
@@ -40,6 +44,10 @@ class FollowRestControllerTest {
 
 	@MockBean
 	private FollowService followService;
+
+	@MockBean
+	private TokenService tokenService;
+
 
 	@Test
 	@DisplayName("팔로우가 가능 할 경우 응답받기 : true")
@@ -97,7 +105,7 @@ class FollowRestControllerTest {
 		setMockingAuthentication(authId);
 
 		//when
-		ResultActions perform = mockMvc.perform(get("/api/friendships/follow/" + targetId))
+		ResultActions perform = mockMvc.perform(post("/api/friendships/follow/" + targetId))
 			.andDo(print());
 
 		//then
@@ -121,7 +129,7 @@ class FollowRestControllerTest {
 		setMockingAuthentication(authId);
 
 		//when
-		ResultActions perform = mockMvc.perform(get("/api/friendships/unfollow/" + targetId))
+		ResultActions perform = mockMvc.perform(delete("/api/friendships/unfollow/" + targetId))
 			.andDo(print());
 
 		//then

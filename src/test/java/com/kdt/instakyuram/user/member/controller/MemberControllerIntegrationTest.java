@@ -62,7 +62,7 @@ public class MemberControllerIntegrationTest {
 		setMockingAuthentication(authId);
 		int requestPage = 2;
 		int requestSize = 5;
-		String htmlTittleContent = "사용자가 팔로잉 할 대상 찾는 사용자 목록";
+		String htmlTittleContent = "Instakyurammers";
 
 		PageDto.Request request = new PageDto.Request(requestPage, requestSize);
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));

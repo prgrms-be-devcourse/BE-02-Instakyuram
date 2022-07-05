@@ -50,7 +50,7 @@ public class PostController {
 		@PathVariable Long id,
 		@AuthenticationPrincipal JwtAuthentication auth, Model model
 	) {
-		PostResponse.FindAllResponse post = postService.findById(auth.id(), id);
+		PostResponse.FindAllResponse post = postService.findById(id);
 		model.addAttribute("member", auth);
 		model.addAttribute("post", post);
 

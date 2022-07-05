@@ -16,4 +16,6 @@ public interface FileStorage {
 
 	void rollback(List<String> files);
 
+	void delete(String serverFileName, ResourcePath path);
+
 }

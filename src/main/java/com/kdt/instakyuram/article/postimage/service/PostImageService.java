@@ -62,13 +62,16 @@ public class PostImageService {
 	}
 
 	@Transactional
-	public List<PostImageResponse.DeleteResponse> delete(Long postId) {
+	public void delete(Long postId) {
 		List<PostImage> postImages = postImageRepository.findByPostId(postId);
 		postImageRepository.deleteAll(postImages);
 
-		return postImages.stream()
+		postImages.stream()
 			.map(postConverter::toDeletePostImageResponse)
 			.toList();
+
+		postImages.forEach(image ->
+			fileStorage.delete(image.getServerFileName(), ResourcePath.POST));
 	}
 
 	public PostImageResponse.ThumbnailResponse findThumbnailByPostId(Long postId) {

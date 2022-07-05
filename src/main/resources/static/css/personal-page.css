@@ -8,6 +8,7 @@ main {
     min-height: 100vh;
 }
 
+
 body {
     height: 100%;
 }
@@ -142,12 +143,20 @@ body {
     display: block;
     margin-right: 28px;
     width: 100%;
-
-    flex: 1 0 0%;
     flex-direction: column;
 }
 
 .article_img {
     height: 100%;
     width: 100%;
+}
+
+.post_count,
+.follower_count,
+.follow_count {
+    font-weight: 600;
+}
+
+.post_link {
+    flex: 1 0 0;
 }

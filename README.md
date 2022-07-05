@@ -80,17 +80,11 @@
 👉 <a href="./infra/README.md">인프라 소개 페이지</a>
 
 **🐳 도커 설치 방법**
-- [도커 맥 설치 페이지](https://docs.docker.com/desktop/mac/install/) / [도커 윈도우 설치 페이지](https://docs.docker.com/desktop/windows/install/)
-  
-  각각 환경에 맞게 위의 페이지에서 설치 후에 사용 가능 합니다.
-- Mac - Hombrew 사용
-  ```shell
-  # 설치
-  brew install --cask docker
-  
-  # 설치 후 버전 확인
-  docker --version
-  ```
+
+[도커 맥 설치 페이지](https://docs.docker.com/desktop/mac/install/) / [도커 윈도우 설치 페이지](https://docs.docker.com/desktop/windows/install/)
+<br/>
+각각 환경에 맞게 위의 페이지에서 설치 후에 사용 가능 합니다.
+
 ### .env 파일 설정 값
 프로젝트 루트 경로에 위치하도록 합니다.
 

@@ -51,7 +51,7 @@
         console.log('unfollow');
         let memberId = my.parentNode.parentNode.children[0].innerHTML;
         fetch('/api/friendships/unfollow/' + memberId, {
-            method: "GET",
+            method: "DELETE",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify()
         }).then((response) => {
@@ -69,7 +69,7 @@
         console.log('follow')
         let memberId = my.parentNode.parentNode.children[0].innerHTML;
         fetch('/api/friendships/follow/' + memberId, {
-            method: "GET",
+            method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify()
         }).then((response) => {

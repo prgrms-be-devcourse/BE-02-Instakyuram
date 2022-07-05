@@ -25,7 +25,7 @@ public class Member extends BaseEntity {
 
 	@Size(min = 6, max = 24)
 	@Column(unique = true)
-	@Pattern(regexp = "^[a-z0-9]*$")
+	@Pattern(regexp = "^[a-z0-9_]*$")
 	@NotBlank
 	private String username;
 

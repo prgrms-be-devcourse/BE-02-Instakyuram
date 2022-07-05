@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 public record MemberRequest() {
 	public record SignUpRequest(
 		@Size(min = 6, max = 24)
-		@Pattern(regexp = "^[a-z0-9]*$")
+		@Pattern(regexp = "^[a-z0-9_]*$")
 		@NotBlank
 		String username,
 

@@ -13,7 +13,7 @@ public interface MemberGiver {
 
 	List<MemberResponse> findAllFollowingIncludeMe(Long id);
 
-	MemberResponse.SigninResponse signin(String username, String password);
+	MemberResponse.SignInResponse signIn(String username, String password);
 
-	MemberResponse.SignupResponse signup(MemberRequest.SignupRequest request);
+	MemberResponse.SignUpResponse signUp(MemberRequest.SignUpRequest request);
 }

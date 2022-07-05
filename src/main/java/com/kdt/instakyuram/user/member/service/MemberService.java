@@ -79,7 +79,7 @@ public class MemberService implements MemberGiver {
 		);
 	}
 
-	public MemberResponse.SignupResponse signup(MemberRequest.SignupRequest request) {
+	public MemberResponse.SignUpResponse signUp(MemberRequest.SignUpRequest request) {
 		Member member = memberRepository.save(new Member(request.username(),
 			passwordEncoder.encode(request.password()),
 			request.name(),
@@ -88,7 +88,7 @@ public class MemberService implements MemberGiver {
 			"")
 		);
 
-		return new MemberResponse.SignupResponse(member.getId(), member.getUsername());
+		return new MemberResponse.SignUpResponse(member.getId(), member.getUsername());
 	}
 
 	// todo : 요청한 사용자의 정보는 빼야함! -> 테스트 코드 변경
@@ -122,7 +122,7 @@ public class MemberService implements MemberGiver {
 			.toList();
 	}
 
-	public MemberResponse.SigninResponse signin(String username, String password) {
+	public MemberResponse.SignInResponse signIn(String username, String password) {
 		Member foundMember = memberRepository.findByUsername(username)
 			.orElseThrow(() -> new BusinessException(ErrorCode.AUTHENTICATION_FAILED,
 				MessageFormat.format("Username = {0}, Password ={1}", username, password)));
@@ -135,7 +135,7 @@ public class MemberService implements MemberGiver {
 		String refreshToken = jwt.generateRefreshToken();
 		tokenService.save(refreshToken, foundMember.getId());
 
-		return new MemberResponse.SigninResponse(foundMember.getId(), username, accessToken, refreshToken, roles);
+		return new MemberResponse.SignInResponse(foundMember.getId(), username, accessToken, refreshToken, roles);
 	}
 
 	public Long countMyFollowing(Long memberId) {

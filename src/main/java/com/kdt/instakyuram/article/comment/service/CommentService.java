@@ -52,7 +52,6 @@ public class CommentService implements CommentGiver {
 		);
 	}
 
-	// TODO [COMMENT] 비관적 락 테스트
 	@Transactional
 	public CommentResponse modify(Long id, Long memberId, String content) {
 		return commentRepository.findByIdAndMemberId_Locked_Pessimistic(id, memberId)
@@ -122,10 +121,6 @@ public class CommentService implements CommentGiver {
 		return commentRepository.findByPostIn(posts).stream()
 			.map(commentConverter::toResponse)
 			.toList();
-	}
-
-	public List<CommentFindAllResponse> findAll(Long postId, Long memberId) {
-		return commentRepository.findAllByPostIdAndMemberId(postId, memberId);
 	}
 
 	public List<CommentFindAllResponse> findAll(Long postId, Long memberId, Long id, Integer limit) {

@@ -6,6 +6,5 @@ import com.kdt.instakyuram.article.comment.dto.CommentFindAllResponse;
 
 public interface CommentRepositoryCustom {
 
-	List<CommentFindAllResponse> findAllByPostIdAndMemberId(Long postId, Long memberId);
 	List<CommentFindAllResponse> findAllByPostIdAndMemberId(Long postId, Long memberId, Long id, Integer limit);
 }

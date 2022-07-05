@@ -91,3 +91,49 @@ brew install node
 ```
 npm install
 ```
+
+### Git submodule
+Submodule Repository - [https://github.com/instakyuram/instakyuram-config](https://github.com/instakyuram/instakyuram-config)
+private 저장소로써, 권한이 없다면 접근 불가능 합니다.
+
+- 처음 프로젝트 Clone 받았을 때
+  - Submodule initializing을 해줘야 합니다.
+  - 항상 서브 모듈은 main 브랜치에 업데이트 되어야 합니다.
+```bash
+# 서브모듈 이니셜라이징
+git submodule init
+
+# 서브 모듈 업데이트
+git submodule update
+
+# 모든 서브모듈에서 main으로 checkout 합니다.
+git submodule foreach git checkout main
+```
+
+- 이 후 변경 사항을 가져올 때
+```bash
+git submodule update --remote
+
+#또는
+ 
+git submodule update --remote --merge
+```
+
+- Submoudle에 대한 변경 사항을 commit/push 할 때 주의점
+  - Submodule에 먼저 commit/push를 하고 MainModule에서 commit/push해야 변경사항을 추적 가능합니다.
+
+- 안전하게 Push할 수 있는 명령어
+```bash
+#submodule이 모두 push된 상태인지 확인하고, 확인이 되면 main project를 push
+git push --recurse-submodules=check
+# submodule을 모두 push하고, 성공하면 main project를 push
+git push --recurse-submodules=on-demand 
+```
+
+- 위 기능을 기본 push 명령어로 설정하는 법
+```bash
+# push시에 항상 check
+git config push.recurseSubmodules check
+# push 시에 항상 서브 모듈을 push
+git config push.recurseSubmodules on-demand
+```

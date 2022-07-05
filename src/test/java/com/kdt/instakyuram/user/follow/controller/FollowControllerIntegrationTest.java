@@ -1,7 +1,9 @@
 package com.kdt.instakyuram.user.follow.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -110,7 +112,7 @@ public class FollowControllerIntegrationTest {
 		setMockingAuthentication(auth.getId());
 
 		//when
-		ResultActions perform = mockMvc.perform(get("/api/friendships/follow/" + target.getId()))
+		ResultActions perform = mockMvc.perform(post("/api/friendships/follow/" + target.getId()))
 			.andDo(print());
 
 		//then
@@ -140,7 +142,7 @@ public class FollowControllerIntegrationTest {
 		setMockingAuthentication(auth.getId());
 
 		//when
-		ResultActions perform = mockMvc.perform(get("/api/friendships/follow/" + target.getId()))
+		ResultActions perform = mockMvc.perform(post("/api/friendships/follow/" + target.getId()))
 			.andDo(print());
 
 		//then
@@ -165,7 +167,7 @@ public class FollowControllerIntegrationTest {
 		setMockingAuthentication(auth.getId());
 
 		//when
-		ResultActions perform = mockMvc.perform(get("/api/friendships/unfollow/" + target.getId()))
+		ResultActions perform = mockMvc.perform(delete("/api/friendships/unfollow/" + target.getId()))
 			.andDo(print());
 
 		//then
@@ -190,7 +192,7 @@ public class FollowControllerIntegrationTest {
 		setMockingAuthentication(auth.getId());
 
 		//when
-		ResultActions perform = mockMvc.perform(get("/api/friendships/unfollow/" + target.getId()))
+		ResultActions perform = mockMvc.perform(delete("/api/friendships/unfollow/" + target.getId()))
 			.andDo(print());
 
 		//then

@@ -70,6 +70,7 @@ img:hover {
 
 .post__image {
     width: 100%;
+    max-height: 550px;
 }
 
 .post__writer_info {

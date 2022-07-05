@@ -21,9 +21,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, CustomizedPos
 
 	List<Post> findAllByMemberId(Long memberId);
 
-	@Query("SELECT p FROM Post p JOIN FETCH p.member m WHERE m.username = :username")
-	List<Post> findAllByUsername(@Param("username") String username);
-
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("SELECT p FROM Post p WHERE p.id = :id AND p.member.id = :memberId")
 	Optional<Post> findByIdAndMemberId_Locked_Pessimistic(Long id, Long memberId);

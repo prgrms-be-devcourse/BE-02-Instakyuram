@@ -1,0 +1,15 @@
+<included>
+    <timestamp datePattern="yyyy-MM-dd" key="LOG_DATE"/>
+
+    <property name="ROOT_PATH" value="./log"/>
+    <property name="SUB_PATH_ERROR" value="error"/>
+    <property name="SUB_PATH_WARN" value="warn"/>
+    <property name="SUB_PATH_DB" value="db"/>
+    <property name="LOG_BACKUP_PATH" value="./log/backup"/>
+
+    <property name="MAX_HISTORY" value="30"/>
+    <property name="TOTAL_SIZE_CAP" value="10GB"/>
+
+    <property name="LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %green([%thread]) %highlight(%-5level) %cyan(%logger{15}) %C.%M.%L :%msg%n"/>
+    <property name="FILE_LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] [%thread] %-5level %logger{15} %C.%M.%L :%msg%n"/>
+</included>

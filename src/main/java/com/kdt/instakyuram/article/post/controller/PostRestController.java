@@ -61,12 +61,11 @@ public class PostRestController {
 		return new ApiResponse<>(postService.findAllRelated(jwtAuthentication.id(), pageRequest));
 	}
 
-	@Operation(summary = "post 단건 상세 조회", description = "해당 id를 통해 post 상세 조회를 할 수 있습니다.")
+	@Operation(summary = "post 단건 상세 조회", description = "id를 통해 단건 post를 상세 조회 할 수 있습니다.")
 	@GetMapping("/{id}")
 	public ApiResponse<PostResponse.FindAllResponse> findOne(
-		@PathVariable Long id,
-		@AuthenticationPrincipal JwtAuthentication jwtAuthentication) {
-		return new ApiResponse<>(postService.findById(jwtAuthentication.id(), id));
+		@PathVariable Long id) {
+		return new ApiResponse<>(postService.findById(id));
 	}
 
 	@Operation(summary = "post 수정", description = "post의 content를 수정합니다.")

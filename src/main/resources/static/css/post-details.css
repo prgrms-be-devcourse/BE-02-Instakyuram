@@ -157,6 +157,7 @@ li {
 }
 .author_username {
     margin-left: 14px;
+    font-weight: 600;
 }
 .profile_image_container {
     width:32px;

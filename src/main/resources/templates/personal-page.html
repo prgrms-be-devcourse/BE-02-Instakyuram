@@ -160,11 +160,13 @@
             for (let j = i * 3; j < i * 3 + 3; j++) {
                 if (j < thumbnails.values.length) {
                     let thumbnail = thumbnails.values[j];
-                    thumbnailHTML += "<div class=\"article\"><img class=\"article_img\" src='http://localhost:8080/api/posts/" +
+                    thumbnailHTML += "<a class='post_link' href='http://localhost:8080/posts/details/" +
+                        thumbnail.postId+"'>" +
+                        "<div class=\"article\"><img class=\"article_img\" src='http://localhost:8080/api/posts/" +
                         thumbnail.postId +
                         "/image/" +
                         thumbnail.serverFileName +
-                        "' alt='articleImage'></div>";
+                        "' alt='articleImage'></div></a>";
                 } else {
                     thumbnailHTML += "<div class='article'></div>";
                 }

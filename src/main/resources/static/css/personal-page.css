@@ -143,8 +143,6 @@ body {
     display: block;
     margin-right: 28px;
     width: 100%;
-
-    flex: 1 0 0%;
     flex-direction: column;
 }
 
@@ -157,4 +155,8 @@ body {
 .follower_count,
 .follow_count {
     font-weight: 600;
+}
+
+.post_link {
+    flex: 1 0 0;
 }

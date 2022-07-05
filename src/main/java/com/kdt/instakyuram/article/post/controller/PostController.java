@@ -25,21 +25,22 @@ public class PostController {
 	}
 
 	@GetMapping("/posts/upload")
-	public String renderUpload(@AuthenticationPrincipal JwtAuthentication auth, Model model)
-	{
+	public String renderUpload(@AuthenticationPrincipal JwtAuthentication auth, Model model) {
 		model.addAttribute("auth", auth);
 
 		return "/modal/post-upload";
 	}
 
-	@GetMapping("/posts/details")
-	public String postDetails() {
+	@GetMapping("/posts/details/{id}")
+	public String postDetails(Model model, @PathVariable Long id, @AuthenticationPrincipal JwtAuthentication auth) {
+		model.addAttribute("auth", auth);
+		model.addAttribute("id", id);
+
 		return "post-details";
 	}
 
 	@GetMapping("/")
-	public String indexPage(@AuthenticationPrincipal JwtAuthentication auth, Model model)
-	{
+	public String indexPage(@AuthenticationPrincipal JwtAuthentication auth, Model model) {
 		model.addAttribute("member", auth);
 
 		return "index";

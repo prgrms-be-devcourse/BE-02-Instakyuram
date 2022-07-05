@@ -19,37 +19,81 @@
     let hasNext = true;
     let lastId = 1000000;
 
+    const padLeft = (word, length, fill_word) => {
+        for(let i = word.length; i < length; i++) {
+            word = fill_word.toString().concat(word);
+        }
+        return word;
+    }
+
+    const formatDate = (date) => {
+        const year = date.getFullYear()
+        const month = padLeft(date.getMonth().toString(), 2, '0');
+        const day = padLeft(date.getDate().toString(), 2, '0');
+        const hour = padLeft(date.getHours().toString(), 2, '0');
+        const minutes = padLeft(date.getMinutes().toString(), 2, '0');
+        const second = padLeft(date.getSeconds().toString(), 2, '0');
+
+        return `${year}-${month}-${day} ${hour}:${minutes}:${second}`
+    }
+
+    const getCreatedDateToString = (date) => {
+        let result = date;
+
+        const now = new Date();
+        const createdDate = new Date(date);
+
+        const diffDate = now.getTime() - createdDate.getTime();
+        const diffDay = Math.abs(diffDate / (1000 * 60 * 60 * 24));
+
+        if (diffDay < 1) {
+            result = '오늘';
+        } else if (diffDay === 1) {
+            result = '어제';
+        } else if (diffDay > 30) {
+            result = Math.floor(diffDay / 30) + '달전';
+        } else if (diffDay > 364) {
+            result = Math.floor(diffDay / 365) + '년전';
+        }
+        else {
+            result = Math.floor(diffDay) + '일전';
+        }
+        return result;
+    }
+
     const search = (lastId) => {
         if (!hasNext) {
             return;
         }
+
+        const now = new Date();
+        const endDate = formatDate(new Date(now.setMonth(now.getMonth() + 1)));
+        const startDate = formatDate(new Date(now.setMonth(now.getMonth() - 4)));
 
         axios({
             method: "GET",
             url: 'api/posts',
             params: {
                 'size': size,
-                'postPagingCriteria.startDate': '2022-06-01 00:00:00',
-                'postPagingCriteria.endDate': '2022-08-01 00:00:00',
+                'postPagingCriteria.startDate': startDate,
+                'postPagingCriteria.endDate': endDate,
                 'postPagingCriteria.id': lastId,
             }
         }).then((res) => {
             renderPosts(res.data.response);
         }).catch((error) => {
-            console.error('error' + error);
+            console.error(error);
         })
     }
 
     search(lastId);
 
     const renderPosts = (posts) => {
-        console.log(posts)
         hasNext = posts.hasNext;
         lastId = posts.lastId;
-
         let postsHTML = '';
         posts.responses.map(post => {
-            console.log(post.postImageResponse[0].serverFileName + ', ' + post.postImageResponse)
+            const postImage = post.postImageResponse == null || post.postImageResponse.length === 0 ? '/images/sample.png' : 'http://localhost:8080/api/posts/' + post.id + '/image/' + post.postImageResponse[0].serverFileName;
             postsHTML += `
                 <div class="post_item">
                     <div class='post__header'>
@@ -77,7 +121,7 @@
                     <div class='post__images'>
                         <img
                                 class='post__image'
-                                src=${post.postImageResponse[0].serverFileName == null ? '/images/sample.png' : 'http://localhost:8080/api/posts/' + post.id + '/image/' + post.postImageResponse[0].serverFileName}
+                                src=${postImage}
                                 alt=""
                         />
                     </div>
@@ -115,7 +159,7 @@
                             <span class='post__comment__writer'>${post.member.username}</span> ${post.content}
                         </p>
                     </div>
-                    <p class='post_created_date'>2일 전</p>
+                    <p class='post_created_date'>${getCreatedDateToString(post.createdAt)}</p>
                 </div>
             `
         });
@@ -154,6 +198,7 @@
             search(lastId);
         }, 700);
     };
+
     window.addEventListener("scroll", onscroll);
 </script>
 </body>

@@ -33,7 +33,6 @@ public class CommentLikeService {
 		CommentLike commentLike = commentConverter.toCommentLike(comment, member);
 		commentLikeRepository.save(commentLike);
 
-		// 해당 댓글의 좋아요 개수까지 포함해서 리턴
 		int likes = commentLikeRepository.countByCommentId(comment.id());
 
 		return new CommentResponse.LikeResponse(comment.id(), likes, true);
@@ -44,7 +43,6 @@ public class CommentLikeService {
 			.map(commentLike -> {
 				commentLikeRepository.delete(commentLike);
 
-				// 해당 댓글의 좋아요 개수까지 포함해서 리턴
 				int likes = commentLikeRepository.countByCommentId(id);
 
 				return new CommentResponse.LikeResponse(id, likes, false);

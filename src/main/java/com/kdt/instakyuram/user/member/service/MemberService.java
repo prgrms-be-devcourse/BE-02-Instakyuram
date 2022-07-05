@@ -24,7 +24,6 @@ import com.kdt.instakyuram.user.member.domain.MemberRepository;
 import com.kdt.instakyuram.user.member.dto.MemberConverter;
 import com.kdt.instakyuram.user.member.dto.MemberRequest;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
-import com.kdt.instakyuram.user.member.dto.MemberOrderDto;
 
 // TODO : MemberGiver의 메서드가 필요합니다 !
 @Service
@@ -92,13 +91,13 @@ public class MemberService implements MemberGiver {
 		return new MemberResponse.SignupResponse(member.getId(), member.getUsername());
 	}
 
-	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> findAll(Long authId,
-		MemberOrderDto searchDto, Pageable requestPage) {
-		Page<Member> pagingMembers = memberRepository.findAllExcludeAuth(authId, searchDto, requestPage);
+	public PageDto.Response<MemberResponse.MemberListViewResponse, Member> findAll(Long authId, Pageable requestPage) {
+		Page<Member> pagingMembers = memberRepository.findAllExcludeAuth(authId, requestPage);
 
 		if (pagingMembers.getContent().isEmpty()) {
 			throw new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
 		}
+
 		List<Long> memberIds = pagingMembers.getContent().stream().map(Member::getId).toList();
 		Set<Long> authFollowings = followService.findAuthFollowings(authId, memberIds);
 

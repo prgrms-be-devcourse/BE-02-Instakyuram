@@ -21,7 +21,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -93,7 +92,7 @@ class MemberControllerTest {
 			int requestSize = 5;
 			MemberOrderDto memberOrderDto = new MemberOrderDto(null, null);
 			PageDto.Request request = new PageDto.Request(requestPage, requestSize);
-			Pageable pageRequest = request.getPageable(Sort.by("id"));
+			Pageable pageRequest = request.getPageable(memberOrderDto.getSortingCriteria());
 			List<Member> members = getMembers();
 			PageImpl<Member> pagingMembers = new PageImpl<>(members, pageRequest, members.size());
 			PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
@@ -103,7 +102,7 @@ class MemberControllerTest {
 					true)
 			);
 
-			given(memberService.findAll(authId, memberOrderDto, pageRequest)).willReturn(pageResponse);
+			given(memberService.findAll(authId, pageRequest)).willReturn(pageResponse);
 
 			//when
 			ResultActions perform = mockMvc.perform(
@@ -130,7 +129,7 @@ class MemberControllerTest {
 				MemberOrderDto.SortCondition sortCondition = MemberOrderDto.SortCondition.USERNAME;
 				MemberOrderDto memberOrderDto = new MemberOrderDto(sortCondition, null);
 				PageDto.Request request = new PageDto.Request(requestPage, requestSize);
-				Pageable pageRequest = request.getPageable(Sort.by("id"));
+				Pageable pageRequest = request.getPageable(memberOrderDto.getSortingCriteria());
 				List<Member> members = getMembers().stream()
 					.sorted(Comparator.comparing(Member::getUsername))
 					.collect(Collectors.toList());
@@ -142,7 +141,7 @@ class MemberControllerTest {
 						true)
 				);
 
-				given(memberService.findAll(authId, memberOrderDto, pageRequest)).willReturn(pageResponse);
+				given(memberService.findAll(authId, pageRequest)).willReturn(pageResponse);
 
 				//when
 				ResultActions perform = mockMvc.perform(
@@ -167,7 +166,7 @@ class MemberControllerTest {
 				MemberOrderDto.Ordering ordering = MemberOrderDto.Ordering.DESC;
 				MemberOrderDto memberOrderDto = new MemberOrderDto(null, ordering);
 				PageDto.Request request = new PageDto.Request(requestPage, requestSize);
-				Pageable pageRequest = request.getPageable(Sort.by("id"));
+				Pageable pageRequest = request.getPageable(memberOrderDto.getSortingCriteria());
 				List<Member> members = getMembers().stream()
 					.sorted(Comparator.comparing(Member::getUsername))
 					.collect(Collectors.toList());
@@ -179,7 +178,7 @@ class MemberControllerTest {
 						true)
 				);
 
-				given(memberService.findAll(authId, memberOrderDto, pageRequest)).willReturn(pageResponse);
+				given(memberService.findAll(authId, pageRequest)).willReturn(pageResponse);
 
 				//when
 				ResultActions perform = mockMvc.perform(

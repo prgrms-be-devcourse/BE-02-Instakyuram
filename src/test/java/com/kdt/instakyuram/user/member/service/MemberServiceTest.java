@@ -39,9 +39,9 @@ import com.kdt.instakyuram.user.follow.service.FollowService;
 import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.domain.MemberRepository;
 import com.kdt.instakyuram.user.member.dto.MemberConverter;
+import com.kdt.instakyuram.user.member.dto.MemberOrderDto;
 import com.kdt.instakyuram.user.member.dto.MemberRequest;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
-import com.kdt.instakyuram.user.member.dto.MemberOrderDto;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -89,15 +89,15 @@ class MemberServiceTest {
 			.boxed()
 			.toList();
 
-		given(memberRepository.findAllExcludeAuth(authId, memberOrderDto,pageRequest)).willReturn(pagingMembers);
+		given(memberRepository.findAllExcludeAuth(authId, pageRequest)).willReturn(pagingMembers);
 		given(memberConverter.toPageResponse(pagingMembers, Set.of())).willReturn(pageResponse);
 
 		//when
 		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageMemberResponses = memberService.findAll(
-			authId, memberOrderDto, pageRequest);
+			authId, pageRequest);
 
 		//then
-		verify(memberRepository, times(1)).findAllExcludeAuth(authId, memberOrderDto,pageRequest);
+		verify(memberRepository, times(1)).findAllExcludeAuth(authId, pageRequest);
 		verify(memberConverter, times(1)).toPageResponse(pagingMembers, Set.of());
 
 		assertThat(pageMemberResponses.getPage()).isEqualTo(requestPage);
@@ -113,21 +113,15 @@ class MemberServiceTest {
 		Long authId = 1L;
 		int requestPage = 2;
 		int requestSize = 5;
-		MemberOrderDto memberOrderDto = new MemberOrderDto(null, null);
 		Pageable pageRequest = new PageDto.Request(requestPage, requestSize).getPageable(Sort.by("id"));
 		PageImpl<Member> pagingMembers = new PageImpl<>(List.of(), pageRequest, 0);
-		PageDto.Response<MemberResponse.MemberListViewResponse, Member> pageResponse = new PageDto.Response<>(
-			pagingMembers,
-			member -> new MemberResponse.MemberListViewResponse(member.getId(), member.getUsername(), member.getName(),
-				true)
-		);
 
-		given(memberRepository.findAllExcludeAuth(authId, memberOrderDto,pageRequest)).willReturn(pagingMembers);
+		given(memberRepository.findAllExcludeAuth(authId, pageRequest)).willReturn(pagingMembers);
 
 		//when
 		//then
 		assertThatThrownBy(() -> {
-			memberService.findAll(authId, memberOrderDto, pageRequest);
+			memberService.findAll(authId, pageRequest);
 		}).isInstanceOf(EntityNotFoundException.class);
 	}
 

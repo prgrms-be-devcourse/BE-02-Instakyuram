@@ -14,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Repository;
 
-import com.kdt.instakyuram.user.member.dto.MemberOrderDto;
-
 @Repository
 public class CustomMemberRepositoryImpl implements CustomMemberRepository {
 	private final EntityManager entityManager;
@@ -24,14 +22,14 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository {
 		this.entityManager = entityManager;
 	}
 
-	public Page<Member> findAllExcludeAuth(Long auId, MemberOrderDto memberOrderDto, Pageable pageable) {
+	public Page<Member> findAllExcludeAuth(Long auId, Pageable pageable) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Member> query = builder.createQuery(Member.class);
-		Root<Member> member = query.from(Member.class); // 애는 모지
+		Root<Member> member = query.from(Member.class);
 		List<Order> orderBys = QueryUtils.toOrders(pageable.getSort(), member, builder);
 		List<Member> memberQuery = entityManager.createQuery(
 				query.select(member)
-					.where(builder.notEqual(member.get("id"),auId))
+					.where(builder.notEqual(member.get("id"), auId))
 					.orderBy(orderBys)
 			).setFirstResult((int)pageable.getOffset())
 			.setMaxResults(pageable.getPageSize())

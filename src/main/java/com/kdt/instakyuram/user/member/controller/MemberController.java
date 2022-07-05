@@ -2,7 +2,6 @@ package com.kdt.instakyuram.user.member.controller;
 
 import javax.validation.Valid;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,25 +46,8 @@ public class MemberController {
 			throw new NotAuthenticationException("로그인을 하셔야 합니다..");
 		}
 
-		return new ModelAndView("member/member-list").addObject(
-			"dto", searchDto.isExistSort() ?
-				memberService.findAll(auth.id(), searchDto, pagingDto.getPageable(Sort.by(searchDto.sortCondition().getValue()))) :
-				memberService.findAll(auth.id(), searchDto, pagingDto.getPageable(Sort.by("id")))
-		);
-
-		// if (searchDto.isExistSort()) {
-		// 	requestPage = pagingDto.getPageable(Sort.by(searchDto.sortCondition().getValue()));
-		//
-		// 	return memberListView.addObject(
-		// 		"dto", memberService.findAll(auth.id(), searchDto, requestPage)
-		// 	);
-		// }
-		//
-		// requestPage = pagingDto.getPageable(Sort.by("id").descending());
-		//
-		// return memberListView.addObject(
-		// 	"dto", memberService.findAll(auth.id(), searchDto, requestPage)
-		// );
+		return new ModelAndView("member/member-list")
+			.addObject("dto", memberService.findAll(auth.id(), pagingDto.getPageable(searchDto.getSortingCriteria())));
 	}
 
 	@GetMapping("/{username}")

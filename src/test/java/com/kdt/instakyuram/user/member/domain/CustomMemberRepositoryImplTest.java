@@ -42,10 +42,7 @@ class CustomMemberRepositoryImplTest {
 		Long authId = members.get(0).getId();
 
 		//when
-		Page<Member> byAllForPaging = memberRepository.findAllExcludeAuth(
-			authId,
-			searchDto,
-			pageRequest);
+		Page<Member> byAllForPaging = memberRepository.findAllExcludeAuth(authId, pageRequest);
 
 		List<Member> pagingContents = byAllForPaging.getContent();
 
@@ -70,10 +67,7 @@ class CustomMemberRepositoryImplTest {
 		Long authId = members.get(0).getId();
 
 		//when
-		Page<Member> byAllForPaging = memberRepository.findAllExcludeAuth(
-			authId,
-			searchDto,
-			pageRequest);
+		Page<Member> byAllForPaging = memberRepository.findAllExcludeAuth(authId,pageRequest);
 
 		List<Member> pagingContents = byAllForPaging.getContent();
 		pagingContents.forEach(System.out::println);
@@ -103,10 +97,7 @@ class CustomMemberRepositoryImplTest {
 		Long authId = members.get(0).getId();
 
 		//when
-		Page<Member> byAllForPaging = memberRepository.findAllExcludeAuth(
-			authId,
-			searchDto,
-			pageRequest);
+		Page<Member> byAllForPaging = memberRepository.findAllExcludeAuth(authId, pageRequest);
 
 		List<Member> pagingContents = byAllForPaging.getContent();
 		pagingContents.forEach(System.out::println);

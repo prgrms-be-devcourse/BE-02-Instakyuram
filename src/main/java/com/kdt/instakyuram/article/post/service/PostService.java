@@ -81,7 +81,7 @@ public class PostService implements PostGiver {
 		PostPagingCriteria criteria = pageRequest.getPostPagingCriteria();
 		Long id = posts.isEmpty() ? null : posts.get(posts.size() - 1).getId();
 		boolean hasNext = hasNext(members, id, criteria.getStartDate(), criteria.getEndDate());
-		// boolean hasNext = true;
+
 		Map<Long, List<PostImageResponse>> postImages = postImageService.findByPostIn(posts)
 			.stream()
 			.collect(Collectors.groupingBy(PostImageResponse::postId));

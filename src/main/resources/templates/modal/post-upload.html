@@ -83,8 +83,7 @@
         }
 
         formData.set('enctype', 'multipart/form-data');
-        formData.append('memberId', 1);
-        formData.append('content', 'test test');
+        formData.append('content', document.getElementById("floatingTextarea2").value);
 
         fetch("/api/posts/", {
             method: "POST",

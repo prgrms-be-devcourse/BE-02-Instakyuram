@@ -1,0 +1,114 @@
+p {
+    margin: 0;
+}
+
+img:hover {
+    cursor: pointer;
+}
+
+.container {
+    display: grid;
+    width: 50%;
+    margin-top: 90px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.post__container {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.post_item {
+    border: 1px solid lightgray;
+    border-radius: 0.5em;
+    margin-bottom: 1em;
+}
+
+.more_horiz_button,
+.post_like_button,
+.post_comment_button,
+.post_near_me_button,
+.post_bookmark_button {
+    width: 25px;
+}
+
+.post__header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.1em 0.3em;
+}
+
+.post__profile_container,
+.post__writer_info,
+.post__header_button {
+    padding-top: 0.2em;
+}
+
+.more_horiz_button {
+    padding: 0.5em 0;
+}
+
+.post__writer_location {
+    margin-top: 0.3em;
+    font-size: 0.8rem;
+    color: gray;
+}
+
+.post__images {
+    width: 100%;
+}
+
+.profile_image {
+    width: 40px;
+}
+
+.post__writer {
+    display: flex;
+}
+
+.post__image {
+    width: 100%;
+}
+
+.post__writer_info {
+    margin-left: 0.5em;
+    cursor: pointer;
+}
+
+.post__writer_username {
+    font-weight: bold;
+}
+
+.post__buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.2em 0.3em 0 0.3em;
+}
+
+.post_like_button,
+.post_comment_button,
+.post_near_me_button {
+    margin-right: 0.5em;
+}
+
+.post__likes {
+    font-size: 0.9rem;
+    font-weight: bold;
+    padding: 0.5em;
+}
+
+.post__comments {
+    padding: 0 0.5em;
+}
+
+.post__comment__writer {
+    font-weight: bold;
+}
+
+.post_created_date {
+    padding: 0.5em;
+    font-size: 0.8rem;
+    color: gray;
+}

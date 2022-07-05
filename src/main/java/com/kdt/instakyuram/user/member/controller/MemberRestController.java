@@ -97,8 +97,12 @@ public class MemberRestController {
 		Cookie refreshTokenCookie = new Cookie(this.jwt.refreshTokenProperties().header(), null);
 		accessTokenCookie.setMaxAge(0);
 		accessTokenCookie.setPath("/");
+		accessTokenCookie.setMaxAge(this.jwt.accessTokenProperties().expirySeconds());
+		accessTokenCookie.setHttpOnly(true);
 		refreshTokenCookie.setMaxAge(0);
 		refreshTokenCookie.setPath("/");
+		refreshTokenCookie.setMaxAge(this.jwt.accessTokenProperties().expirySeconds());
+		refreshTokenCookie.setHttpOnly(true);
 		response.addCookie(accessTokenCookie);
 		response.addCookie(refreshTokenCookie);
 

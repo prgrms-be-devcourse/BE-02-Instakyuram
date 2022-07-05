@@ -4,7 +4,7 @@
 <link rel="stylesheet" th:href="@{/css/personal-page.css}"/>
 <title th:text="${profileInfo.username}">username</title>
 <body>
-<div th:replace="fragments/header :: headerFragment(username = (${auth == null} ? '/signin' : ${auth?.username}))"></div>
+<div th:replace="fragments/header :: headerFragment(username = (${auth == null} ? 'signin' : ${auth?.username}))"></div>
 <main class="personal_main">
     <div class="main_container">
         <div class="header_container" th:object="${profileInfo}">

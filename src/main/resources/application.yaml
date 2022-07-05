@@ -24,13 +24,18 @@ cors:
     method: GET, POST, PATCH, DELETE
 security:
   patterns:
-    ignoring: ["/css/**", "/js/**", "/webjars/**", "/images/**", "/swagger-resources/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html/**"]
-    permit-all:
-      GET : ["/members/signin", "/members/**", "/api/posts/**"]
-      POST : ["/api/members/signin", "/api/members/signup"]
-      PATCH : []
-      PUT : []
+    ignoring:
+      GET : [ "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html/**",  "/api/posts/thumbnails","/api/posts/*/image/*", "/api/profiles/*/image"]
+      POST: ["/api/members/signin", "/api/members/signup"]
+      PATCH: []
+      PUT: []
       DELETE : []
+    permit-all:
+      GET: [ "/members/*", "/posts/*" ]
+      POST: []
+      PATCH: [ ]
+      PUT: [ ]
+      DELETE: [ ]
   jwt:
     issuer: kyuram
     client-secret:

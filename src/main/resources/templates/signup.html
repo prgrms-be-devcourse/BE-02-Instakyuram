@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<th:block th:replace="fragments/head :: headFragment('')"></th:block>
+<th:block th:replace="fragments/head :: headFragment('회원 가입')"></th:block>
 <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
 
 <script>
@@ -32,23 +32,18 @@
     // 이메일 중복처리
 </script>
 <style>
-    * {
-        margin: 0;
-        box-sizing: border-box;
-    }
-
-    .text_span {
-        color : #8E8E8E
-    }
 
     main {
-        height: 600px;
-        width: 450px;
-        padding: 50px 0;
-        border: #EFEFEF solid 2px;
-        margin: 100px auto;
-        text-align: center;
+        background-color: #FAFAFA;
+        width: 100%;
+        flex-grow: 1;
+        flex-shrink: 0;
+        display: flex;
         flex-direction: column;
+        min-height: 100vh;
+    }
+    .text_span {
+        color: #8E8E8E
     }
 
     .logo {
@@ -67,16 +62,18 @@
         padding-left: 10px;
         align-content: center;
     }
+
     .uk_input {
         height: 45px;
         width: 230px;
-        margin-bottom: 10px;
+
         background-color: #FAFAFA;
         border: #EFEFEF 1px solid;
         border-radius: 6px;
         padding-left: 10px;
         align-content: center;
     }
+
     .login_btn {
         width: 300px;
         height: 35px;
@@ -93,29 +90,57 @@
         height: 25px;
         border-radius: 6px;
         border: white;
-        margin-bottom: 10px;
+        margin-left: 10px;
         background-color: #8E8E8E;
         color: #FFFFFF;
         font-size: 13px;
     }
+
+    .signup_container {
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+        max-width:935px;
+    }
+
+    .signup_item_container {
+        display:flex;
+        flex-direction: row;
+        width:100%;
+        align-items: center;
+        margin-bottom: 10px;
+    }
 </style>
 
 <main>
-    <div class="logo">Instakuyram</div><br>
-    <span class="text_span" style="color: #8E8E8E">친구들의 사진과 동영상을 보려면 가입하세요.</span>
-     <br><br><br>
+    <div class="signup_container">
+        <div class="logo">Instakuyram</div>
+        <br>
+        <span class="text_span" style="color: #8E8E8E">친구들의 사진과 동영상을 보려면 가입하세요.</span>
+        <br><br><br>
 
-    <input type="email" class="uk_input" id="email" name="email" placeholder="이메일을 입력하세요">
-    <input type="button" class="duplicate_btn" value="중복확인" onclick="joinRequest()">
-
-    <input type="text" class="uk_input" id="username" name="username" placeholder="아이디를 입력하세요">
-    <input type="button" class="duplicate_btn" value="중복확인" onclick="joinRequest()">
-
-    <input type="text"  class="other_input" id="name" name="name" placeholder="이름을 입력하세요"> <br>
-    <input type="text" class="other_input" id="phoneNumber" name="phoneNumber" placeholder="핸드폰번호를 입력하세요"> <br>
-    <input type="password" class="other_input" id="password" name="password" placeholder="패스워드를 입력하세요."> <br>
-    <span style="color : #8E8E8E; font-size: 13px; ">
+        <div class="signup_item_container">
+        <input type="email" class="uk_input" id="email" name="email" placeholder="이메일을 입력하세요">
+        <input type="button" class="duplicate_btn" value="중복확인" onclick="joinRequest()">
+        </div>
+        <div class="signup_item_container">
+        <input type="text" class="uk_input" id="username" name="username" placeholder="아이디를 입력하세요">
+        <input type="button" class="duplicate_btn" value="중복확인" onclick="joinRequest()">
+        </div>
+        <div class="signup_item_container">
+        <input type="text" class="other_input" id="name" name="name" placeholder="이름을 입력하세요"> <br>
+        </div>
+        <div class="signup_item_container">
+        <input type="text" class="other_input" id="phoneNumber" name="phoneNumber" placeholder="핸드폰번호를 입력하세요"> <br>
+        </div>
+        <div class="signup_item_container">
+        <input type="password" class="other_input" id="password" name="password" placeholder="패스워드를 입력하세요."> <br>
+        </div>
+        <span style="color : #8E8E8E; font-size: 13px; ">
         서비스를 이용하는 사람이 회원님의 연락처 정보를 <br> Instakyuram에 업로드했을 수도 있습니다. 더 알아보기
     </span>
-    <input type="button" class="login_btn" value="가입하기" onclick="joinRequest()">
+        <input type="button" class="login_btn" value="가입하기" onclick="joinRequest()">
+    </div>
 </main>

@@ -55,12 +55,12 @@ public class MemberRestController {
 	}
 
 	@PostMapping("/signup")
-	ApiResponse<MemberResponse.SignUpResponse> signup(@RequestBody MemberRequest.SignUpRequest request) {
+	ApiResponse<MemberResponse.SignUpResponse> signup(@RequestBody @Valid MemberRequest.SignUpRequest request) {
 		return new ApiResponse<>(memberService.signUp(request));
 	}
 
 	@PostMapping("/signin")
-	public ApiResponse<MemberResponse.SignInResponse> signIn(@RequestBody MemberRequest.SignInRequest signInRequest,
+	public ApiResponse<MemberResponse.SignInResponse> signIn(@RequestBody @Valid MemberRequest.SignInRequest signInRequest,
 		HttpServletRequest request, HttpServletResponse response) {
 		MemberResponse.SignInResponse signInResponse = this.memberService.signIn(signInRequest.username(),
 			signInRequest.password());

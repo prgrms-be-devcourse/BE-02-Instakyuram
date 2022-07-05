@@ -128,7 +128,7 @@ class MemberRestControllerTest {
 		//given
 		MemberRequest.SignUpRequest signupRequest = new MemberRequest.SignUpRequest(
 			member.getUsername(),
-			"123456789",
+			"@Programmers12",
 			member.getName(),
 			member.getEmail(),
 			member.getPhoneNumber()

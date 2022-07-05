@@ -1,4 +1,4 @@
-package com.kdt.instakyuram.user.member.controller;
+package com.kdt.instakyuram.user.profile.controller;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kdt.instakyuram.common.ApiResponse;
 import com.kdt.instakyuram.exception.NotAuthenticationException;
 import com.kdt.instakyuram.security.jwt.JwtAuthentication;
-import com.kdt.instakyuram.user.member.service.ProfileService;
+import com.kdt.instakyuram.user.profile.service.ProfileService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

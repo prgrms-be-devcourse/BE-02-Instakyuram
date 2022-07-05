@@ -37,7 +37,7 @@ import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.dto.MemberRequest;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.user.member.service.MemberService;
-import com.kdt.instakyuram.user.member.service.ProfileService;
+import com.kdt.instakyuram.user.profile.service.ProfileService;
 import com.kdt.instakyuram.article.post.service.PostGiver;
 import com.kdt.instakyuram.security.Role;
 import com.kdt.instakyuram.security.SecurityConfigProperties;

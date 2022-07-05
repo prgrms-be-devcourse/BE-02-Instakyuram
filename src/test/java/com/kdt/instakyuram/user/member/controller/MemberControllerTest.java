@@ -41,7 +41,7 @@ import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.dto.MemberOrderDto;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.user.member.service.MemberService;
-import com.kdt.instakyuram.user.member.service.ProfileService;
+import com.kdt.instakyuram.user.profile.service.ProfileService;
 
 @WebMvcTest(MemberController.class)
 class MemberControllerTest {

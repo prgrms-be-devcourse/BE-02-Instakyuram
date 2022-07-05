@@ -18,7 +18,7 @@ import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 import com.kdt.instakyuram.user.member.dto.MemberOrderDto;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.user.member.service.MemberService;
-import com.kdt.instakyuram.user.member.service.ProfileService;
+import com.kdt.instakyuram.user.profile.service.ProfileService;
 
 @RequestMapping("/members")
 @Controller
@@ -39,8 +39,7 @@ public class MemberController {
 	}
 
 	@GetMapping
-	public ModelAndView getMembers(@Valid PageDto.Request pagingDto,
-		@Valid MemberOrderDto searchDto,
+	public ModelAndView getMembers(@Valid PageDto.Request pagingDto, @Valid MemberOrderDto searchDto,
 		@AuthenticationPrincipal JwtAuthentication auth) {
 		if (auth == null) {
 			throw new NotAuthenticationException("로그인을 하셔야 합니다..");
@@ -87,7 +86,7 @@ public class MemberController {
 	}
 
 	@GetMapping("/signin")
-	public String singinPage(@AuthenticationPrincipal JwtAuthentication auth) {
+	public String signInPage(@AuthenticationPrincipal JwtAuthentication auth) {
 		if (auth == null) {
 			return "signin";
 		}

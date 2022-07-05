@@ -58,9 +58,9 @@ public class PostConverter {
 			.member(memberResponse)
 			.postImageResponse(postImageResponse)
 			.commentResponse(commentResponse)
+			.createdAt(post.getCreatedAt())
 			.totalPostLike(totalPostLike)
 			.build();
-
 	}
 
 	public PostResponse toResponse(Post post) {

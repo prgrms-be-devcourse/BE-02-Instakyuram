@@ -93,4 +93,19 @@ public class LocalFileService implements FileStorage {
 		}
 	}
 
+	@Override
+	public void delete(String serverFileName, ResourcePath path) {
+		try {
+			Resource directory = resourceLoader.getResource(DEFAULT_PATH + path.getPrefix());
+			String fullPath = directory.getURI().getPath() + "/" + serverFileName;
+
+			File file = new File(fullPath);
+
+			logger.warn("파일을 삭제합니다. [파일정보 : {}]", fullPath);
+			file.delete();
+		} catch (IOException e) {
+			throw new FileWriteException("파일을 삭제하면서 오류가 발생했습니다.");
+		}
+	}
+
 }

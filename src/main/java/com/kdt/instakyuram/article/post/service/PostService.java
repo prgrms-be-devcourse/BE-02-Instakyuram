@@ -30,7 +30,6 @@ import com.kdt.instakyuram.exception.ErrorCode;
 import com.kdt.instakyuram.user.member.domain.Member;
 import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.user.member.service.MemberGiver;
-import com.kdt.instakyuram.util.ImageManager;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -170,22 +169,19 @@ public class PostService implements PostGiver {
 
 	@Transactional
 	public Long delete(Long id, Long memberId) {
-		List<PostImageResponse.DeleteResponse> deletedImages = postRepository.findByIdAndMemberId(id, memberId)
+		return postRepository.findByIdAndMemberId(id, memberId)
 			.map(post -> {
 				commentGiver.delete(id);
 				postLikeService.delete(id);
-				List<PostImageResponse.DeleteResponse> images = postImageService.delete(id);
+				postImageService.delete(id);
 				postRepository.delete(post);
 
-				return images;
+				return id;
 			})
-			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
-				MessageFormat.format("Post ID = {0}, Member ID = {1}", id, memberId)));
-
-		deletedImages.forEach(image ->
-			ImageManager.delete(image.path(), image.serverFileName()));
-
-		return id;
+			.orElseThrow(
+				() -> new EntityNotFoundException(ErrorCode.POST_NOT_FOUND,
+				MessageFormat.format("Post ID = {0}, Member ID = {1}", id, memberId))
+			);
 	}
 
 	@Override

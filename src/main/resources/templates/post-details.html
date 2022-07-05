@@ -3,33 +3,99 @@
 <th:block th:replace="fragments/head :: headFragment('')"></th:block>
 <link rel="stylesheet" th:href="@{/css/post-details.css}"/>
 <body>
-<div th:replace="~{fragments/header :: headerFragment}"></div>
-<div class="container">
-    <section class="container__post">
-        <img class="post__image" src="/images/sample.png" alt="sample"/>
-    </section>
-    <section class="container__comments">
-        <ul class="comments">
+<div th:replace="fragments/header :: headerFragment(username = (${auth == null} ? '/signin' : ${auth?.username}))"></div>
+<main>
+    <div class="post_page_container">
+        <div class="post_container">
+            <div class="image_container">
+                <img th:src="@{/images/default_profile.jpg}" class="post_image"/>
+            </div>
+            <div class="right_side_container">
+                <div class="header_container">
+                    <div class="header">
+                        <div class="profile_image_container">
+                            <img th:src="@{/images/default_profile.jpg}" class="member_profile_img"/>
+                        </div>
+                        <div>
+                            <span class="author_username">pjh_jn</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="right_content_container">
+                    <div class="content_comment_container">
+                        <ul class = "content_comment_sub_container">
+                            <div class="item_container">
+                                <div class="profile_image_container">
+                                    <img th:src="@{/images/default_profile.jpg}" class="member_profile_img"/>
+                                </div>
+                                <div>
+                                    <span class="author_username">pjh_jn</span>
+                                    <span class="post_content"> 컨텐츠 입니다.</span>
+                                </div>
+                            </div>
+                            <div class="item_container">
+                                <section class="container__comments">
+                                    <ul class="comments">
 
-        </ul>
-    </section>
-</div>
+                                    </ul>
+                                </section>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+    </div>
+</main>
+
+</body>
+<script th:inline="javascript">
+    const getPost = (id) => {
+        axios({
+            method: "GET",
+            url: '/api/posts/' + id,
+        }).then((res) => {
+            renderPost(res.data.response)
+            console.log(res.data.response);
+        }).catch(error => {
+            console.log("error" + error);
+        })
+    }
+
+    const renderPost = (post) => {
+        let postImage = document.querySelector(".post_container .image_container .post_image");
+        const postId = post.id
+        const serverFileName = post.postImageResponse[0].serverFileName;
+        console.log(postId);
+        console.log(serverFileName);
+        postImage.setAttribute("src", "http://localhost:8080/api/posts/" +postId + "/image/" + serverFileName)
+        document.querySelector(".item_container .author_username").innerHTML = post.member.username;
+        document.querySelector(".content_comment_sub_container .item_container .profile_image_container .member_profile_img").setAttribute("src","http://localhost:8080/api/profiles/" +post.member.id + "/image")
+        document.querySelector(".header .profile_image_container .member_profile_img").setAttribute("src","http://localhost:8080/api/profiles/" +post.member.id + "/image")
+        document.querySelector(".header .author_username").innerHTML = post.member.username;
+        document.querySelector(".post_content").innerHTML = post.content;
+
+    }
+    getPost([[${id}]]);
+</script>
 <script th:inline="javascript">
     let cursorId;
 
-    const id = 1;
+    const id =  [[${id}]];
     const search = (id) => {
         axios({
             method: "GET",
             url: '/api/comments/post/' + id,
             params: {
-                "postId": 1,
+                "postId": id,
                 "id": cursorId,
                 "limit": 5,
             }
         }).then((res) => {
+            console.log(res.data.response);
             renderComments(res.data.response);
+
         }).catch(error => {
             console.log("error" + error);
         })
@@ -41,8 +107,8 @@
         comments.forEach(function (comment) {
             commentsHTML += `<li class='comments__item'>`;
             commentsHTML += `<div class='comments__item__container'>`;
-            commentsHTML += `<div class='comments__item__profile'>`;
-            commentsHTML += `<img class='profile_image' src='/images/icon/account.png' alt='profile'/> </div>`
+            commentsHTML += `<div class='profile_image_container'>`;
+            commentsHTML += `<img class='profile_image' src='/api/profiles/${comment.memberId}/image' alt='profile'/> </div>`
             commentsHTML += `<div class='comments__item__comment'>` +
                 `<p class='comment__item__content'>` +
                 `<b> ${comment.username} </b>` +
@@ -93,5 +159,4 @@
     window.addEventListener("scroll", onscroll);
 
 </script>
-</body>
 </html>

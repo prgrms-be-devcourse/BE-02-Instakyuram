@@ -13,6 +13,7 @@
 <div th:replace="~{fragments/header :: headerFragment(username = (${auth == null} ? '/signin' : ${auth?.username}))}"></div>
 <body style="margin: 50px;">
 <main>
+    <div class="main_container">
 <div class="mb-3">
     <label for="fileUpload" class="form-label">이미지 첨부</label>
     <input class="form-control" type="file" id="fileUpload" accept="image/*" multiple>
@@ -32,7 +33,7 @@
         <button type="button" class="btn btn-primary" style="margin-top:20px;"> posting</button>
         <button type="button" class="btn btn-secondary" style="margin-top:20px;" onclick="window.history.back()">back</button>
 </span>
-
+    </div>
 <script>
     let formData
     let thumbnailImages = document.querySelector('.row');
@@ -82,8 +83,7 @@
         }
 
         formData.set('enctype', 'multipart/form-data');
-        formData.append('memberId', 1);
-        formData.append('content', 'test test');
+        formData.append('content', document.getElementById("floatingTextarea2").value);
 
         fetch("/api/posts/", {
             method: "POST",

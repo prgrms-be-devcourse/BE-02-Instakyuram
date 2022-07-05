@@ -10,7 +10,7 @@ spring:
     path match:
       matching-strategy: ant_path_matcher
   flyway:
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
     locations: classpath:db/migration, classpath:db/seed
   servlet:
@@ -41,7 +41,7 @@ security:
     client-secret:
     accessToken:
       header: atoken
-      expiry-seconds: 60
+      expiry-seconds: 6000000
     refreshToken:
       header: rtoken
-      expiry-seconds: 120
+      expiry-seconds: 6000000

@@ -2,25 +2,23 @@ package com.kdt.instakyuram.user.member.controller;
 
 import javax.validation.Valid;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.kdt.instakyuram.article.post.service.PostGiver;
 import com.kdt.instakyuram.common.PageDto;
 import com.kdt.instakyuram.exception.NotAuthenticationException;
+import com.kdt.instakyuram.security.jwt.JwtAuthentication;
+import com.kdt.instakyuram.user.member.dto.MemberOrderDto;
+import com.kdt.instakyuram.user.member.dto.MemberResponse;
 import com.kdt.instakyuram.user.member.service.MemberService;
 import com.kdt.instakyuram.user.member.service.ProfileService;
-import com.kdt.instakyuram.user.member.dto.MemberResponse;
-import com.kdt.instakyuram.article.post.service.PostGiver;
-import com.kdt.instakyuram.security.jwt.JwtAuthentication;
 
 @RequestMapping("/members")
 @Controller
@@ -41,16 +39,15 @@ public class MemberController {
 	}
 
 	@GetMapping
-	public ModelAndView getMembers(@ModelAttribute @Valid PageDto.Request pagingDto,
+	public ModelAndView getMembers(@Valid PageDto.Request pagingDto,
+		@Valid MemberOrderDto searchDto,
 		@AuthenticationPrincipal JwtAuthentication auth) {
 		if (auth == null) {
 			throw new NotAuthenticationException("로그인을 하셔야 합니다..");
 		}
 
-		Pageable requestPage = pagingDto.getPageable(Sort.by("id").descending());
-
 		return new ModelAndView("member/member-list")
-			.addObject("dto", memberService.findAll(auth.id(), requestPage));
+			.addObject("dto", memberService.findAll(auth.id(), pagingDto.getPageable(searchDto.getSortingCriteria())));
 	}
 
 	@GetMapping("/{username}")

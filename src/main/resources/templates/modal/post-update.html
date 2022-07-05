@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+            crossorigin="anonymous"></script>
+    <title>post-update</title>
+</head>
+
+<th:block th:replace="fragments/head :: headFragment('')"></th:block>
+<link rel="stylesheet" th:href="@{/css/post-update.css}"/>
+
+<div th:replace="~{fragments/header :: headerFragment(username = (${auth == null} ? '/signin' : ${auth?.username}))}"></div>
+
+<body style="margin: 50px;">
+<main>
+    <div class="main-left">
+        <div class="slider">
+            <input type="radio" class="input-radio" th:each="postImageResponse, i : ${post.postImageResponse()}"
+                   th:if="${i.index} == 0" name="slide" th:id="'slide'+${i.index}" checked>
+            <input type="radio" class="input-radio" th:each="postImageResponse, i : ${post.postImageResponse()}"
+                   th:if="${i.index} != 0" name="slide" th:id="'slide'+${i.index}">
+
+            <ul id="imgholder" class="imgs">
+                <li th:each="postImageResponse : ${post.postImageResponse()}">
+                    <img class="post-img"
+                         th:src="@{http://localhost:8080/api/posts/}+${postImageResponse.postId()} + @{/image/} + ${postImageResponse.serverFileName()}">
+                </li>
+            </ul>
+
+            <div class="bullets">
+                <label th:each="item, i : ${post.postImageResponse()}" th:for="'slide'+${i.index}"></label>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-right">
+            <textarea class="post-control" id="floatingTextarea2" th:text="${post.content()}"
+                      th:value="${post.content()}"
+                      style="height: 450px"></textarea>
+        <button type="button" class="btn btn-secondary" style="margin-top:20px; margin-left: 25%;"
+                onclick="window.history.back()">back
+        </button>
+        <button type="button" class="btn btn-primary" style="margin-top:20px;"> update</button>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const id = /*[[${post.id}]]*/;
+        /*]]>*/
+
+        document.querySelector('.btn-primary').addEventListener('click', (e) => {
+            const content = document.getElementById("floatingTextarea2").valueOf();
+            axios
+                .patch("/api/posts/" + id,
+                    {
+                        headers: {
+                            'Content-type': 'application/json',
+                        },
+                        content: document.getElementById("floatingTextarea2").value
+                    }
+                )
+                .then(response => {
+                    alert("수정이 완료되었습니다 !")
+                    window.location.href = "http://localhost:8080/posts/" + id;
+                })
+                .catch(error => {
+                    alert("오류가 발생했습니다. \n" + error);
+                })
+        });
+    </script>
+
+</main>
+</body>
+</html>

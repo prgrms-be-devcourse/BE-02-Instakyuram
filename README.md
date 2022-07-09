@@ -1,8 +1,30 @@
 # 인스타뀨램
 
+[🤲🏻 프로젝트 소개](#-프로젝트-소개)
+<br/>
+[👬 팀 소개](#-팀-소개)
+<br/>
+[🛠 기술 소개](#-기술-스택)
+<br/>
+[🖼 ERD](#-erd)
+<br/>
+[💻 개발환경](#-개발환경)
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[⌙ 로컬 개발 환경 구축 (Infra)](#로컬-개발-환경-구축-infra)
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[⌙ .env 파일 설정 값](#env-파일-설정-값)
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[⌙ Husky](#husky)
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[⌙ Git submodule](#git-submodule)
+
 ## 🤲🏻 프로젝트 소개
 
+<img width="600" src="./src/main/resources/static/images/logo.png"/>
+
 인스타그램 서비스를 클론 코딩하는 프로젝트입니다.
+
+<br/>
 
 ## 👬 팀 소개
 
@@ -50,34 +72,38 @@
   </tr>
 </table>
 
+<br/>
+
 ## 🛠 기술 스택
 
 ### BackEnd
 
-- `Java 17`
-- `Gradle 7.4.2`
-- `Spring Boot 2.7.0`
-- `MySQL`
-- `JPA`
-- `JUnit5 / Mockito`
-- `Swagger`
-- `Flyway`
+<img src="https://img.shields.io/badge/Java 17-007396?style=flat&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/Gradle 7.4.2-02303A.svg?style=flat&logo=Gradle&logoColor=white">
+<img src="https://img.shields.io/badge/Spring Boot 2.7.0-6DB33F.svg?style=flat&logo=Spring Boot&logoColor=white">
+<img src="https://img.shields.io/badge/MySQL-4479A1.svg?style=flat&logo=MySQL&logoColor=white">
+<img src="https://img.shields.io/badge/JPA-FF9E0F.svg?style=flat&logo=JPA&logoColor=white">
+<img src="https://img.shields.io/badge/JUnit5-25A162.svg?style=flat&logo=JUnit5&logoColor=white">
+<img src="https://img.shields.io/badge/Swagger-85EA2D.svg?style=flat&logo=Swagger&logoColor=white">
+<img src="https://img.shields.io/badge/Flyway-CC0200.svg?style=flat&logo=Flyway&logoColor=white">
 
 ### FrontEnd
 
-- `Thymeleaf`
+<img src="https://img.shields.io/badge/Thymeleaf-005F0F.svg?style=flat&logo=Thymeleaf&logoColor=white">
 
 ### 문서/협업
 
-- `Jira`
-- `Notion`
-- `Slack`
-- `Git`
-- `Mermaid js`
+<img src="https://img.shields.io/badge/Jira-0052CC.svg?style=flat&logo=Jira Software&logoColor=white"><img src="https://img.shields.io/badge/Notion-000000.svg?style=flat&logo=Notion&logoColor=white">
+<img src="https://img.shields.io/badge/Slack-4A154B.svg?style=flat&logo=Slack&logoColor=white">
+<img src="https://img.shields.io/badge/GitHub-181717.svg?style=flat&logo=GitHub&logoColor=white">
+<img src="https://img.shields.io/badge/Mermiad js-0790C0.svg?style=flat&logoColor=white">
+
+<br/>
 
 ## 🖼 ERD
 
 ![image](https://user-images.githubusercontent.com/50834204/174832512-4f3741d7-8728-4135-85a0-22714ac2917a.png)
+
+<br/>
 
 ## 💻 개발환경
 
